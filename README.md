@@ -2,6 +2,8 @@
 
 LaTeX proposal for Sultan Devino Suyudi (23/521686/PA/22442): **Verifikasi Runtime Berbasis Partial Order pada Interaksi Layanan Asinkron Menggunakan OpenTelemetry**.
 
+The research now checks whether at least one causally compatible event sequence is accepted by a developer-defined workflow state machine. Acceptance means consistency with that model. The existing causal-prerequisite prototype has not yet been extended to implement this search. Evaluation includes controlled cases, independently developed open-source applications (selection pending), and synthetic graphs. See [CONTEXT.md](CONTEXT.md) and [the acceptance decision](docs/adr/0001-existential-workflow-conformance.md).
+
 The draft follows the reference's `content/proposal/` organization and four chapters. Supervisor, examiners, seminar date, and calendar schedule are still pending. The current schedule uses six relative months. See [docs/DRAFT-DECISIONS.md](docs/DRAFT-DECISIONS.md) for provisional research choices and [CHANGELOG.md](CHANGELOG.md) for major changes.
 
 The studied reference is kept separately in `.reference/skripsi/`. See [REFERENCE-NOTES.md](REFERENCE-NOTES.md) for its structure, formatting, source organization, and the snapshot commit.
@@ -89,7 +91,7 @@ Use `tlmgr` for this user-local installation rather than installing a second TeX
 
 ## Verified on 2 October 2026
 
-- Our proposal compiled successfully to 36 A4 pages, with all citations and cross-references resolved and no package warnings or overfull boxes.
+- Our revised proposal compiled successfully to 37 A4 pages, with all citations and cross-references resolved and no package warnings or overfull boxes.
 - All three new diagrams compiled from their tracked standalone TikZ sources.
 - Full reference compiled successfully: 55 A4 pages, with BibTeX references and cross-references resolved.
 - All three standalone proposal diagrams compiled successfully from their TikZ sources into `build/reference-diagrams/`.

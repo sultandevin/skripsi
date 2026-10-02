@@ -1,0 +1,3 @@
+# Accept one allowed causally compatible workflow sequence
+
+On 2 October 2026 the user chose existential workflow conformance: a complete observation is consistent if at least one topological ordering is accepted by the developer-defined state machine. This follows the original idea draft and replaces the first proposal's causal-prerequisite checks; requiring every ordering to be accepted would answer a stronger question. Acceptance does not establish actual causal enforcement, while rejection requires exhausting the compatible search space; incomplete evidence and resource cutoffs remain inconclusive.

@@ -40,23 +40,20 @@ OTLP menyediakan representasi pertukaran data telemetri, termasuk pengodean JSON
 
 \section{Semantik Verifikasi Interaksi}
 \label{sec:semantik}
-Verifikasi runtime memeriksa perilaku yang diamati terhadap spesifikasi. Proposal ini membedakan dua pertanyaan yang tampak serupa. Pertama, apakah ada urutan topologis yang diterima oleh suatu model sekuensial? Kedua, apakah prasyarat benar-benar merupakan pendahulu kausal dari tindakan yang memerlukannya?
+Verifikasi runtime memeriksa perilaku yang diamati terhadap spesifikasi. Semantik utama penelitian ini adalah kesesuaian eksistensial: observasi dinyatakan konsisten apabila sedikitnya satu urutan seluruh peristiwa yang mempertahankan hubungan kausal diterima oleh model workflow. Model tersebut berupa state machine kecil yang ditulis pengembang, bukan model formal lengkap implementasi.
 
-Untuk model bahasa $L(P)$ dan graf $G$, pertanyaan pertama dapat ditulis:
+Untuk model bahasa $L(P)$ dan graf $G$, kondisi penerimaan ditulis:
 \begin{equation}
-  \exists\pi\in\operatorname{Lin}(G):\quad \pi\in L(P).
+  \exists\pi\in\operatorname{Lin}(G):\quad \lambda(\pi)\in L(P).
   \label{eq:existential}
 \end{equation}
-Persamaan~\ref{eq:existential} tidak membuktikan bahwa semua urutan yang mungkin memenuhi model. Jika pembayaran dan pengiriman tidak terurut, sebuah urutan topologis dapat menempatkan pembayaran lebih dahulu walaupun tidak terdapat dependensi pembayaran menuju pengiriman.
+$\operatorname{Lin}(G)$ adalah himpunan urutan topologis graf dan $\lambda$ memetakan peristiwa ke simbol bisnis. Peristiwa konteks yang tidak termasuk alfabet model diproyeksikan keluar dari kata yang diperiksa, tetapi tetap dipertahankan dalam graf agar batasan urutan tidak hilang. Pemetaan ini ditetapkan sebelum evaluasi; peristiwa bisnis yang seharusnya diperiksa tidak boleh diabaikan sebagai konteks.
 
-Aturan utama yang dirancang dalam penelitian ini lebih langsung. Untuk himpunan peristiwa prasyarat $A_w$ dan dependen $B_w$ pada alur kerja $w$, aturan dipenuhi apabila:
-\begin{equation}
-  \forall b\in B_w,\quad \exists a\in A_w:\ a\prec b.
-  \label{eq:causal-rule}
-\end{equation}
-Persamaan~\ref{eq:causal-rule} menyatakan dependensi kausal, bukan sekadar kemungkinan penempatan dalam urutan sekuensial. Bila $B_w$ kosong, aturan ini tidak mewajibkan kemunculan $b$; properti bahwa alur akhirnya selesai memerlukan aturan lain dan berada di luar lingkup awal. Batas kemunculan $k$ diperiksa sebagai $|B_w|\leq k$.
+Sebagai contoh, jika pembayaran dan pengiriman tidak terurut dalam observasi lengkap, urutan pembayaran lalu pengiriman dapat diterima meskipun urutan sebaliknya ditolak. Hasilnya adalah konsisten dengan workflow, bukan bukti bahwa pembayaran benar-benar merupakan pendahulu kausal pengiriman. Jika graf justru menetapkan pengiriman sebelum pembayaran dan model melarang urutan tersebut, tidak ada urutan yang diterima. Apabila graf memiliki beberapa urutan, semuanya memakai model yang sama; tidak cukup memeriksa satu urutan topologis yang kebetulan dipilih.
 
-Pada bukti tidak lengkap, sebagian fakta dapat tetap dibuktikan. Dua pengiriman yang diamati membuktikan pelanggaran batas satu pengiriman, meskipun peristiwa lain hilang. Sebaliknya, tidak terlihatnya pembayaran tidak membuktikan bahwa pembayaran tidak terjadi. Status valid juga hanya bermakna dalam batas peristiwa dan aturan yang diperiksa, bukan pembuktian seluruh perilaku aplikasi.
+Semantik ini berbeda dari persyaratan bahwa semua urutan yang kompatibel harus diterima, maupun aturan yang mewajibkan adanya lintasan kausal dari setiap prasyarat menuju tindakan dependen. Kedua persyaratan tersebut tidak menjadi kriteria utama. Konsekuensinya, kesalahan aplikasi yang masih memiliki penjelasan urutan yang diterima tidak selalu dapat dibuktikan dari observasi. Penelitian melaporkan batas ini secara eksplisit.
+
+Pada bukti tidak lengkap, peristiwa atau sisi yang hilang dapat mengubah himpunan urutan dan kata yang diterima. Karena itu, hasil utama keseluruhan workflow memerlukan kontrak kelengkapan; tanpa kontrak tersebut statusnya tidak dapat disimpulkan. Status konsisten hanya berlaku pada model, observasi, dan cakupan workflow yang dinyatakan. Ia bukan pembuktian seluruh implementasi benar atau jaminan liveness pada eksekusi tanpa batas.
 
 \section{Penelitian Terdahulu}
 \subsection{Pemeriksaan Kesesuaian pada Microservices}
@@ -70,7 +67,7 @@ Ellsberg menerapkan Runtime Protocol Refinement Checking melalui perbandingan pe
 TraceLink memvalidasi trace implementasi terhadap desain terverifikasi dalam ekosistem PGo, yang menghasilkan TLA+ dan Go dari Modular PlusCal \citep{hackett2025}. Pendekatan tersebut menekankan hubungan antara desain formal dan implementasi serta mempertahankan informasi urutan parsial. Proposal ini tidak menggunakan toolchain PGo atau mengklaim jaminan yang setara; sasaran awalnya adalah aturan aplikasi terbatas pada telemetri OpenTelemetry.
 
 \subsection{Verifikasi Interaksi Menggunakan Automata}
-\citet{weilkennedy2025} memeriksa kumpulan trace lokal komunikasi tanpa mengasumsikan jam global bersama dan mengusulkan prosedur berbasis automata. Kajian ini merupakan preprint dan digunakan sebagai pembanding konseptual. Keberadaan prosedur tersebut memperlihatkan bahwa pemeriksaan beberapa urutan yang mungkin bukan kebaruan tersendiri. Proposal ini memilih pemeriksaan keterjangkauan untuk aturan kausal; eksplorasi automata untuk seluruh linear extension tidak menjadi algoritma utama.
+\citet{weilkennedy2025} memeriksa kumpulan trace lokal komunikasi tanpa mengasumsikan jam global bersama dan mengusulkan prosedur berbasis automata. Kajian ini merupakan preprint dan digunakan sebagai pembanding konseptual. Keberadaan prosedur tersebut memperlihatkan bahwa pemeriksaan beberapa urutan yang mungkin bukan kebaruan tersendiri. Proposal ini merancang pencarian urutan topologis yang diterima state machine kecil dari observasi OpenTelemetry. Pemanfaatan automata dan urutan parsial tidak diklaim sebagai kebaruan tersendiri.
 
 \begin{table}[H]
   \centering\small
@@ -80,16 +77,16 @@ TraceLink memvalidasi trace implementasi terhadap desain terverifikasi dalam eko
     \toprule
     Penelitian & Fokus yang relevan & Perbedaan ruang lingkup proposal \\
     \midrule
-    Sakai dan Takahashi & Model proses layanan dari tracing & Aturan kausal eksplisit dari pengembang \\
+    Sakai dan Takahashi & Model proses layanan dari tracing & Workflow eksplisit dari pengembang \\
     Sun dkk. & Inkonsistensi perilaku microservices & Model aturan terbatas, tanpa ekstraksi model lengkap \\
     Ding dkk. & Refinement implementasi protokol & Interaksi aplikasi, bukan protokol konsensus \\
     Hackett dan Beschastnikh & Trace terhadap desain terverifikasi & Kontrak observasi OpenTelemetry, tanpa PGo \\
-    Weil-Kennedy dkk. & Interaksi dari trace lokal melalui automata & Keterjangkauan kausal, tanpa pencarian semua urutan \\
+    Weil-Kennedy dkk. & Interaksi dari trace lokal melalui automata & Ekspor OpenTelemetry dan model workflow terbatas \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
 \section{Kesenjangan dan Posisi Penelitian}
-Penelitian ditempatkan di antara pemeriksaan proses dari tracing dan validasi trace berbasis spesifikasi formal. Pertanyaan yang diuji adalah apakah aturan dependensi aplikasi yang terbatas dapat diperiksa dari kontrak observasi OpenTelemetry, serta pada kondisi apa hasilnya berbeda dari baseline timestamp. Tiga aspek menjadi perhatian: kecukupan bukti untuk membentuk sisi kausal, pembedaan pelanggaran dari ketidaklengkapan, dan biaya pemeriksaan serta ukuran penjelasan.
+Penelitian ditempatkan di antara pemeriksaan proses dari tracing dan validasi trace berbasis spesifikasi formal. Pertanyaan yang diuji adalah apakah kesesuaian urutan workflow yang terbatas dapat diperiksa dari kontrak observasi OpenTelemetry, serta pada kondisi apa hasilnya berbeda dari baseline timestamp. Tiga aspek menjadi perhatian: kecukupan bukti untuk membentuk sisi kausal, pembedaan pelanggaran dari ketidaklengkapan, dan biaya pemeriksaan serta ukuran penjelasan.
 
 Pernyataan kesenjangan ini merupakan posisi penelitian berdasarkan literatur yang telah ditelaah, bukan klaim bahwa seluruh penelitian sebelumnya telah disurvei secara sistematis. Kontribusi yang diharapkan berupa prototipe yang dapat dijalankan, kontrak normalisasi, dataset terkontrol, serta analisis hasil pembandingan. Tidak ditetapkan lebih dahulu bahwa pendekatan kausal selalu lebih unggul; keuntungan, keterbatasan, dan kasus tanpa perbedaan harus dilaporkan.

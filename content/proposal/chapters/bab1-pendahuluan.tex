@@ -9,17 +9,17 @@ OpenTelemetry menyediakan model observasi berupa \ist{trace}, \ist{span}, perist
 
 Penelitian terdahulu telah menghubungkan perilaku yang diamati dengan perilaku yang diharapkan. \citet{sakai2022} mengkaji pembentukan model proses layanan untuk pemeriksaan kesesuaian menggunakan \ist{distributed tracing}. \citet{sun2024} mengusulkan pendekatan berbantuan anotasi untuk mendeteksi inkonsistensi perilaku sistem berbasis microservices. Pada ranah protokol terdistribusi, Ellsberg memeriksa implementasi terhadap simulasi protokol \citep{ding2025}, sedangkan TraceLink menghubungkan trace implementasi dengan desain terverifikasi melalui ekosistem PGo \citep{hackett2025}. Kajian automata untuk kumpulan trace lokal juga menunjukkan bahwa pemeriksaan interaksi tidak harus mengandalkan jam global bersama \citep{weilkennedy2025}.
 
-Proposal ini berfokus pada aturan interaksi aplikasi yang lebih terbatas: dependensi kausal antarperistiwa bisnis dan batas jumlah kemunculan peristiwa pada satu alur kerja. Contohnya, setiap \kode{shipping.started} harus memiliki \kode{payment.succeeded} sebagai pendahulu kausal, dan pengiriman untuk satu pesanan dibatasi satu kali. Aturan tersebut ditulis pengembang, kemudian diperiksa terhadap graf yang dibentuk dari bukti observasi. Penelitian tidak bermaksud membuktikan seluruh implementasi benar atau menggantikan model formal lengkap.
+Proposal ini berfokus pada kesesuaian urutan workflow aplikasi terhadap state machine kecil yang ditulis pengembang. Contohnya, pembayaran dan reservasi boleh muncul dalam urutan mana pun, tetapi pengiriman hanya diterima setelah keduanya dan hanya satu kali. Pemeriksa mencari sedikitnya satu urutan peristiwa yang diterima model sekaligus mempertahankan semua hubungan kausal yang diamati. Hasil konsisten menunjukkan adanya penjelasan urutan yang diizinkan, bukan bukti bahwa setiap urutan yang mungkin benar atau bahwa semua prasyarat mempunyai lintasan kausal menuju pengiriman.
 
 Pemanfaatan telemetri juga memerlukan penanganan bukti yang tidak lengkap. Tidak ditemukannya pembayaran dalam suatu ekspor dapat berarti pembayaran memang tidak terjadi, tetapi dapat pula berarti peristiwa tersebut tidak berhasil dicatat atau diekspor. Mekanisme sampling dan batas perekaman merupakan bagian yang perlu diperhatikan pada instrumentasi OpenTelemetry \citep{otelsdk}. Menyamakan kehilangan observasi dengan kegagalan aplikasi dapat menimbulkan alarm yang tidak berdasar. Oleh sebab itu, penelitian ini membedakan status pelanggaran yang terbukti dari status tidak dapat disimpulkan.
 
-Kesenjangan yang ditelaah adalah kebutuhan akan pendekatan dengan kontrak observasi yang jelas, aturan interaksi sederhana, dan evaluasi yang memisahkan dampak urutan timestamp dari dampak kualitas bukti. Penggunaan \ist{partial order} maupun pemeriksaan kesesuaian telah dikaji sebelumnya. Kontribusi yang diusulkan terletak pada perancangan dan evaluasi pemeriksaan kausal pada data OpenTelemetry untuk ruang lingkup aplikasi asinkron, termasuk batas interpretasi hubungan span dan penjelasan peristiwa relevan ketika terjadi pelanggaran.
+Kesenjangan yang ditelaah adalah kebutuhan akan pendekatan dengan kontrak observasi yang jelas, aturan interaksi sederhana, dan evaluasi yang memisahkan dampak urutan timestamp dari dampak kualitas bukti. Penggunaan \ist{partial order} maupun pemeriksaan kesesuaian telah dikaji sebelumnya. Kontribusi yang diusulkan terletak pada perancangan dan evaluasi pemeriksaan kesesuaian workflow pada data OpenTelemetry untuk ruang lingkup aplikasi asinkron, termasuk batas interpretasi hubungan span dan penjelasan peristiwa relevan ketika terjadi pelanggaran.
 
 \section{Rumusan Masalah}
 Berdasarkan latar belakang tersebut, masalah penelitian dirumuskan sebagai berikut.
 \begin{enumerate}
   \item Bagaimana membentuk graf \ist{partial order} dari peristiwa bisnis dan bukti dependensi yang tersedia pada data OpenTelemetry tanpa mengasumsikan urutan global berdasarkan timestamp?
-  \item Bagaimana memeriksa aturan dependensi kausal dan batas kemunculan peristiwa, serta membedakan pelanggaran dari bukti observasi yang tidak memadai?
+  \item Bagaimana menentukan apakah terdapat urutan peristiwa yang diterima model workflow dan konsisten dengan partial order, serta membedakan ketidaksesuaian dari bukti yang tidak memadai?
   \item Bagaimana perbedaan \ist{false positive}, \ist{false negative}, cakupan keputusan, dan waktu verifikasi antara pemeriksaan berbasis \ist{partial order} dan pemeriksaan berdasarkan urutan timestamp pada skenario terkontrol?
   \item Bagaimana menyajikan peristiwa yang relevan untuk menjelaskan pelanggaran tanpa menampilkan keseluruhan trace?
 \end{enumerate}
@@ -27,8 +27,8 @@ Berdasarkan latar belakang tersebut, masalah penelitian dirumuskan sebagai berik
 \section{Batasan Masalah}
 Ruang lingkup penelitian dibatasi sebagai berikut.
 \begin{enumerate}
-  \item Objek uji berupa interaksi aplikasi asinkron pada alur pemesanan dengan layanan \ist{checkout}, pembayaran, persediaan, dan pengiriman. Generalisasi ke aplikasi lain memerlukan evaluasi tambahan.
-  \item Aturan utama berupa dependensi kausal dan batas kemunculan peristiwa per alur kerja. Penelitian tidak mengembangkan bahasa spesifikasi formal baru, tidak memverifikasi protokol konsensus, dan tidak membuktikan properti \ist{liveness} pada eksekusi tanpa batas.
+  \item Objek uji mencakup aplikasi terkontrol, workflow dari aplikasi microservices sumber terbuka yang dikembangkan pihak lain, dan graf sintetis. Aplikasi eksternal dipilih berdasarkan komunikasi asinkron, kesesuaian model workflow, kemampuan instrumentasi, dan sumber daya yang tersedia; nama serta revisi final ditetapkan setelah studi kelayakan.
+  \item Spesifikasi utama berupa state machine berhingga untuk workflow terbatas per alur kerja. Penerimaan bersifat eksistensial atas urutan topologis, bukan kewajiban semua urutan diterima atau bukti kausal setiap prasyarat. Penelitian tidak mengembangkan bahasa formal baru, tidak memverifikasi konsensus, dan tidak membuktikan \ist{liveness} tanpa batas.
   \item Verifikasi dilakukan secara \ist{offline} terhadap hasil observasi eksekusi. Istilah runtime merujuk pada sumber bukti yang diperoleh saat aplikasi berjalan; pemeriksaan \ist{streaming} dan intervensi otomatis tidak termasuk sasaran awal.
   \item Masukan awal berupa ekspor OTLP JSON yang dinormalisasi. Dukungan terhadap format biner, semua varian backend tracing, dan instrumentasi otomatis seluruh aplikasi berada di luar lingkup.
   \item Identitas peristiwa, identitas alur kerja, dan semantik arah dependensi ditentukan dalam kontrak instrumentasi. Trace standar tanpa informasi bisnis yang memadai tidak dianggap cukup untuk seluruh aturan.
@@ -41,15 +41,15 @@ Ruang lingkup penelitian dibatasi sebagai berikut.
 Penelitian bertujuan mengembangkan dan mengevaluasi prototipe verifikasi interaksi layanan asinkron berbasis \ist{partial order}. Tujuan tersebut dijabarkan menjadi:
 \begin{enumerate}
   \item merumuskan kontrak normalisasi observasi OpenTelemetry menjadi peristiwa dan dependensi kausal;
-  \item menerapkan pemeriksaan aturan dengan keluaran valid, pelanggaran, dan tidak dapat disimpulkan;
-  \item membandingkan hasil dan biaya pemeriksaan kausal dengan baseline timestamp melalui eksperimen berlabel;
+  \item menerapkan pencarian kesesuaian workflow dengan keluaran konsisten, tidak konsisten, dan tidak dapat disimpulkan;
+  \item membandingkan hasil dan biaya pemeriksaan kesesuaian partial order dengan baseline timestamp melalui eksperimen berlabel;
   \item menghasilkan penjelasan yang menampilkan aturan, alur kerja, serta peristiwa relevan bagi pelanggaran.
 \end{enumerate}
 
 \section{Manfaat Penelitian}
 Secara akademis, penelitian diharapkan memberikan bukti empiris mengenai penggunaan informasi kausal dalam pemeriksaan interaksi aplikasi asinkron. Dataset berlabel dan prosedur evaluasi dapat menjadi dasar untuk menguji kembali batasan pendekatan, terutama pada hubungan antara konkurensi, perbedaan jam, dan ketidaklengkapan observasi.
 
-Secara metodologis, kontrak observasi membantu memisahkan fakta bisnis, metadata instrumentasi, serta keputusan pemeriksa. Pemisahan tersebut memungkinkan kesalahan aplikasi dibedakan dari kesalahan ekspor atau penafsiran telemetri. Secara praktis, prototipe diharapkan membantu pengembang menelusuri pelanggaran dependensi pada alur kerja melalui penjelasan yang lebih terarah daripada membaca seluruh trace secara manual.
+Secara metodologis, kontrak observasi membantu memisahkan fakta bisnis, metadata instrumentasi, serta keputusan pemeriksa. Pemisahan tersebut memungkinkan kesalahan aplikasi dibedakan dari kesalahan ekspor atau penafsiran telemetri. Secara praktis, prototipe diharapkan membantu pengembang menelusuri ketidaksesuaian urutan pada alur kerja melalui penjelasan yang lebih terarah daripada membaca seluruh trace secara manual.
 
 \section{Sistematika Penulisan}
 Proposal ini terdiri atas empat bab. Bab I menjelaskan latar belakang, masalah, batasan, tujuan, dan manfaat penelitian. Bab II membahas konsep yang digunakan, penelitian terkait, dan posisi penelitian. Bab III menjelaskan metode, kontrak observasi, rancangan pemeriksa, serta evaluasi dan ancaman validitas. Bab IV memuat rencana jadwal pelaksanaan penelitian. Daftar pustaka disajikan setelah Bab IV.
