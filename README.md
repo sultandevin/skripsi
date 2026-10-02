@@ -1,0 +1,104 @@
+# UGM proposal workspace
+
+LaTeX proposal for Sultan Devino Suyudi (23/521686/PA/22442): **Verifikasi Runtime Berbasis Partial Order pada Interaksi Layanan Asinkron Menggunakan OpenTelemetry**.
+
+The draft follows the reference's `content/proposal/` organization and four chapters. Supervisor, examiners, seminar date, and calendar schedule are still pending. The current schedule uses six relative months. See [docs/DRAFT-DECISIONS.md](docs/DRAFT-DECISIONS.md) for provisional research choices and [CHANGELOG.md](CHANGELOG.md) for major changes.
+
+The studied reference is kept separately in `.reference/skripsi/`. See [REFERENCE-NOTES.md](REFERENCE-NOTES.md) for its structure, formatting, source organization, and the snapshot commit.
+
+## WSL LaTeX setup
+
+TeX Live 2026 is installed for this user at:
+
+```text
+/home/molly/.local/share/texlive/2026
+```
+
+Installed tools include pdfLaTeX, BibTeX, latexmk 4.88, XeLaTeX, LuaLaTeX, and MakeIndex. The proposal uses pdfLaTeX + BibTeX; latexmk handles repeated compilation automatically. Packages include Indonesian Babel support and hyphenation patterns, Times/Courier/Helvetica fonts, natbib, nomencl, tables, listings, hyperlinks, URL wrapping, enumitem, TikZ, standalone, and KOMA-Script's support for nomencl.
+
+New interactive zsh sessions load the installation through `~/.config/texlive/env.sh`, sourced from `~/.zshrc`. `~/.profile` also loads it for shells that use that file. For an already-open terminal:
+
+```sh
+. "$HOME/.config/texlive/env.sh"
+```
+
+The Makefile also sets the TeX Live path directly, so builds do not depend on restarting the terminal. No administrator privileges or system package changes were required.
+
+## Build and preview
+
+Run these commands from this workspace:
+
+```sh
+make reference   # Compile the separate reference document
+make proposal    # Compile diagrams, bibliography, and the full proposal
+make proposal-diagrams # Regenerate diagram PDFs independently
+make watch       # Rebuild our proposal as source files change; Ctrl+C to stop
+make clean       # Remove auxiliary compilation files, retaining PDFs
+```
+
+Output paths:
+
+- Reference PDF: `build/reference/main.pdf`.
+- Proposal PDF: `content/proposal/main.pdf` (reviewable copy included in Git).
+- Build PDF and auxiliary files: `build/proposal/` (ignored by Git).
+
+The source layout mirrors the reference:
+
+```text
+content/proposal/
+  main.tex
+  main.pdf
+  ugmskripsi.cls
+  references.bib
+  chapters/
+    bab1-pendahuluan.tex
+    bab2-penelitian-terkait.tex
+    bab3-metodologi.tex
+    bab4-jadwal-penelitian.tex
+  figures/logougm.png
+  diagrams/
+    partial-order.tex / .pdf
+    architecture-overview.tex / .pdf
+    experiment-flow.tex / .pdf
+```
+
+Open the generated PDF in Codex or your usual PDF viewer. PDF rendering/text extraction tools (`pdftoppm`, `pdftotext`, and `pdfinfo`) already exist in WSL. SyncTeX files are generated to support editor/PDF navigation.
+
+Use the WSL build for this project with chapter files, a custom class, bibliography, and images. `make watch` updates the PDF inside `build/proposal/`; run `make proposal` to refresh the committed review copy in `content/proposal/`. After editing a diagram's `.tex` source, run `make proposal-diagrams` to regenerate the PDF used by the main document.
+
+## Recreate the local reference checkout
+
+The reference is excluded from our own version history. To recreate the exact studied source:
+
+```sh
+mkdir -p .reference
+git clone https://github.com/vityasyyy/skripsi.git .reference/skripsi
+git -C .reference/skripsi checkout 1d4be15f23b5ba4e60425de5a0795f6452c1b6c0
+make reference
+```
+
+## Add a LaTeX package later
+
+```sh
+tlmgr install package-name
+```
+
+Installation documentation: https://tug.org/texlive/quickinstall.html
+
+Use `tlmgr` for this user-local installation rather than installing a second TeX distribution through the operating system.
+
+## Verified on 2 October 2026
+
+- Our proposal compiled successfully to 36 A4 pages, with all citations and cross-references resolved and no package warnings or overfull boxes.
+- All three new diagrams compiled from their tracked standalone TikZ sources.
+- Full reference compiled successfully: 55 A4 pages, with BibTeX references and cross-references resolved.
+- All three standalone proposal diagrams compiled successfully from their TikZ sources into `build/reference-diagrams/`.
+- PDF cover and table of contents were rendered and visually inspected.
+- Indonesian hyphenation patterns are installed and enabled; no LaTeX package warnings or overfull boxes remained in the final reference log. Twelve underfull-box notices remain from the reference's paragraph layout.
+- A second `make reference` reported the PDF up to date.
+- New interactive zsh sessions find the installed tools.
+- The reference checkout has no source changes.
+
+## Template provenance
+
+The UGM class and logo are copied from the reference snapshot recorded in `REFERENCE-NOTES.md`; the original class author attribution is retained. The approval-page wording is adapted for a draft with a pending seminar date. Main document content, diagrams, and bibliography are written for this topic. Hyperlink borders are hidden, and the bibliography is included in the contents. These changes do not certify compliance with an official guide absent from the reference repository.

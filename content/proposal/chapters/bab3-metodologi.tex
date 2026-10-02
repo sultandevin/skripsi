@@ -1,0 +1,220 @@
+\chapter{METODE DAN RANCANGAN PENELITIAN}
+
+\section{Deskripsi Umum Penelitian}
+Penelitian dilakukan melalui pengembangan prototipe dan evaluasi eksperimental terkontrol. Prototipe menerima aturan interaksi serta ekspor observasi, membentuk graf kausal per alur kerja, memeriksa aturan, dan menghasilkan keputusan beserta penjelasan. Alur pemesanan digunakan sebagai objek uji yang menyediakan pembayaran dan reservasi persediaan konkuren sebelum pengiriman.
+
+Pemeriksaan utama menggunakan keterjangkauan pada graf untuk semantik Persamaan~\ref{eq:causal-rule}. Pilihan ini memperjelas arti prasyarat dan membatasi algoritma awal pada aturan yang dapat diperiksa langsung. Pencarian urutan topologis yang diterima automata pada Persamaan~\ref{eq:existential} diperlakukan sebagai semantik berbeda dan tidak digunakan untuk menyatakan bahwa dependensi kausal sudah terbukti.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{architecture-overview}
+  \caption{Rancangan alur observasi dan dua pendekatan pemeriksaan pada masukan yang sama. Oracle menentukan label dari skenario dan fakta aplikasi, bukan dari keluaran verifier.}
+  \label{fig:architecture}
+\end{figure}
+
+\section{Tahapan Penelitian}
+Tahapan penelitian ditunjukkan pada Gambar~\ref{fig:methodology} dan dijelaskan sebagai berikut.
+\begin{enumerate}
+  \item Penelaahan literatur dan penetapan semantik. Kegiatan mencakup penelaahan sumber terkait, pemilihan aturan, serta pemisahan dependensi kausal dari penerimaan suatu urutan sekuensial.
+  \item Penyusunan kontrak observasi. Titik bisnis, identitas alur kerja, arah sisi, serta jaminan kelengkapan ditetapkan sebelum penyusunan dataset.
+  \item Pengembangan prototipe. Adapter OTLP JSON, normalisasi peristiwa, pembentukan graf, pemeriksaan aturan, dan penjelasan deterministik disusun sebagai komponen terpisah.
+  \item Penyiapan objek uji dan baseline. Layanan terkontrol menghasilkan variasi eksekusi, sedangkan baseline menerapkan pemeriksaan urutan timestamp terhadap aturan yang sama.
+  \item Kalibrasi dan penyusunan korpus. Label diperiksa melalui skenario dan fakta aplikasi. Uji awal memastikan perubahan jam tidak mengubah graf, serta kehilangan observasi tidak disamakan dengan event bisnis hilang.
+  \item Pelaksanaan eksperimen. Kedua pendekatan dijalankan pada masukan berpasangan. Data keputusan, waktu, ukuran graf, dan penjelasan dicatat.
+  \item Analisis dan pelaporan. Hasil ditafsirkan per skenario, keterbatasan dicatat, dan artefak disiapkan agar eksperimen dapat diulang.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{experiment-flow}
+  \caption{Tahapan penelitian, dengan kalibrasi sebelum pengukuran resmi.}
+  \label{fig:methodology}
+\end{figure}
+
+\section{Kontrak Observasi dan Pembentukan Graf}
+\subsection{Unit Peristiwa dan Identitas Alur Kerja}
+Setiap peristiwa dinormalisasi menjadi record yang memuat identitas unik, jenis peristiwa, layanan, identitas trace/span, identitas alur kerja, dan referensi pendahulu. Timestamp dipertahankan untuk baseline dan penjelasan, tetapi tidak digunakan untuk menyimpulkan sisi lintas layanan. Satu peristiwa bisnis tidak boleh diam-diam dipetakan menjadi beberapa peristiwa yang dihitung sebagai aksi berbeda.
+
+Peristiwa bisnis direkam pada titik yang ditetapkan kontrak. Keberhasilan pembayaran dan reservasi persediaan, misalnya, dicatat setelah perubahan aplikasi berhasil disimpan. Span durasional yang sudah ada tetap dapat menjadi konteks, tetapi awal permintaan tidak menggantikan titik keberhasilan. Pemilihan titik ini diuji melalui fakta aplikasi, bukan hanya nama span.
+
+Pengelompokan dilakukan menurut atribut bisnis, misalnya \kode{order.id}. Peristiwa antara, yang tidak cocok dengan alias aturan, tetap disimpan karena dapat menjadi bagian lintasan kausal. Referensi lintas pesanan tidak ditelusuri sebagai dependensi yang sah. Referensi tersebut ditandai sebagai cacat bukti, sehingga tidak terjadi pemenuhan prasyarat dari pesanan lain.
+
+\subsection{Sumber Sisi yang Diterima}
+Graf $G_w=(V_w,D_w)$ dibentuk per alur kerja. Sisi $D_w$ diterima dari sumber berikut.
+\begin{enumerate}
+  \item Urutan eksekusi lokal yang dijamin instrumentasi. Peristiwa pada satu urutan eksekusi diberi nomor urut atau referensi pendahulu. Kesamaan layanan tanpa jaminan satu urutan eksekusi tidak cukup, karena satu proses dapat menangani pekerjaan konkuren.
+  \item Hubungan awal span induk menuju awal span anak sesuai konteks yang diketahui. Hubungan tersebut tidak diperluas menjadi urutan akhir induk terhadap seluruh peristiwa anak.
+  \item Hubungan pengiriman menuju pemrosesan pesan dengan identitas pesan dan konteks yang cocok, sesuai kontrak propagasi \citep{otelmessaging}.
+  \item Link atau referensi pendahulu yang secara eksplisit diberi makna kausal dalam instrumentasi aplikasi. Link umum yang semantiknya tidak ditetapkan tidak digunakan sebagai sisi berarah \citep{otelapi}.
+\end{enumerate}
+
+Dalam prototipe, atribut seperti \kode{porv.predecessors} dan penanda \kode{porv.causal} dapat digunakan sebagai kontrak aplikasi. Keduanya bukan field semantik standar OpenTelemetry. Penggunaan struktur OTLP standar dengan atribut tambahan harus dilaporkan secara jujur sebagai instrumentasi eksplisit, bukan klaim bahwa tracing otomatis sudah merekam seluruh kausalitas.
+
+\subsection{Validasi Masukan dan Kelengkapan}
+Normalisasi memeriksa identitas duplikat, nilai korelasi, referensi yang tidak terselesaikan, dan siklus. Ekspor tidak sesuai skema dipisahkan sebagai kesalahan masukan. Graf yang mengandung siklus tidak dipaksa menjadi \ist{partial order}; keputusan urutan dinyatakan tidak dapat disimpulkan hingga masalah observasi dijelaskan.
+
+Penanda kelengkapan $K_w$ hanya diberikan pada alur kerja terkontrol apabila semua titik bisnis dan referensi kausal yang diperlukan telah terkumpul serta tidak ada kehilangan yang diketahui. Penutupan permintaan atau waktu akhir span tidak membuktikan $K_w$. Pada uji kehilangan telemetri, penanda kelengkapan dicabut dan jumlah atau referensi kehilangan disimpan.
+
+Pembentukan graf dan pemeriksaan siklus memerlukan waktu $O(|V_w|+|D_w|)$. Keterjangkauan melalui penelusuran graf memerlukan waktu linear per pencarian. Jika dilakukan untuk sejumlah pasangan prasyarat dan dependen, biaya keseluruhan dapat bertambah mengikuti jumlah pasangan tersebut. Penelitian tidak mengasumsikan bahwa replikasi banyak graf kecil mencerminkan biaya satu graf besar yang rapat.
+
+\section{Representasi Aturan dan Algoritma Pemeriksaan}
+\subsection{Aturan yang Didukung}
+Aturan didefinisikan secara deklaratif dalam berkas terpisah. Listing~\ref{lst:rules} memperlihatkan contoh yang sesuai dengan ruang lingkup awal.
+\begin{lstlisting}[language=yaml,caption={Contoh aturan interaksi pada satu pesanan},label={lst:rules}]
+name: checkout
+correlation:
+  attribute: order.id
+events:
+  paid:
+    match:
+      name: payment.succeeded
+  reserved:
+    match:
+      name: stock.reserved
+  shipped:
+    match:
+      name: shipping.started
+rules:
+  - id: payment_before_shipping
+    before: paid
+    after: shipped
+  - id: stock_before_shipping
+    before: reserved
+    after: shipped
+  - id: ship_at_most_once
+    event: shipped
+    max_occurrences: 1
+\end{lstlisting}
+
+Alias mencocokkan jenis peristiwa secara eksplisit. Untuk setiap pengiriman, verifier mencari sedikitnya satu pembayaran dan satu reservasi pada alur yang sama yang mempunyai lintasan menuju pengiriman. Aturan tidak mewajibkan pembayaran mendahului reservasi atau sebaliknya. Percobaan ulang harus mempunyai identitas peristiwa unik; aplikasi menentukan apakah jenisnya menunjukkan percobaan atau keberhasilan bisnis yang perlu dihitung.
+
+\subsection{Keputusan Berdasarkan Bukti}
+\begin{table}[H]
+  \centering\small
+  \caption{Dasar keputusan untuk aturan yang didukung}
+  \label{tab:verdict}
+  \begin{tabularx}{\textwidth}{@{}p{2.3cm}XX@{}}
+    \toprule
+    Status & Kondisi & Batas interpretasi \\
+    \midrule
+    Valid & Prasyarat kausal terpenuhi untuk instans yang diamati; batas jumlah terpenuhi pada bukti lengkap & Hanya aturan dan cakupan observasi yang diperiksa \\
+    Pelanggaran & Prasyarat gagal pada bukti lengkap atau jumlah observasi melampaui batas & Alasan menyebut aturan dan bukti yang mendasarinya \\
+    Tidak dapat disimpulkan & Bukti yang dibutuhkan hilang, ambigu, bersiklus, atau tidak dapat dikorelasikan & Tidak diperlakukan sebagai valid atau pelanggaran aplikasi \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Kegagalan menemukan lintasan pada bukti lengkap merupakan pelanggaran aturan kausal, termasuk jika kedua titik tampak tidak terurut. Pada bukti tidak lengkap, kegagalan yang sama tidak cukup untuk menyatakan pelanggaran. Jalur yang terlihat dapat membuktikan dependensi untuk instans dependen yang terlihat, tetapi tidak membuktikan tidak adanya instans lain yang hilang. Karena itu, klaim valid dibatasi pada cakupan yang dinyatakan, dan evaluasi utama kebenaran keseluruhan alur menggunakan korpus lengkap.
+
+Batas jumlah memiliki perlakuan berbeda. Jumlah yang teramati melebihi batas membuktikan pelanggaran bahkan jika peristiwa lain hilang. Jumlah yang belum melebihi batas memerlukan kelengkapan untuk dinyatakan memenuhi aturan. Jika tidak terdapat peristiwa yang cocok dengan protokol, ekspor dinyatakan tidak dapat disimpulkan. Pada agregasi, pelanggaran yang telah terbukti diprioritaskan; tanpa pelanggaran, satu keputusan tidak dapat disimpulkan membuat hasil agregat tidak dapat disimpulkan.
+
+\subsection{Alur Algoritma}
+Pemeriksa menempuh langkah berikut: membaca aturan dan masukan; mengelompokkan peristiwa; memvalidasi graf dan bukti; mencocokkan alias; mencari lintasan pendahulu bagi setiap dependen; menghitung kemunculan; menyusun status per aturan; dan mengagregasi keputusan. Penelusuran menggunakan struktur iteratif agar graf dalam tidak bergantung pada batas rekursi.
+
+Aturan, peristiwa, dan alasan diurutkan menurut identitas yang deterministik. Perubahan urutan array span dalam ekspor tidak boleh mengubah keputusan. Jika urutan array span event dipakai sebagai urutan lokal, penggunaannya hanya berlaku pada eksportir yang menjamin urutan eksekusi; apabila tidak ada jaminan itu, referensi lokal eksplisit diperlukan.
+
+\section{Baseline Urutan Timestamp}
+Baseline menggunakan hasil normalisasi yang sama. Dalam satu alur kerja, peristiwa diurutkan menaik berdasarkan timestamp fisik, dengan identitas peristiwa sebagai pemutus seri yang tetap. Untuk aturan prasyarat, baseline menyatakan terpenuhi apabila terdapat prasyarat sebelum setiap dependen dalam urutan tersebut. Pemeriksaan jumlah kemunculan dan gerbang kualitas bukti disamakan dengan pendekatan utama.
+
+Baseline tidak menggunakan lintasan kausal untuk menentukan pemenuhan prasyarat. Jika timestamp hilang atau tidak dapat dibaca, keputusan urutannya tidak dapat disimpulkan. Kedua pendekatan menerima informasi kualitas bukti yang sama; kehilangan telemetri tidak digunakan untuk membuat baseline sengaja lebih buruk. Perbedaan keputusan pada korpus lengkap kemudian dapat dianalisis sebagai dampak pemilihan relasi urutan.
+
+Konkurensi saja tidak selalu membuat baseline salah. Jika peristiwa independen tidak dibatasi oleh aturan dan timestamp tetap menempatkan kedua prasyarat sebelum pengiriman, kedua pendekatan dapat memberi keputusan sama. Pergeseran jam dapat menyebabkan baseline menolak dependensi yang sebenarnya ada. Sebaliknya, timestamp yang tampak benar dapat menutupi ketiadaan dependensi yang disyaratkan. Kedua arah kesalahan diuji; penurunan \ist{false positive} tidak diasumsikan berlaku pada semua skenario.
+
+\section{Rancangan Penjelasan Pelanggaran}
+Keluaran penjelasan memuat identitas aturan, identitas alur kerja, jenis kegagalan, dan peristiwa relevan. Pelanggaran batas jumlah menampilkan sedikitnya $k+1$ peristiwa yang cukup untuk menunjukkan bahwa batas $k$ terlampaui. Pemilihannya dibuat deterministik.
+
+Pelanggaran dependensi menampilkan peristiwa dependen, prasyarat yang ditemukan tetapi tidak mendahuluinya, serta lintasan konteks yang dipilih dari graf. Pencarian pada graf penuh tetap menjadi dasar kesimpulan. Irisan yang ditampilkan sendiri tidak membuktikan bahwa tidak ada lintasan lain, sehingga laporan menyertakan penanda bahwa keterjangkauan diperiksa pada seluruh graf alur kerja. Tidak digunakan istilah \ist{minimal counterexample} karena algoritma tidak membuktikan minimalitas global.
+
+\section{Lingkungan dan Bahan Penelitian}
+Implementasi awal direncanakan memakai TypeScript/Bun dengan pemisahan adapter, graf, aturan, dan pemformat keluaran. Objek uji terdiri atas empat proses layanan dengan penyimpanan lokal terpisah. Aksi pembayaran merupakan simulasi dan tidak memakai penyedia pembayaran atau transaksi keuangan nyata.
+
+Prototipe pendahuluan pada workspace peneliti menyediakan dasar pemeriksaan \ist{offline} dan demo alur pemesanan dengan proses terpisah. Demo tersebut menghasilkan struktur OTLP JSON melalui eksportir eksplisit; hal itu belum sama dengan pembuktian interoperabilitas terhadap keluaran SDK. Sebagai bagian penelitian, setidaknya satu jalur ekspor dari SDK OpenTelemetry yang dipilih akan diuji terhadap adapter. Versi SDK, Bun, dependensi, dan profil konvensi dikunci sebelum pengumpulan data resmi.
+
+Spesifikasi perangkat, sistem operasi, versi runtime, konfigurasi instrumentasi, dan konfigurasi eksportir akan dicatat pada manifest eksperimen. Nilai perangkat keras tidak ditetapkan sebelum mesin eksperimen dipilih. Pemilihan HTTP konkuren untuk demo awal tidak dianggap mewakili seluruh semantik broker pesan; perluasan broker merupakan kemungkinan tindak lanjut, bukan syarat seluruh klaim penelitian.
+
+\section{Skenario dan Label Acuan}
+\label{sec:scenarios}
+Label acuan atau \ist{ground truth} ditentukan dari desain skenario, catatan keputusan aplikasi, dan fakta penyimpanan pada objek uji. Graf sintetis memperoleh label dari konstruksi yang telah ditetapkan serta oracle independen pada graf kecil. Label tidak diambil dari hasil verifier yang sedang dievaluasi.
+
+\begin{longtable}{@{}p{0.7cm}p{3.0cm}p{6.1cm}p{2.8cm}@{}}
+  \caption{Skenario uji dan label acuan}\label{tab:scenarios}\\
+  \toprule
+  ID & Skenario & Perlakuan & Acuan \\
+  \midrule\endfirsthead
+  \toprule ID & Skenario & Perlakuan & Acuan \\
+  \midrule\endhead
+  S1 & Sekuensial valid & Semua prasyarat mempunyai lintasan menuju pengiriman & Valid \\
+  S2 & Konkuren valid & Pembayaran dan persediaan bertukar urutan penyelesaian; pengiriman menunggu keduanya & Valid \\
+  S3 & Pergeseran jam & Timestamp layanan diubah; aksi dan sisi dari S2 tetap & Valid \\
+  S4 & Pengiriman dini & Pengiriman dilakukan sebelum pembayaran dan tidak menerima dependensinya & Pelanggaran \\
+  S5 & Prasyarat hilang & Pembayaran atau reservasi tidak dilakukan; observasi tetap lengkap & Pelanggaran \\
+  S6 & Pengiriman duplikat & Dua aksi pengiriman nyata dengan identitas berbeda pada satu pesanan & Pelanggaran \\
+  S7 & Dependensi terputus & Prasyarat tercatat lebih awal secara waktu, tetapi tidak menjadi pendahulu kausal pada model uji & Pelanggaran aturan kausal \\
+  S8 & Kehilangan telemetri & S2 tetap benar, tetapi peristiwa atau sisi relevan dihapus dari ekspor dan kelengkapan dicabut & Tidak cukup bukti \\
+  S9 & Bukti bermasalah & Referensi tidak terselesaikan, korelasi hilang, atau siklus disuntikkan & Tidak cukup bukti / kesalahan masukan \\
+  \bottomrule
+\end{longtable}
+
+S7 adalah uji terhadap kewajiban kausal dalam model yang dinyatakan, bukan pernyataan bahwa aplikasi dunia nyata selalu salah hanya karena sebuah link tidak ada. Pada observasi produksi yang tidak lengkap, kasus tersebut harus diperlakukan sebagai tidak dapat disimpulkan. S8 menjaga fakta pembayaran pada aplikasi untuk membedakan kehilangan observasi dari penghilangan aksi bisnis pada S5.
+
+\section{Desain Eksperimen dan Protokol Pengukuran}
+\subsection{Variabel dan Korpus}
+Variabel utama adalah pendekatan pemeriksaan: graf kausal atau urutan timestamp. Faktor yang divariasikan meliputi jenis skenario, jumlah peristiwa, lebar cabang konkuren, panjang lintasan, kepadatan sisi, pergeseran jam, dan kualitas bukti. Aturan, input normalisasi, mesin, serta kondisi proses dijaga sama pada pasangan pengukuran.
+
+Rencana awal menggunakan 30 run atau seed berbeda per keluarga skenario. Angka tersebut merupakan rencana operasional untuk memperoleh variasi yang dapat diperiksa, bukan klaim kecukupan statistik untuk semua efek. Run yang memakai trace sama hanya menambah sampel waktu, bukan menambah jumlah eksekusi independen untuk ketepatan deteksi. Sampel dikelompokkan menurut keluarga dan sumbernya agar hasil tidak didominasi replikasi identik.
+
+Uji ukuran menggunakan graf sekitar 100, 500, 1.000, dan 5.000 peristiwa, dengan lebar cabang 1, 2, 4, dan 8 jika konstruksinya memungkinkan. Dua bentuk beban dibedakan: banyak alur kerja independen dan satu alur kerja yang membesar. Kombinasi yang tidak memenuhi jumlah peristiwa atau bentuk graf diberi alasan dan tidak diganti diam-diam.
+
+Pergeseran jam diatur pada 0, $\pm100$ ms, $\pm1$ s, dan $\pm5$ menit. Nilai tersebut merupakan stress test yang dapat direproduksi, bukan perkiraan distribusi jam pada sistem produksi. Kehilangan observasi diuji melalui penghilangan peristiwa relevan dan variasi kehilangan terkontrol dengan seed tetap. Label aplikasi dan label kecukupan bukti disimpan terpisah.
+
+\subsection{Pengumpulan Data}
+Untuk setiap run, skenario dijalankan dengan keadaan aplikasi baru. Catatan fakta bisnis dan konfigurasi perlakuan disimpan, telemetri dikumpulkan, lalu kualitas bukti divalidasi. Hasil normalisasi yang sama diberikan kepada kedua pendekatan. Urutan eksekusi pemeriksa diacak atau diseimbangkan untuk mengurangi pengaruh beban dan cache.
+
+Waktu verifikasi inti diukur setelah parsing dan normalisasi selesai. Secara terpisah, waktu menyeluruh dari pembacaan input hingga serialisasi laporan dicatat agar biaya adapter tidak tersembunyi. Setiap konfigurasi waktu menjalani lima pemanasan dan sekurang-kurangnya 30 pengulangan ukur pada proses eksperimen yang dijelaskan. Jika dipilih proses baru per sampel, biaya startup dicatat dan dipisahkan dari durasi inti.
+
+Run yang gagal dijalankan diberi status kegagalan eksperimen dan tidak dihitung sebagai keputusan pemeriksa. Batas waktu ditetapkan sebelum pengukuran; timeout tetap dilaporkan sebagai ketidakberhasilan menyelesaikan pemeriksaan. Pengaturan yang berubah setelah kalibrasi menghasilkan versi korpus atau manifest baru, sehingga sampel dari konfigurasi berbeda tidak tercampur tanpa penjelasan.
+
+\subsection{Metrik Ketepatan dan Cakupan}
+Pada korpus lengkap, pelanggaran merupakan kelas positif. True positive ($TP$) menyatakan pelanggaran yang terdeteksi benar; false positive ($FP$) menyatakan eksekusi valid yang dinyatakan melanggar; false negative ($FN$) menyatakan pelanggaran yang dinyatakan valid; true negative ($TN$) menyatakan valid yang dinilai valid.
+\begin{align}
+  \operatorname{FPR} &= \frac{FP}{FP+TN}, &
+  \operatorname{FNR} &= \frac{FN}{FN+TP}, \\
+  \operatorname{Precision} &= \frac{TP}{TP+FP}, &
+  \operatorname{Recall} &= \frac{TP}{TP+FN}.
+\end{align}
+Penyebut nol dilaporkan sebagai tidak terdefinisi, bukan diberi nilai nol. Keputusan tidak dapat disimpulkan dilaporkan di luar matriks biner. Agar pemeriksa tidak tampak akurat hanya karena banyak menahan keputusan, cakupan dinyatakan sebagai:
+\begin{equation}
+  C=\frac{N_{\mathrm{valid}}+N_{\mathrm{pelanggaran}}}{N_{\mathrm{seluruh\ input\ evaluasi}}}.
+\end{equation}
+Jumlah keputusan benar terhadap seluruh input berlabel juga dilaporkan, bersama jumlah abstain pada trace yang seharusnya dapat diputuskan. Pada korpus tidak lengkap, ukuran utama adalah proporsi keputusan tidak dapat disimpulkan yang tepat dan alarm pelanggaran tanpa bukti yang memadai. Kebenaran aplikasi yang diketahui oracle tidak otomatis membuat observasinya cukup bagi pemeriksa.
+
+\subsection{Metrik Biaya dan Penjelasan}
+Waktu inti dan menyeluruh disajikan dalam milidetik, dengan median, rentang antarkuartil, dan persentil ke-95. Rasio waktu berpasangan dilaporkan hanya jika penyebut dapat diukur secara bermakna. Memori tambahan dapat dicatat sebagai snapshot sebelum dan sesudah, tetapi tidak disebut sebagai alokasi puncak tanpa pengukuran yang sesuai.
+
+Ukuran penjelasan diukur melalui jumlah identitas peristiwa unik yang ditampilkan. Untuk jumlah $n_{\mathrm{slice}}$ dan ukuran graf alur $n_{\mathrm{workflow}}$, rasio ringkasan adalah:
+\begin{equation}
+  R_{\mathrm{slice}}=\frac{n_{\mathrm{slice}}}{n_{\mathrm{workflow}}}.
+\end{equation}
+Pembandingan dilakukan terhadap alur kerja yang melanggar, bukan seluruh korpus yang berisi banyak alur tidak terkait. Byte hasil serialisasi dicatat sebagai ukuran tambahan. Rasio kecil tidak dianggap membuktikan penjelasan mudah dipahami; semua keluaran diperiksa tetap memuat aturan dan konteks yang benar.
+
+\section{Analisis Hasil dan Kriteria Keberhasilan}
+Analisis dimulai dari tabel keputusan berpasangan per skenario dan sumber korpus. Selisih tingkat kesalahan, cakupan, dan waktu ditampilkan tanpa menggabungkan kategori lengkap dengan tidak lengkap. Perubahan timestamp pada graf yang sama menjadi uji invariansi: keputusan kausal seharusnya tetap, sedangkan baseline dapat berubah.
+
+Keberhasilan prototipe dinilai dari kemampuannya menyelesaikan pipeline, mematuhi kontrak observasi, menghasilkan keputusan yang sesuai oracle pada kasus dasar, dan memberi penjelasan deterministik. Hipotesis manfaat berupa penurunan kesalahan akibat urutan timestamp diuji melalui data, bukan dijadikan syarat bahwa setiap konfigurasi harus menunjukkan keunggulan. Hasil tanpa perbedaan, peningkatan biaya, abstain, dan timeout tetap dilaporkan.
+
+Penelitian tidak mengklaim peningkatan umum hanya dari tujuh atau sembilan fixture. Korpus kecil berfungsi sebagai pemeriksaan regresi. Inferensi hasil dibatasi pada variasi terkontrol dan profil data yang benar-benar diuji. Jika analisis inferensial ditambahkan, unit independensi dan metode ditetapkan sebelum pengukuran resmi; pengulangan waktu atas trace sama tidak diperlakukan sebagai sampel akurasi independen.
+
+\section{Ancaman terhadap Validitas}
+\subsection{Validitas Internal}
+Label yang ditentukan oleh verifier sendiri dapat membuat evaluasi melingkar. Mitigasinya adalah catatan skenario dan fakta aplikasi yang independen, serta pemeriksaan oracle untuk graf kecil. Kedua pendekatan memakai input normalisasi yang sama dan gerbang kualitas bukti yang setara. Pergeseran timestamp dipisahkan dari perubahan perilaku, sehingga sebab perbedaan keputusan dapat ditelusuri.
+
+Ketidakatomikan antara penyimpanan aksi dan perekaman telemetri merupakan risiko lain. Pada prototipe terkontrol, proses dihentikan setelah ekspor berhasil dan fakta aplikasi diperiksa. Klaim kelengkapan tidak diperluas ke crash recovery atau sistem produksi. Beban mesin, JIT, cache, dan urutan run dikendalikan atau direkam agar tidak tersembunyi dalam waktu verifikasi.
+
+\subsection{Validitas Konstruk}
+Kesesuaian urutan timestamp tidak sama dengan dependensi kausal; perbedaan ini dinyatakan sebelum eksperimen. Jumlah peristiwa ringkasan juga bukan ukuran langsung kegunaan penjelasan. Status valid dibatasi pada aturan dan observasi yang diperiksa, bukan properti lengkap aplikasi. Atribut tambahan di OTLP dilaporkan sebagai kontrak aplikasi agar klaim penggunaan OpenTelemetry tidak menutupi instrumentasi yang diperlukan.
+
+\subsection{Validitas Eksternal}
+Satu alur checkout dan graf sintetis tidak mewakili semua microservices. HTTP konkuren belum mencakup seluruh perilaku broker, retry, fan-out, atau batching. Penelitian mendokumentasikan bentuk graf, jenis komunikasi, dan variasi yang didukung; perluasan sistem dan beban produksi merupakan penelitian berikutnya.
+
+\subsection{Reliabilitas dan Reproduksibilitas}
+Aturan, input mentah, normalisasi, label, seed, konfigurasi, dan hasil per run disimpan dalam berkas yang dapat diperiksa. Versi runtime serta dependensi dikunci. Uji determinisme memastikan perubahan urutan ekspor atau jam tidak mengubah keputusan kausal. Data waktu mentah disertakan sehingga variasi hasil dapat dianalisis kembali tanpa hanya mengandalkan ringkasan.

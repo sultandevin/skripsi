@@ -1,0 +1,35 @@
+\chapter{JADWAL PENELITIAN}
+
+Penelitian direncanakan berlangsung selama enam bulan. Tabel~\ref{tab:schedule} menggunakan bulan relatif B1--B6 karena bulan mulai dan durasi final masih menunggu konfirmasi. Jadwal ini merupakan rencana kerja awal, bukan pernyataan bahwa seluruh tahap sudah diselesaikan. Tanggal kalender akan ditambahkan setelah disepakati dengan pembimbing.
+
+\begin{table}[H]
+  \centering\small
+  \caption{Rencana jadwal penelitian enam bulan (provisional)}
+  \label{tab:schedule}
+  \begin{tabularx}{\textwidth}{@{}Xcccccc@{}}
+    \toprule
+    Kegiatan & B1 & B2 & B3 & B4 & B5 & B6 \\
+    \midrule
+    Literatur dan penetapan semantik & $\bullet$ & $\bullet$ & & & & \\
+    Kontrak observasi dan desain aturan & $\bullet$ & $\bullet$ & & & & \\
+    Prototipe dan pengujian adapter & & $\bullet$ & $\bullet$ & & & \\
+    Baseline, skenario, dan oracle & & $\bullet$ & $\bullet$ & & & \\
+    Kalibrasi dan pembekuan konfigurasi & & & $\bullet$ & $\bullet$ & & \\
+    Eksperimen dan pengumpulan data & & & & $\bullet$ & $\bullet$ & \\
+    Analisis dan penjelasan hasil & & & & & $\bullet$ & $\bullet$ \\
+    Penulisan dan konsultasi & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
+    Revisi akhir dan persiapan seminar & & & & & & $\bullet$ \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Penjelasan Kegiatan}
+Pada B1--B2, penelaahan literatur dilakukan bersamaan dengan penetapan semantik aturan dan titik observasi bisnis. Keluaran tahap ini berupa posisi penelitian, daftar aturan, dan kontrak instrumentasi yang disepakati. Penentuan semantik diselesaikan sebelum dataset resmi dibentuk.
+
+Pada B2--B3, prototipe pendahuluan dikembangkan menjadi pipeline penelitian yang dapat menerima ekspor sesuai kontrak. Baseline timestamp, uji interoperabilitas SDK, serta oracle dan skenario disiapkan. Kasus dasar mencakup dependensi valid, konkurensi, pelanggaran bisnis, dan bukti tidak lengkap.
+
+Pada B3--B4, kalibrasi memastikan label, parsing, metrik waktu, dan perlakuan kualitas bukti berjalan sesuai rancangan. Versi perangkat lunak, parameter, dan korpus dibekukan sebelum eksperimen resmi. Penyesuaian pada tahap ini dicatat agar hasil uji awal tidak dicampur dengan data resmi.
+
+Pada B4--B5, eksperimen dilakukan dengan seed dan prosedur yang telah ditetapkan. Data mentah, kegagalan run, serta keluaran kedua pendekatan disimpan. Pada B5--B6, hasil dianalisis per skenario dan bentuk beban, kemudian dibahas bersama keterbatasannya.
+
+Penulisan dan konsultasi dilakukan sepanjang penelitian. Tahap akhir mencakup revisi berdasarkan masukan pembimbing, pemeriksaan konsistensi rumusan masalah dengan hasil evaluasi, penyusunan artefak reproduksi, serta persiapan seminar sesuai jadwal akademik yang nantinya ditetapkan.

@@ -1,0 +1,64 @@
+\documentclass[proposal,indonesia]{ugmskripsi}
+
+% Author and topic supplied in draft penelitian okt 26.pdf.
+\titleind{Verifikasi Runtime Berbasis \textit{Partial Order} pada Interaksi Layanan Asinkron Menggunakan OpenTelemetry}
+\titleeng{Partial-Order-Based Runtime Verification of Asynchronous Service Interactions Using OpenTelemetry}
+\fullname{Sultan Devino Suyudi}
+\idnum{23/521686/PA/22442}
+\degree{Sarjana}
+\gelar{S.Kom.}
+\yearsubmit{2026}
+\program{Ilmu Komputer}
+\dept{Ilmu Komputer dan Elektronika}
+% Replace pending academic metadata after confirmation.
+\firstsupervisor{Belum ditetapkan}
+\firstexaminer{Belum ditetapkan}
+\secondexaminer{Belum ditetapkan}
+\examdate{Belum ditetapkan}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{{figures/}{diagrams/}}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,tabularx,multirow,float}
+\usepackage{listings,xcolor}
+\usepackage{hyperref,url,xurl,enumitem}
+\hypersetup{hidelinks,pdftitle={Partial-Order-Based Runtime Verification of Asynchronous Service Interactions Using OpenTelemetry},pdfauthor={Sultan Devino Suyudi}}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,frame=single,
+  columns=fullflexible,keepspaces=true,showstringspaces=false,tabsize=2}
+\lstdefinelanguage{yaml}{keywords={true,false,null},sensitive=false,
+  comment=[l]{\#},morestring=[b]',morestring=[b]"}
+\newcommand{\ist}[1]{\textit{#1}}
+\newcommand{\kode}[1]{\texttt{#1}}
+
+\begin{document}
+\sloppy
+\cover
+\titlepageind
+\approvalpage
+\tableofcontents
+
+\abstractind
+Interaksi layanan asinkron dapat menghasilkan sejumlah peristiwa yang berjalan konkuren tanpa urutan global tunggal. Pemeriksaan yang mengurutkan seluruh peristiwa berdasarkan waktu fisik berpotensi salah menafsirkan dependensi, terutama ketika jam antarlayanan berbeda. Penelitian ini bertujuan mengembangkan dan mengevaluasi prototipe verifikasi runtime berbasis \ist{partial order} untuk aturan interaksi aplikasi menggunakan data OpenTelemetry. Peristiwa bisnis, identitas alur kerja, dan bukti dependensi dinormalisasi menjadi graf berarah. Aturan utama menyatakan bahwa setiap peristiwa dependen harus memiliki prasyarat yang secara kausal mendahuluinya; aturan tambahan membatasi jumlah kemunculan peristiwa. Hubungan induk--anak dan \ist{span link} digunakan sesuai kontrak instrumentasi yang mendefinisikan titik peristiwa dan arah dependensi, bukan dengan menganggap semua hubungan sebagai bukti penyelesaian bisnis. Pemeriksaan menghasilkan status valid, pelanggaran, atau tidak dapat disimpulkan ketika bukti tidak memadai. Evaluasi direncanakan pada alur \ist{checkout} terkontrol serta graf sintetis berlabel, dengan membandingkan pemeriksaan kausal terhadap \ist{baseline} urutan timestamp. Metrik meliputi \ist{false positive}, \ist{false negative}, cakupan keputusan, waktu verifikasi, dan ukuran penjelasan pelanggaran. Variasi eksperimen mencakup konkurensi, pergeseran jam, pelanggaran prasyarat, duplikasi, serta kehilangan telemetri. Penelitian diharapkan menghasilkan prototipe, kontrak observasi, dan bukti empiris mengenai kondisi ketika urutan kausal membantu pemeriksaan interaksi. Penjelasan pelanggaran berupa irisan peristiwa relevan; minimalitas global dan verifikasi protokol konsensus berada di luar ruang lingkup.
+
+\vspace{0.5cm}
+\noindent\textbf{Kata Kunci:} verifikasi runtime, \ist{partial order}, layanan asinkron, OpenTelemetry, hubungan kausal
+\endabstractind
+
+\abstracteng
+Asynchronous service interactions may produce concurrent events without a single global execution order. Checking all events in physical timestamp order can misrepresent dependencies, particularly when service clocks differ. This research proposes the development and evaluation of a partial-order-based runtime verifier for application interaction rules using OpenTelemetry data. Business events, workflow identities, and dependency evidence are normalized into a directed graph. The primary rule requires every dependent event to have a causally preceding prerequisite; an additional rule limits event occurrences. Parent--child relationships and span links are interpreted through an instrumentation contract defining event points and dependency direction, rather than treating every relationship as proof of business completion. The verifier reports valid, violated, or inconclusive outcomes when evidence is insufficient. Planned evaluation uses a controlled checkout workflow and labeled synthetic graphs, comparing causal checking with a timestamp-order baseline. Metrics include false positives, false negatives, decision coverage, verification time, and violation explanation size. Experiments vary concurrency, clock offsets, prerequisite violations, duplication, and telemetry loss. Expected contributions are a prototype, an observation contract, and empirical evidence about conditions under which causal ordering supports interaction checking. Violation explanations contain relevant event slices; global minimality and consensus protocol verification are outside the scope.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} runtime verification, partial order, asynchronous services, OpenTelemetry, causal ordering
+\endabstracteng
+
+\include{chapters/bab1-pendahuluan}
+\include{chapters/bab2-penelitian-terkait}
+\include{chapters/bab3-metodologi}
+\include{chapters/bab4-jadwal-penelitian}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
+\bibliography{references}
+\end{document}
