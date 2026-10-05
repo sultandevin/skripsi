@@ -1,5 +1,7 @@
 # UGM proposal workspace
 
+> Can partial-order analysis of OpenTelemetry data reliably determine whether an asynchronous application execution is consistent with developer-defined workflow constraints, without relying on synchronized physical clocks across services, and under what conditions does it outperform timestamp-based verification?
+
 LaTeX proposal for Sultan Devino Suyudi (23/521686/PA/22442): **Verifikasi Runtime Berbasis Partial Order pada Interaksi Layanan Asinkron Menggunakan OpenTelemetry**.
 
 The research now checks whether at least one causally compatible event sequence is accepted by a developer-defined workflow state machine. Acceptance means consistency with that model. The existing causal-prerequisite prototype has not yet been extended to implement this search. Evaluation includes controlled cases, independently developed open-source applications (selection pending), and synthetic graphs. See [CONTEXT.md](CONTEXT.md) and [the acceptance decision](docs/adr/0001-existential-workflow-conformance.md).
