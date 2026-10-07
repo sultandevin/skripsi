@@ -12,8 +12,8 @@ Penelitian direncanakan berlangsung selama enam bulan. Tabel~\ref{tab:schedule} 
     \midrule
     Literatur dan penetapan semantik & $\bullet$ & $\bullet$ & & & & \\
     Kontrak observasi dan desain aturan & $\bullet$ & $\bullet$ & & & & \\
-    Pencarian workflow dan pengujian adapter & & $\bullet$ & $\bullet$ & & & \\
-    Baseline, aplikasi eksternal, dan oracle & & $\bullet$ & $\bullet$ & & & \\
+    Pencarian alur kerja dan pengujian \ist{adapter} & & $\bullet$ & $\bullet$ & & & \\
+    Pembanding, aplikasi eksternal, dan \ist{oracle} & & $\bullet$ & $\bullet$ & & & \\
     Kalibrasi dan pembekuan konfigurasi & & & $\bullet$ & $\bullet$ & & \\
     Eksperimen dan pengumpulan data & & & & $\bullet$ & $\bullet$ & \\
     Analisis dan penjelasan hasil & & & & & $\bullet$ & $\bullet$ \\
@@ -26,10 +26,12 @@ Penelitian direncanakan berlangsung selama enam bulan. Tabel~\ref{tab:schedule} 
 \section{Penjelasan Kegiatan}
 Pada B1--B2, penelaahan literatur dilakukan bersamaan dengan penetapan semantik aturan dan titik observasi bisnis. Keluaran tahap ini berupa posisi penelitian, daftar aturan, dan kontrak instrumentasi yang disepakati. Penentuan semantik diselesaikan sebelum dataset resmi dibentuk.
 
-Pada B2--B3, prototipe pendahuluan dikembangkan menjadi pipeline penelitian yang dapat menerima ekspor sesuai kontrak. Baseline timestamp, uji interoperabilitas SDK, serta oracle dan skenario disiapkan. Pencarian state machine menggantikan kriteria keterjangkauan prototipe awal. Studi kelayakan aplikasi eksternal mencakup workflow asli, instrumentasi, dan fault terkontrol. Kasus dasar mencakup workflow sesuai, konkurensi, ketidaksesuaian, dan bukti tidak lengkap.
+Pada B2--B3, prototipe pendahuluan dikembangkan menjadi \ist{pipeline} penelitian yang dapat menerima ekspor sesuai kontrak. Pembanding \ist{timestamp}, uji interoperabilitas SDK, serta \ist{oracle} dan skenario disiapkan. Pencarian kesesuaian mesin keadaan diuji terhadap \ist{oracle} independen. Studi kelayakan satu alur kerja OpenTelemetry Demo mencakup perilaku asli, instrumentasi SDK, label independen, dan kesalahan terkontrol. Pada akhir B3, target aplikasi atau penggantinya, profil beban kerja, serta target operasional dibekukan; prioritas pengurangan cakupan mengikuti Bab III. Kasus dasar mencakup alur kerja sesuai, konkurensi, ketidaksesuaian, dan bukti tidak lengkap.
+
+Uji awal yang telah dijalankan mendukung kelayakan pengumpulan SDK dan rekonsiliasi tiga titik pada profil normal terbatas. Tahap B2--B3 tetap mencakup implementasi verifier eksistensial, validasi model, penutupan skenario kesalahan, dan \ist{oracle} bisnis yang belum diselesaikan. Pelaksanaan uji awal tidak menandai seluruh tahap sebagai selesai dan tidak menggantikan pengumpulan data resmi.
 
 Pada B3--B4, kalibrasi memastikan label, parsing, metrik waktu, dan perlakuan kualitas bukti berjalan sesuai rancangan. Versi perangkat lunak, parameter, dan korpus dibekukan sebelum eksperimen resmi. Penyesuaian pada tahap ini dicatat agar hasil uji awal tidak dicampur dengan data resmi.
 
-Pada B4--B5, eksperimen dilakukan dengan seed dan prosedur yang telah ditetapkan. Data mentah, kegagalan run, serta keluaran kedua pendekatan disimpan. Pada B5--B6, hasil dianalisis per skenario dan bentuk beban, kemudian dibahas bersama keterbatasannya.
+Pada B4--B5, eksperimen dilakukan dengan \ist{seed} dan prosedur yang telah ditetapkan. Data mentah, kegagalan \ist{run}, serta keluaran kedua pendekatan disimpan. Pada B5--B6, hasil dianalisis per skenario dan bentuk beban, kemudian dibahas bersama keterbatasannya.
 
 Penulisan dan konsultasi dilakukan sepanjang penelitian. Tahap akhir mencakup revisi berdasarkan masukan pembimbing, pemeriksaan konsistensi rumusan masalah dengan hasil evaluasi, penyusunan artefak reproduksi, serta persiapan seminar sesuai jadwal akademik yang nantinya ditetapkan.

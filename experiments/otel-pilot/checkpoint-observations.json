@@ -1,0 +1,42 @@
+[
+  {
+    "status": "checkpoints-matched",
+    "order_id": "caa0fb7e-c248-11f1-b0c4-de5ecdb1ef4d",
+    "message_id": "a0e08327-e434-4845-b315-ad276aba7827",
+    "event_count": 3,
+    "kafka_offset": "0",
+    "edges": [
+      [
+        "f39e1119e812a4f08facbc82fffce73b:e15af63a261b5915:event:0",
+        "f39e1119e812a4f08facbc82fffce73b:e15af63a261b5915:event:1"
+      ],
+      [
+        "f39e1119e812a4f08facbc82fffce73b:e15af63a261b5915:event:0",
+        "f39e1119e812a4f08facbc82fffce73b:3758a4ae4470dedd:event:0"
+      ]
+    ],
+    "completeness": "not-established",
+    "note": "Checkpoint validation is not an existential-conformance or application-fault verdict.",
+    "accounting_log_context_matched": true
+  },
+  {
+    "status": "checkpoints-matched",
+    "order_id": "e66326f4-c248-11f1-b0c4-de5ecdb1ef4d",
+    "message_id": "d2b088bc-9a79-43ba-b64a-2ff96f056940",
+    "event_count": 3,
+    "kafka_offset": "1",
+    "edges": [
+      [
+        "490a7065dacc898edde50ccf8bc92b15:fa0acc046673f8df:event:0",
+        "490a7065dacc898edde50ccf8bc92b15:fa0acc046673f8df:event:1"
+      ],
+      [
+        "490a7065dacc898edde50ccf8bc92b15:fa0acc046673f8df:event:0",
+        "490a7065dacc898edde50ccf8bc92b15:ac650b1e21134f7c:event:0"
+      ]
+    ],
+    "completeness": "not-established",
+    "note": "Checkpoint validation is not an existential-conformance or application-fault verdict.",
+    "accounting_log_context_matched": true
+  }
+]

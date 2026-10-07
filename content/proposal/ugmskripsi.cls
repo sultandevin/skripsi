@@ -34,7 +34,7 @@
 \ProcessOptions
 \LoadClass[a4paper,12pt]{report}
 \RequirePackage[authoryear,round]{natbib}
-\bibliographystyle{plainnat}
+\bibliographystyle{ugmplainnat}
 \RequirePackage{nomencl}%
 \renewcommand{\nomname}{\nomenclaturename}%
 \makenomenclature%

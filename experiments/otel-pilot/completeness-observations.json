@@ -1,0 +1,139 @@
+{
+  "observation_profile": "business-checkpoints-v3",
+  "scope": "Three checkpoint types for one successful order in a fresh single-partition epoch, through recorded source freeze",
+  "executions": [
+    {
+      "run_id": "20261007T122825Z-f877b33d",
+      "order_id": "995e991a-c24a-11f1-bb13-22e717f2b00f",
+      "status": "inconclusive",
+      "failures": [
+        "Collector export snapshot was not closed"
+      ],
+      "broker_start": {
+        "orders:0": 0
+      },
+      "broker_end": {
+        "orders:0": 1
+      },
+      "accounting_phase": "idle",
+      "collector_closed_cleanly": false,
+      "checkpoint_count": 3,
+      "source_images": {
+        "checkout": "sha256:d0af9afc65cea2591f8bf52dec2734c41b88776d99a364fcd2fd232e2a3ab973",
+        "accounting": "sha256:edcdb349fdbccf473913861e0714165259c87921f4e58b0d201d8b0afcdd06a2"
+      },
+      "closure_sha256": "a435c7048b0bb76805370ba9a657af39c19dee9c70f7a80a404b59016cf66f1b"
+    },
+    {
+      "run_id": "20261007T123126Z-58dbb2bd",
+      "order_id": "04a5043b-c24b-11f1-9b28-f23d58ba2aa1",
+      "status": "complete-for-declared-scope",
+      "failures": [],
+      "broker_start": {
+        "orders:0": 0
+      },
+      "broker_end": {
+        "orders:0": 1
+      },
+      "accounting_phase": "idle",
+      "collector_closed_cleanly": true,
+      "checkpoint_count": 3,
+      "source_images": {
+        "checkout": "sha256:d0af9afc65cea2591f8bf52dec2734c41b88776d99a364fcd2fd232e2a3ab973",
+        "accounting": "sha256:edcdb349fdbccf473913861e0714165259c87921f4e58b0d201d8b0afcdd06a2"
+      },
+      "closure_sha256": "0da93314f417b4c6d407dc3dd7686bde97564ad533415805cb18529ca222a61e"
+    },
+    {
+      "run_id": "20261007T123321Z-648ec7ba",
+      "order_id": "4995b8f7-c24b-11f1-a8f0-a22324e7e51c",
+      "status": "complete-for-declared-scope",
+      "failures": [],
+      "broker_start": {
+        "orders:0": 0
+      },
+      "broker_end": {
+        "orders:0": 1
+      },
+      "accounting_phase": "idle",
+      "collector_closed_cleanly": true,
+      "checkpoint_count": 3,
+      "source_images": {
+        "checkout": "sha256:d0af9afc65cea2591f8bf52dec2734c41b88776d99a364fcd2fd232e2a3ab973",
+        "accounting": "sha256:edcdb349fdbccf473913861e0714165259c87921f4e58b0d201d8b0afcdd06a2"
+      },
+      "closure_sha256": "127fb9b9d54502880c6c808a5b86d30021fc01b7dcf209feca57d0f8244831d5"
+    }
+  ],
+  "derived_controls": [
+    {
+      "case": "missing-export",
+      "status": "inconclusive",
+      "failures": [
+        "Exported checkpoints do not cover the frozen action ledger exactly",
+        "Projection differs from the full closed exporter checkpoint set"
+      ]
+    },
+    {
+      "case": "missing-action-ledger",
+      "status": "inconclusive",
+      "failures": [
+        "Ledger is outside the supported three-action normal-run scope",
+        "Unexpected action types in ledger",
+        "Exported checkpoints do not cover the frozen action ledger exactly"
+      ]
+    },
+    {
+      "case": "busy-accounting",
+      "status": "inconclusive",
+      "failures": [
+        "Accounting was frozen inside an action; ledger may lag"
+      ]
+    },
+    {
+      "case": "extra-broker-message",
+      "status": "inconclusive",
+      "failures": [
+        "Requires a fresh, single-partition topic with exactly one stored message"
+      ]
+    },
+    {
+      "case": "source-restarted",
+      "status": "inconclusive",
+      "failures": [
+        "accounting did not freeze cleanly"
+      ]
+    },
+    {
+      "case": "unlinked-extra-export",
+      "status": "inconclusive",
+      "failures": [
+        "Projection differs from the full closed exporter checkpoint set"
+      ]
+    },
+    {
+      "case": "reported-dropped-events",
+      "status": "inconclusive",
+      "failures": [
+        "Closed exporter reports dropped selected-span events"
+      ]
+    },
+    {
+      "case": "clock-shift",
+      "status": "complete-for-declared-scope",
+      "failures": []
+    }
+  ],
+  "build": {
+    "profile": "business-checkpoints-v3",
+    "source_revision": "63649d6d6a59de88fb421b88c3c3a6185b6d21ad",
+    "patch_sha256": "2d25539238d85631ea20598faab8981a00e0aada0f0a6b09ba1a115142f01f1f",
+    "go_version": "go version go1.27.1 linux/amd64",
+    "dotnet_sdk_image": "mcr.microsoft.com/dotnet/sdk:8.0@sha256:ec9c0a0dc5f60adc2065762050638dd5ed5facfc53716d4580a42d86027c8e80",
+    "images": {
+      "checkout": "sha256:d0af9afc65cea2591f8bf52dec2734c41b88776d99a364fcd2fd232e2a3ab973",
+      "accounting": "sha256:edcdb349fdbccf473913861e0714165259c87921f4e58b0d201d8b0afcdd06a2"
+    }
+  },
+  "note": "Collection completeness only. No existential-conformance verdict or application-fault label. Derived controls are not additional application executions."
+}

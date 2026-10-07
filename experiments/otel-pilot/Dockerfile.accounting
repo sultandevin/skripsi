@@ -1,0 +1,9 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:ec9c0a0dc5f60adc2065762050638dd5ed5facfc53716d4580a42d86027c8e80 AS build
+WORKDIR /src
+COPY src/accounting/ ./
+COPY pb/demo.proto ./proto/demo.proto
+RUN dotnet publish Accounting.csproj -c Release --no-self-contained -o /out
+
+FROM ghcr.io/open-telemetry/demo:2.0.2-accounting
+COPY --from=build /out/Accounting.dll /app/Accounting.dll
+COPY --from=build /out/Accounting.pdb /app/Accounting.pdb

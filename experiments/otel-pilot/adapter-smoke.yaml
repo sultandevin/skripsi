@@ -1,0 +1,17 @@
+name: otel-pilot-adapter-smoke
+correlation:
+  attribute: app.order.id
+events:
+  charged:
+    match:
+      name: charged
+  shipped:
+    match:
+      name: shipped
+rules:
+  - id: charge_before_ship
+    before: charged
+    after: shipped
+  - id: one_shipping_event
+    event: shipped
+    max_occurrences: 1

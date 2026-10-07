@@ -1,0 +1,45 @@
+\documentclass[proposal,indonesia]{ugmskripsi}
+
+% Author and topic supplied in draft penelitian okt 26.pdf.
+\titleind{Verifikasi \ist{Runtime} Berbasis \textit{Partial Order} pada Interaksi Layanan Asinkron Menggunakan OpenTelemetry}
+\titleeng{Partial-Order-Based Runtime Verification of Asynchronous Service Interactions Using OpenTelemetry}
+\fullname{Sultan Devino Suyudi}
+\idnum{23/521686/PA/22442}
+\degree{Sarjana}
+\gelar{S.Kom.}
+\yearsubmit{2026}
+\program{Ilmu Komputer}
+\dept{Ilmu Komputer dan Elektronika}
+% Replace pending academic metadata after confirmation.
+\firstsupervisor{Belum ditetapkan}
+\firstexaminer{Belum ditetapkan}
+\secondexaminer{Belum ditetapkan}
+\examdate{Belum ditetapkan}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{{figures/}{diagrams/}}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,tabularx,multirow,float}
+\usepackage{listings,xcolor}
+\usepackage{hyperref,url,xurl,enumitem}
+\hypersetup{hidelinks,pdftitle={Partial-Order-Based Runtime Verification of Asynchronous Service Interactions Using OpenTelemetry},pdfauthor={Sultan Devino Suyudi}}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,frame=single,
+  columns=fullflexible,keepspaces=true,showstringspaces=false,tabsize=2}
+\lstdefinelanguage{yaml}{keywords={true,false,null},sensitive=false,
+  comment=[l]{\#},morestring=[b]',morestring=[b]"}
+\newcommand{\ist}[1]{\textit{#1}}
+\newcommand{\kode}[1]{\texttt{#1}}
+
+% Supervisor review copy: Bab I, Bab II, and the full bibliography.
+\begin{document}
+\sloppy
+\pagenumbering{arabic}
+\include{chapters/bab1-pendahuluan}
+\include{chapters/bab2-penelitian-terkait}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
+\nocite{*}
+\bibliography{references}
+\end{document}

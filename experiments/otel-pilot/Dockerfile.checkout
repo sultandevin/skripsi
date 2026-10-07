@@ -1,0 +1,2 @@
+FROM ghcr.io/open-telemetry/demo:2.0.2-checkout
+COPY checkout /usr/src/app/checkout

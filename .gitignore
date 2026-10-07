@@ -1,5 +1,8 @@
 .reference/
+.research/
 build/
+__pycache__/
+*.py[cod]
 *.aux
 *.bbl
 *.blg

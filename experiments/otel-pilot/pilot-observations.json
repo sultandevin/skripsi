@@ -1,0 +1,131 @@
+[
+  {
+    "order_id": "8d26d50f-c240-11f1-940f-4ed46abd6049",
+    "trace_ids": [
+      "5fe3e6259b90787b9187e85ae2863603",
+      "9c219895ac216a0bb6b8fffe4d048ce6"
+    ],
+    "span_count": 44,
+    "services": {
+      "checkout": 12,
+      "currency": 2,
+      "shipping": 3,
+      "cart": 7,
+      "quote": 3,
+      "product-catalog": 1,
+      "flagd": 6,
+      "email": 4,
+      "payment": 5,
+      "accounting": 1
+    },
+    "accounting_otel_log_matches": 1,
+    "accounting_process_log_contains_order": true,
+    "accounting_spans_in_checkout_trace": 0,
+    "accounting_spans_in_linked_traces": 1,
+    "accounting_parent_ids_present": [
+      false
+    ],
+    "accounting_links": [
+      {
+        "traceId": "9c219895ac216a0bb6b8fffe4d048ce6",
+        "spanId": "763cacc0b951d54a",
+        "flags": 769
+      }
+    ],
+    "checkout_events": [
+      "prepared",
+      "feature_flag",
+      "charged",
+      "shipped",
+      "feature_flag"
+    ],
+    "completeness": "not-established",
+    "interpretation": "Correlation and processing evidence only; no conformance or application-fault verdict."
+  },
+  {
+    "order_id": "b2601b33-c240-11f1-940f-4ed46abd6049",
+    "trace_ids": [
+      "0ed6363faa56ef6899a2900aae57b4d5",
+      "c123e58baf63c604d0baa879b83e0e96"
+    ],
+    "span_count": 38,
+    "services": {
+      "currency": 2,
+      "flagd": 3,
+      "shipping": 3,
+      "email": 4,
+      "cart": 7,
+      "product-catalog": 1,
+      "checkout": 12,
+      "quote": 3,
+      "payment": 2,
+      "accounting": 1
+    },
+    "accounting_otel_log_matches": 1,
+    "accounting_process_log_contains_order": true,
+    "accounting_spans_in_checkout_trace": 0,
+    "accounting_spans_in_linked_traces": 1,
+    "accounting_parent_ids_present": [
+      false
+    ],
+    "accounting_links": [
+      {
+        "traceId": "c123e58baf63c604d0baa879b83e0e96",
+        "spanId": "6d7bc131548239a5",
+        "flags": 769
+      }
+    ],
+    "checkout_events": [
+      "prepared",
+      "feature_flag",
+      "charged",
+      "shipped",
+      "feature_flag"
+    ],
+    "completeness": "not-established",
+    "interpretation": "Correlation and processing evidence only; no conformance or application-fault verdict."
+  },
+  {
+    "order_id": "edfc91cf-c240-11f1-8e42-3a0d8f5a823f",
+    "trace_ids": [
+      "62192efd29540261e8d39b216f4af16e",
+      "66459c3b60692eac78f6bade21a3ca35"
+    ],
+    "span_count": 44,
+    "services": {
+      "currency": 2,
+      "product-catalog": 1,
+      "checkout": 12,
+      "cart": 7,
+      "shipping": 3,
+      "flagd": 6,
+      "quote": 3,
+      "email": 4,
+      "payment": 5,
+      "accounting": 1
+    },
+    "accounting_otel_log_matches": 1,
+    "accounting_process_log_contains_order": true,
+    "accounting_spans_in_checkout_trace": 0,
+    "accounting_spans_in_linked_traces": 1,
+    "accounting_parent_ids_present": [
+      false
+    ],
+    "accounting_links": [
+      {
+        "traceId": "62192efd29540261e8d39b216f4af16e",
+        "spanId": "29f5d26d258e7540",
+        "flags": 769
+      }
+    ],
+    "checkout_events": [
+      "prepared",
+      "feature_flag",
+      "charged",
+      "shipped",
+      "feature_flag"
+    ],
+    "completeness": "not-established",
+    "interpretation": "Correlation and processing evidence only; no conformance or application-fault verdict."
+  }
+]
