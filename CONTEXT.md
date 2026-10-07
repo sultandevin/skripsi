@@ -32,6 +32,6 @@ _Avoid_: Model-incompatible observation as a synonym for every application fault
 An observation for which compatibility cannot be decided because evidence is insufficient or the search did not complete within its resource limits.
 _Avoid_: Insufficient evidence as a synonym for every search cutoff.
 
-**PORnV attributes**:
-Application-defined observation metadata in the `pornv` namespace, named after the research prototype PORnV. These attributes are carried by OpenTelemetry but are not standard OpenTelemetry fields.
+**PORV attributes**:
+Application-defined observation metadata for the research prototype PORV. The `pornv` namespace retains the implementation tool and repository name. These attributes are carried by OpenTelemetry but are not standard OpenTelemetry fields.
 _Avoid_: Automatic business causality supplied by tracing.

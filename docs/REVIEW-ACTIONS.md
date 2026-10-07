@@ -21,7 +21,7 @@ The proposal remains for supervisor review. Formal evaluation results, full exte
 
 ## Subsequent clarity review — 5 October 2026
 
-Applied priority items 1–8 and 12–16: one-page Indonesian/English abstracts; three research questions; explicit model-compatibility outcomes with inconclusive retained for evidence and resource limits; early S7 example and offline explanation; standard/custom instrumentation separation; PORnV namespace definitions; controlled-baseline framing; descriptive S5/S7 names; consistent Indonesian terminology; definition of formal-language words; reduced duplicate caveats.
+Applied priority items 1–8 and 12–16: one-page Indonesian/English abstracts; three research questions; explicit model-compatibility outcomes with inconclusive retained for evidence and resource limits; early S7 example and offline explanation; standard/custom instrumentation separation; PORV namespace definitions; controlled-baseline framing; descriptive S5/S7 names; consistent Indonesian terminology; definition of formal-language words; reduced duplicate caveats.
 
 Item 9 is discussion only: a deterministic single topological ordering remains an optional comparator. Items 10–11 and 17–23 are preserved: independent oracle validation, separate application labels, unchanged existential DFA semantics, completeness contract, honest novelty, inconclusive cutoffs, and deterministic explanations with full-graph fallback. No new formalism or required experiments were added.
 

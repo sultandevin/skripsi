@@ -25,7 +25,7 @@ The collector image tag is `0.120.0`, while its startup log reports binary versi
 | `20261007T111733Z-69d25755` | `b2601b33-c240-11f1-940f-4ed46abd6049` | 38 | Process log and one matching OTLP log |
 | `20261007T111913Z-9a503f08` (after reset) | `edfc91cf-c240-11f1-8e42-3a0d8f5a823f` | 44 | Process log and one matching OTLP log |
 
-Each run included checkout's `prepared`, `charged` and `shipped` span events. Each also included an accounting Kafka receive span in a **separate trace**, linked to the observed checkout Kafka producer span. The link carried trace/span identity but no PORnV causal annotation. Accounting's order log did not carry a trace/span context in the inspected records. Do not equate a receive-span boundary with completion of the accounting business action.
+Each run included checkout's `prepared`, `charged` and `shipped` span events. Each also included an accounting Kafka receive span in a **separate trace**, linked to the observed checkout Kafka producer span. The link carried trace/span identity but no PORV causal annotation. Accounting's order log did not carry a trace/span context in the inspected records. Do not equate a receive-span boundary with completion of the accounting business action.
 
 The initial consumer reported an unknown `orders` topic before checkout's first publication created it; processing later succeeded. Startup broker health does not establish topic readiness. The clean reset removed only the pilot's containers/volumes, archived its exports and recreated the application; the third message's consumer record had offset zero. Future official runs should establish topic readiness explicitly before measurement.
 
@@ -35,7 +35,7 @@ A single Docker memory snapshot summed to approximately 765 MiB across pilot con
 
 ## Adapter smoke check
 
-The existing PORnV binary read the first run's aggregated ordinary OTLP JSON successfully and returned `inconclusive` (exit code 3). The smoke protocol matched checkout's `charged` and `shipped` events using `app.order.id`.
+The existing `pornv` binary read the first run's aggregated ordinary OTLP JSON successfully and returned `inconclusive` (exit code 3). The smoke protocol matched checkout's `charged` and `shipped` events using `app.order.id`.
 
 Diagnostics identified an unannotated accounting link, unestablished completeness and an unresolved causal reference across workflow grouping. The parser/export path therefore works, but native instrumentation does not yet satisfy the research observation contract. The old prototype implements causal-prerequisite rules rather than the thesis's existential DFA search; this smoke check does not validate that algorithm or establish a conformance verdict.
 
