@@ -91,7 +91,7 @@ def reconcile(run):
                 and event['attributes'].get('app.message.id') == metadata.get('app.message.id'),
                 'Projection identity differs from raw exporter record')
         if kind == 'order.accounting.processed':
-            require(event['predecessors'] == metadata.get('pornv.predecessors', []),
+            require(event['predecessors'] == metadata.get('porv.predecessors', []),
                     'Projection causal reference differs from raw exporter record')
             for key in ['messaging.destination.name', 'messaging.kafka.destination.partition',
                         'messaging.kafka.message.offset']:

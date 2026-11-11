@@ -33,7 +33,7 @@ for case in ['message-mismatch', 'broken-predecessor', 'missing-processing-recor
                     for attr in event.get('attributes', []):
                         if case == 'message-mismatch' and attr['key'] == 'app.message.id':
                             attr['value'] = {'stringValue': 'wrong-message'}
-                        if case == 'broken-predecessor' and attr['key'] == 'pornv.predecessors':
+                        if case == 'broken-predecessor' and attr['key'] == 'porv.predecessors':
                             attr['value'] = {'arrayValue': {'values': [{'stringValue': 'missing:event:0'}]}}
     path = out / case
     path.mkdir(exist_ok=True)

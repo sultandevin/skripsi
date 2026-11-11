@@ -34,7 +34,7 @@ def offsets(which):
 
 
 def copy_journal(service):
-    subprocess.run(['docker', 'cp', f'pornv-otel-pilot-{service}-1:/tmp/pornv-actions.jsonl',
+    subprocess.run(['docker', 'cp', f'porv-otel-pilot-{service}-1:/tmp/porv-actions.jsonl',
                     str(run / f'{service}-actions.jsonl')], check=True, capture_output=True)
 
 
@@ -62,14 +62,14 @@ cut = {'protocol': 'single-order-frozen-checkpoints-v1',
 for service in ['checkout', 'accounting']:
     copy_journal(service)
     info = json.loads(subprocess.check_output(['docker', 'inspect',
-                     f'pornv-otel-pilot-{service}-1'], text=True))[0]
+                     f'porv-otel-pilot-{service}-1'], text=True))[0]
     state = info['State']
     cut['sources'][service] = {
         'container_id': info['Id'], 'image': info['Image'],
         'paused': state['Paused'], 'running': state['Running'],
         'oom_killed': state['OOMKilled'], 'restart_count': info['RestartCount'],
         'journal_sha256': hashlib.sha256((run / f'{service}-actions.jsonl').read_bytes()).hexdigest()}
-subprocess.run(['docker', 'cp', 'pornv-otel-pilot-accounting-1:/tmp/pornv-actions.jsonl.phase',
+subprocess.run(['docker', 'cp', 'porv-otel-pilot-accounting-1:/tmp/porv-actions.jsonl.phase',
                 str(run / 'accounting-phase.txt')], check=True, capture_output=True)
 cut['accounting_phase'] = (run / 'accounting-phase.txt').read_text()
 cut['broker_start'] = offsets('-2')
@@ -79,7 +79,7 @@ cut['broker_end'] = offsets('-1')
 time.sleep(5)
 subprocess.run(COMPOSE + ['stop', '-t', '45', 'otel-collector'], check=True)
 collector = json.loads(subprocess.check_output(['docker', 'inspect',
-                       'pornv-otel-pilot-otel-collector-1'], text=True))[0]
+                       'porv-otel-pilot-otel-collector-1'], text=True))[0]
 cut['collector_stopped'] = not collector['State']['Running'] and collector['State']['ExitCode'] == 0
 cut['collector_state'] = collector['State']
 snapshot = run / 'collector-snapshot'

@@ -35,7 +35,7 @@ A single Docker memory snapshot summed to approximately 765 MiB across pilot con
 
 ## Adapter smoke check
 
-The existing `pornv` binary read the first run's aggregated ordinary OTLP JSON successfully and returned `inconclusive` (exit code 3). The smoke protocol matched checkout's `charged` and `shipped` events using `app.order.id`.
+The existing `porv` binary read the first run's aggregated ordinary OTLP JSON successfully and returned `inconclusive` (exit code 3). The smoke protocol matched checkout's `charged` and `shipped` events using `app.order.id`.
 
 Diagnostics identified an unannotated accounting link, unestablished completeness and an unresolved causal reference across workflow grouping. The parser/export path therefore works, but native instrumentation does not yet satisfy the research observation contract. The old prototype implements causal-prerequisite rules rather than the thesis's existential DFA search; this smoke check does not validate that algorithm or establish a conformance verdict.
 

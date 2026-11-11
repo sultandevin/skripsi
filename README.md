@@ -1,12 +1,12 @@
 # UGM proposal workspace
 
-> Can partial-order analysis of OpenTelemetry data reliably determine whether an asynchronous application execution is consistent with developer-defined workflow constraints, without relying on synchronized physical clocks across services, and under what conditions does it outperform timestamp-based verification?
+> Can partial-order analysis of OpenTelemetry data reliably determine whether an asynchronous application execution is consistent with developer-defined workflow constraints, without relying on synchronized physical clocks across services, and what do causal information and alternative-order search contribute compared with timestamp and single-topological-order verification?
 
 LaTeX proposal for Sultan Devino Suyudi (23/521686/PA/22442): **Verifikasi Runtime Berbasis Partial Order pada Interaksi Layanan Asinkron Menggunakan OpenTelemetry**.
 
-The research now checks whether at least one causally compatible event sequence is accepted by a developer-defined workflow state machine. Acceptance means consistency with that model. The existing Go causal-prerequisite prototype has not yet been extended to implement this search. Evaluation includes controlled cases, one external workflow from OpenTelemetry Demo 2.0.2, and synthetic graphs. Preliminary external runs established SDK checkpoint collection and bounded normal-run completeness; independent business-fault cases and formal verifier evaluation remain outstanding. Application-fault detection uses separate independent labels. See [CONTEXT.md](CONTEXT.md), [the acceptance decision](docs/adr/0001-existential-workflow-conformance.md), and [pilot results](docs/OTEL-PILOT-RESULTS.md).
+The research now checks whether at least one causally compatible event sequence is accepted by a developer-defined workflow state machine. Acceptance means consistency with that model. The existing causal-prerequisite prototype has not yet been extended to implement this search. Evaluation includes controlled cases, one external workflow from OpenTelemetry Demo 2.0.2, and synthetic graphs. Preliminary external runs established SDK checkpoint collection and bounded normal-run completeness; independent business-fault cases and formal verifier evaluation remain outstanding. Application-fault detection uses separate independent labels. See [CONTEXT.md](CONTEXT.md), [the acceptance decision](docs/adr/0001-existential-workflow-conformance.md), and [pilot results](docs/OTEL-PILOT-RESULTS.md).
 
-The proposal calls the research prototype **PORV**. The tool, GitHub repository links, paths, and `pornv` metadata namespace keep their existing implementation names.
+The proposal calls the research prototype **PORV**. The tool, GitHub repository links, paths, and `porv` metadata namespace keep their existing implementation names.
 
 The draft follows the reference's `content/proposal/` organization and four chapters. Supervisor, examiners, seminar date, and calendar schedule are still pending. The current schedule uses six relative months. See [docs/DRAFT-DECISIONS.md](docs/DRAFT-DECISIONS.md) for provisional research choices and [CHANGELOG.md](CHANGELOG.md) for major changes.
 
@@ -120,6 +120,20 @@ Both abstracts now fit one page, with three research questions and model-compati
 
 ## Pilot-aligned proposal verified on 7 October 2026
 
-The proposal now describes the three external checkpoints, client success without broker acknowledgement, the two permitted normal event orders, and a bounded completeness procedure using separate action records, source phases, broker offsets and a closed collector snapshot. It distinguishes preliminary SDK collection from pending DFA verification and independent business-fault evaluation. The implementation plan follows the existing Go prototype.
+The proposal now describes the three external checkpoints, client success without broker acknowledgement, the two permitted normal event orders, and a bounded completeness procedure using separate action records, source phases, broker offsets and a closed collector snapshot. It distinguishes preliminary SDK collection from pending DFA verification and independent business-fault evaluation. The implementation builds on the existing causal-prerequisite approach.
 
 The full proposal compiled to 50 A4 pages with 18 resolved bibliography entries, no LaTeX warnings, no unresolved references, and no overfull or underfull boxes. The new checkpoint table/listing, collection procedure and feasibility-status pages were visually inspected. Academic metadata and official template verification remain pending. The review copy is `content/proposal/main.pdf`.
+
+## Evaluation review adopted on 7 October 2026
+
+Required comparators now include raw timestamps, one deterministic topological ordering, and a conservative timestamp variant with explicit clock-error bounds and abstention on ambiguous intervals. The preliminary prerequisite checker is retained as a bounded second analysis for explicit dependency rules, with independent path labels. Oracle agreement, search benefit and application-fault detection are evaluated separately, including reliable-clock S7 cases where timestamps detect a fault that existential checking misses.
+
+The external three-event path is integration evidence; all its normal topological orders are accepted, so it does not establish search benefit. Application faults remain required on the controlled application, and external business-fault claims require independent evidence. These requirements supersede the earlier optional-comparator scope; implementation and formal experiments remain outstanding.
+
+The revised proposal builds to 53 A4 pages with 18 resolved bibliography entries and no warnings or box-layout notices. Both abstracts remain one page; the updated diagram and comparator sections were visually inspected.
+
+## Prospective methodology protocol — 7 October 2026
+
+[The evaluation protocol](docs/EVALUATION-PROTOCOL.md) fixes statistics, sampling units, width scaling and operational targets before calibration: 10 seconds or 1,000,000 configurations per complete small workflow, at least 95% existential decision coverage and at most 5% resource cutoffs. These are prospective requirements. Official corpus generation must follow final manifest freezing. The proposal retains offline runtime verification, adds verified related-work positioning and risk–coverage analysis, consolidates pilot status into a table, and moves external reproduction details to an appendix. Optional external fault patches and broader closure profiles are cut first.
+
+The complete revision builds to 60 A4 pages with 30 resolved bibliography entries and no warnings or box-layout notices. Both abstracts remain one page; the new methodology sections, pilot table and appendix were visually checked.

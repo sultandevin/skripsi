@@ -7,7 +7,7 @@ Recorded on 2 October 2026 (Asia/Jakarta). This file is an editorial record, not
 - Primary input: `/mnt/c/Users/devino suyudi/Downloads/draft penelitian okt 26.pdf`, five pages. Its PDF metadata reports creation on 14 September 2026; the supplied filename is preserved in this record.
 - The Thesis project was accessible. **Create Bab I II Latex PDF** confirms the Indonesian/English title and the prior draft direction, and points to a previous standalone Bab I–II draft. That older PDF/source was not retrieved or copied into this proposal.
 - **Explain RPRC and DPIs** supports the distinction between application interactions and consensus protocol implementations. Only relevant readable messages were used; opaque content-reference placeholders were not treated as retrieved content.
-- Local supporting context: `/home/molly/university/pornv/README.md`, `docs/decisions.md`, and demo/evaluation documentation. Those files were read without changes. They describe an existing causal verifier and a controlled demo, not completed thesis evidence or a timestamp comparison.
+- Local supporting context: `/home/molly/university/porv/README.md`, `docs/decisions.md`, and demo/evaluation documentation. Those files were read without changes. They describe an existing causal verifier and a controlled demo, not completed thesis evidence or a timestamp comparison.
 - The reference class, chapter order, and layout were studied previously. Its other author's research content was not reused.
 
 ## Research choices in this draft
@@ -18,9 +18,9 @@ Recorded on 2 October 2026 (Asia/Jakarta). This file is an editorial record, not
 | Accept an observation if an allowed compatible sequence exists | User confirmed existential workflow conformance on 2 October: at least one topological ordering must be accepted by the developer-defined state machine. This follows Section E, step 5 of the idea draft and supersedes the first proposal's causal-prerequisite interpretation. Acceptance is consistency, not proof of actual causal enforcement or universal safety. |
 | Add an inconclusive outcome | Missing telemetry or an ambiguous link cannot by itself establish an application violation. Completeness is an explicit controlled observation contract. |
 | Treat business events as points | A span start must not be mislabeled as business completion. Parentage does not imply parent completion before a child. |
-| Make additional instrumentation explicit | `pornv.predecessors`, `pornv.causal`, and completeness markers are application contracts rather than standard OpenTelemetry semantics. |
+| Make additional instrumentation explicit | `porv.predecessors`, `porv.causal`, and completeness markers are application contracts rather than standard OpenTelemetry semantics. |
 | Start with offline verification | Runtime data are collected during execution; a streaming monitor is not promised. |
-| Use the same normalized inputs for both approaches | Only the relation used by ordering rules differs; count rules and evidence-quality checks are shared. |
+| Use the same normalized inputs for required comparators | Four conformance strategies share the DFA, projection and evidence gates. The second prerequisite analysis uses explicit dependency rules and separate path labels. |
 | Keep the timestamp comparison honest | Independent concurrency alone need not cause false positives. Clock offsets and missing required causality are separate test conditions. |
 | Require independent labels | Independent enumeration/model checking or known constructions label observation consistency; application facts separately label actual business faults. Neither label comes from the evaluated verifier. |
 | Distinguish independent runs and repeated timings | Timing repetition does not increase the number of independent accuracy observations. |
@@ -62,14 +62,14 @@ Section F (page 3) originally lists detection correctness (including false posit
 - Shortened both abstracts to the core research story and reduced the research questions to three. Explanation work remains an objective and part of evaluation rather than a fourth compound question.
 - Indonesian prose uses alur kerja, urutan parsial, mesin keadaan/keadaan, peristiwa, and kesalahan aplikasi. English equivalents are introduced where useful; standard OpenTelemetry and formal notation identifiers remain intact.
 - Verifier outcomes are now **Kompatibel dengan model / Tidak kompatibel dengan model / Tidak dapat disimpulkan**. The third label is retained because resource cutoffs do not necessarily mean evidence is insufficient. Labels changed; existential acceptance and all evidence/search gates did not.
-- The researcher-defined attribute namespace is **pornv**, retaining the implementation tool name `pornv`; the proposal display name is now **PORV**. `pornv.predecessors` carries predecessor event IDs; `pornv.causal` marks explicitly contracted causal links. This supersedes the proposal's `porv.*` examples, not the separate prototype implementation. Final serialization remains an implementation/calibration choice.
+- The researcher-defined attribute namespace is **porv**, retaining the implementation tool name `porv`; the proposal display name is now **PORV**. `porv.predecessors` carries predecessor event IDs; `porv.causal` marks explicitly contracted causal links. This supersedes the proposal's `porv.*` examples, not the separate prototype implementation. Final serialization remains an implementation/calibration choice.
 - Added a concise standard OTel/business-instrumentation/extra-causal-metadata boundary; introduced offline runtime verification earlier; defined formal-language “kata”; renamed S5 and S7.
 - Timestamp sorting is explicitly a controlled comparison, not a state-of-the-art claim. A single deterministic topological ordering is discussed as an optional comparator only; no extra mandatory experiment or algorithm is added.
 - Oracle agreement remains implementation validation. Empirical conclusions focus on decision changes, costs, evidence quality, and independently labeled application faults. Removed redundant acceptance caveats outside the designated interpretation sections.
 
 ## Proposal aligned with the execution pilot — 7 October 2026
 
-- The verifier implementation plan uses Go to extend the actual preliminary prototype. The prior TypeScript/Bun plan is superseded; existential DFA search remains unimplemented.
+- The verifier builds on the preliminary causal-prerequisite approach; existential DFA search remains unimplemented.
 - OpenTelemetry Demo 2.0.2 is the initial external target. SDK collection, identities and bounded normal-run completeness have been exercised. Business-fault feasibility is still unresolved, so the documented replacement procedure remains applicable before official collection.
 - The normal external model accepts `acp` and `apc`: attempted publication precedes client-reported success and accounting processing, while the two successors are unordered. Client success under `sarama.NoResponse` is not a broker acknowledgement. A repeated delivery is not inherently a business fault.
 - Completeness covers only declared event types, one order, and a recorded collection boundary. Separate synced action journals, the accounting phase marker, source state, broker offsets and closed exporter snapshots support the pilot collection gate. Journals share trusted action instrumentation with the telemetry points and are not independent business-state oracles.
@@ -78,4 +78,25 @@ Section F (page 3) originally lists detection correctness (including false posit
 
 ## Prototype naming — 7 October 2026
 
-The proposal and research prose use **PORV**. The tool/executable, GitHub repository name and URL, filesystem paths, `pornv.*` metadata, and existing instrumentation source identifiers retain their implementation names. This is a display-name change, not an implementation migration.
+The proposal and research prose use **PORV**. The tool/executable, GitHub repository name and URL, filesystem paths, `porv.*` metadata, and existing instrumentation source identifiers retain their implementation names. This is a display-name change, not an implementation migration.
+
+## Evaluation review adopted — 7 October 2026
+
+This supersedes the earlier optional-topological-comparator decision and the exclusion of prerequisite analysis from required scope.
+
+- Raw timestamps, deterministic topological ordering (Kahn with lexicographic event-ID selection), and conservative timestamps with frozen absolute clock-error bounds are required comparators. The clock comparator abstains when projected intervals do not establish a strict total order; it neither searches alternatives nor repairs ordering from communication edges. Test within-bound and out-of-bound offsets separately and report decision coverage.
+- Keep primary existential DFA semantics. Reuse prerequisite reachability as a bounded required second analysis for declared dependency rules, initially without repetitions; do not automatically derive it from arbitrary DFAs. Validate independent path labels separately from existential and application-fault labels.
+- Split implementation validation, information-causality comparisons, search-sensitive comparisons, and practical application-fault detection. Independent enumeration prevents implementation self-labeling but does not make existential accuracy a neutral measure of practical superiority.
+- Include swap-invariant models, mixed accepted/rejected extensions, deterministic choices that reject despite a witness, and reliable-clock S7 baseline wins. A shared clock across distinct processes must not accidentally introduce local-order edges that convert S7 into S4.
+- Narrow the external three-checkpoint path to SDK integration, causal reconstruction, collection completeness and clock sensitivity. All normal extensions are accepted. Required controlled-application fault evaluation remains; external business-fault claims are conditional on demonstrated fault feasibility. Replace the external target if integration fails, rather than manufacturing business requirements to obtain faults.
+- Existing pilot observations and prototype implementation were not changed; these are proposal requirements, not completed experimental results.
+
+## Remaining methodology review adopted — 7 October 2026
+
+This supersedes the earlier post-calibration target-setting wording. [The prospective protocol](EVALUATION-PROTOCOL.md) records fixed core targets: 10 seconds or 1,000,000 configurations, at least 95% coverage and at most 5% resource cutoffs for complete selected graphs with 4–20 full-graph vertices, width at most 4 and 2–16 DFA states. These are design targets, not measured results. Machine selection and the design manifest precede calibration; fresh official cases are generated only after final manifest freezing. Slow cells are not removed.
+
+- Statistics are required: independent base graphs/executions, clustered variants, paired percentile bootstrap CIs, exact McNemar with Holm correction for the eight planned application comparisons, and exact binomial intervals for independent base-observation FPR/FNR. The cell/profile manifest remains a required pre-generation deliverable.
+- Added general constrained-topological-sorting hardness and the order-ideal bound via a width-w chain partition. The fixed-width polynomial bound is an algorithm derivation, not a new theorem or general polynomial-time claim. Width is controlled and checked from the full poset.
+- Retain the title's runtime terminology with cited offline-RV justification. Added verified positioning against causal tracing, ShiViz, Petri-net alignment conformance and decentralized LTL monitoring.
+- Minimum evidence gates stay required. Cut optional external faults/closure profiles first; stress tests and extra timing variants are optional. Prerequisite analysis stays bounded and complementary.
+- Both abstracts explicitly locate search-benefit evidence in controlled/synthetic cases. Progress status is consolidated in one feasibility subsection with all three closure attempts; exact revisions, transport configuration and closure mechanics move to an appendix.

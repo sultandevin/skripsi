@@ -1,0 +1,44 @@
+\chapter{REPRODUKSI INTEGRASI EKSTERNAL}
+\label{app:external}
+\section{Identitas dan Konfigurasi}
+Target pilot adalah OpenTelemetry Demo rilis 2.0.2, berlisensi Apache-2.0, pada commit berikut \citep{oteldemo2025}:
+\begin{lstlisting}
+63649d6d6a59de88fb421b88c3c3a6185b6d21ad
+\end{lstlisting}
+Konfigurasi produsen pada revisi tersebut memakai \kode{sarama.NoResponse}. Karena itu, notifikasi keberhasilan klien dan nilai offset produsen tidak dipakai sebagai bukti bahwa broker telah menyimpan pesan. Posisi Kafka pada observasi pemrosesan berasal dari konsumen, dan jumlah pesan yang tersimpan diperiksa secara terpisah melalui rentang offset broker. Kembalinya pemanggilan log juga tidak menjamin bahwa keluaran log telah tersimpan secara persisten.
+
+\section{Prosedur Penutupan Profil Normal}
+Profil normal awal memakai keadaan broker baru, satu partisi, satu pesanan berhasil, dan satu pesan, tanpa permintaan lain, pengulangan publikasi, atau \ist{restart} sumber. Kelengkapan hanya mencakup tiga jenis peristiwa terpilih untuk pesanan tersebut sampai batas pembekuan proses, bukan seluruh \ist{span} otomatis atau seluruh aplikasi. Prosedur pengumpulan untuk profil ini adalah:
+\begin{enumerate}
+  \item Checkout dan accounting menulis catatan aksi terpisah dari SDK telemetri. Setiap penambahan catatan disinkronkan ke disk; kegagalan penulisan menggagalkan sumber eksperimen. Accounting mencatat fase pemrosesan sebelum aksi dan fase selesai setelah aksi, pencatatan peristiwa, serta penutupan \ist{span} kembali.
+  \item Setelah respons checkout berhasil, kedua sumber dibekukan. Catatan aksi, fase accounting, identitas citra, dan keadaan proses disalin. Pembekuan accounting pada fase pemrosesan menghasilkan tidak dapat disimpulkan karena aksi mungkin sudah terjadi sebelum catatannya ditulis.
+  \item Rentang offset broker diperiksa dan dicocokkan dengan posisi dalam catatan accounting. Pada profil normal baru, broker menyimpan tepat satu pesan pada offset nol. Pemeriksaan ini merupakan bukti posisi/jumlah pesan, bukan audit isi pesan oleh konsumen independen.
+  \item Telemetri yang sudah dikirim diberi kesempatan mencapai kolektor, lalu kolektor dihentikan secara normal untuk menutup salinan ekspor. Jeda tunggu saja tidak membuktikan ekspor lengkap. Seluruh peristiwa terpilih dalam ekspor direkonsiliasi satu per satu dengan catatan aksi, identitas, dan referensi kausal; hitungan peristiwa yang dilaporkan dibuang juga diperiksa.
+\end{enumerate}
+Penanda $K_w$ diberikan hanya jika rekonsiliasi berhasil, sumber tidak mengalami kegagalan atau \ist{restart}, accounting berada di luar aksi, dan kolektor berhenti normal. Catatan hilang, pesan atau aksi tambahan di luar profil, maupun ekspor yang tidak cocok menghasilkan tidak dapat disimpulkan. Aktivitas setelah sumber dilanjutkan berada di luar batas pengumpulan yang disimpan. Profil ini tidak langsung digunakan untuk menilai S5 atau S6; penutupan skenario tersebut harus memenuhi ketentuan pada Bagian~\ref{sec:completeness} tanpa mewajibkan tiga aksi normal.
+
+Catatan aksi merupakan instrumentasi eksperimen yang dipercaya untuk menyaksikan titik pencatatan, dengan jalur penyimpanan berbeda dari telemetri. Catatan tersebut bukan implementasi independen dari aturan bisnis dan tidak menggantikan \ist{oracle} kesalahan aplikasi. Penulisan sinkron juga dapat mengubah waktu eksekusi; biaya tersebut dipisahkan dari pengukuran waktu verifier dan tidak dianggap telah mengukur overhead aplikasi.
+
+\section{Manifest Bukti Kelayakan}
+\begin{table}[H]
+  \centering\small
+  \caption{Uji kelayakan penutupan pengumpulan eksternal}
+  \label{tab:pilot-closure}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Sufiks run & Titik cocok & Hasil pengumpulan \\
+    \midrule
+    \kode{f877b33d} & 3 & Tidak dapat disimpulkan; kolektor berhenti sebelum penutupan ekspor selesai \\
+    \kode{58dbb2bd} & 3 & Lengkap pada cakupan yang dinyatakan; catatan aksi/ekspor cocok, satu offset broker, sumber di luar aksi \\
+    \kode{648ec7ba} & 3 & Lengkap pada cakupan yang sama dalam epoch baru dan pesanan berbeda \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Identitas tiga percobaan penutupan yang dirangkum pada Tabel~\ref{tab:pilot-closure} adalah:
+\begin{lstlisting}
+20261007T122825Z-f877b33d
+20261007T123126Z-58dbb2bd
+20261007T123321Z-648ec7ba
+\end{lstlisting}
+Ringkasan terstruktur tersimpan pada \path{experiments/otel-pilot/completeness-observations.json}. Instruksi reproduksi, patch instrumentasi, dan kontrak terdapat pada \path{experiments/otel-pilot/README.md} serta \path{docs/OTEL-OBSERVATION-CONTRACT.md}. Bukti mentah, catatan aksi beku, metadata penutupan, dan checksum dipertahankan secara lokal di bawah \path{.research/otel-pilot/runs/}, dengan direktori sesuai identitas run. Metadata pengumpulan ini mendukung rekonsiliasi titik yang dipilih; label kesalahan aplikasi harus diperoleh dari pemeriksaan fakta bisnis tersendiri.

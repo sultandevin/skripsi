@@ -24,4 +24,4 @@ with tarfile.open(fileobj=io.BytesIO(archive), mode='r:gz') as tar:
     binary.chmod(0o755)
 (OUT / 'release.sha256').write_text(expected + '  ' + filename + '\n')
 (OUT / 'Dockerfile').write_text('FROM scratch\nCOPY grpcurl /grpcurl\nENTRYPOINT ["/grpcurl"]\n')
-subprocess.run(['docker', 'build', '-t', 'pornv-pilot-grpcurl:1.9.3', str(OUT)], check=True)
+subprocess.run(['docker', 'build', '-t', 'porv-pilot-grpcurl:1.9.3', str(OUT)], check=True)

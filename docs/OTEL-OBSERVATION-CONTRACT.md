@@ -10,7 +10,7 @@ This contract covers one isolated order in the pinned 2.0.2 checkout-to-accounti
 
 Every checkpoint carries `app.order.id` and a generated `app.message.id`. Retransmission of the same message retains its message identity; distinct attempts from distinct calls receive new identities. A repeated delivery is not automatically a second forbidden business effect.
 
-The publisher puts message identity and the send-attempt event identity into Kafka headers. Accounting records the predecessor on its processing event in the application-defined `pornv.predecessors` attribute. The identifier follows the prototype adapter's OTLP event format `traceId:spanId:event:index`. In v2 the initiated checkpoint is the producer's first event; the integration gate checks that reference against the actual exported event rather than assuming it resolved.
+The publisher puts message identity and the send-attempt event identity into Kafka headers. Accounting records the predecessor on its processing event in the application-defined `porv.predecessors` attribute. The identifier follows the prototype adapter's OTLP event format `traceId:spanId:event:index`. In v2 the initiated checkpoint is the producer's first event; the integration gate checks that reference against the actual exported event rather than assuming it resolved.
 
 The recorded dependencies are:
 
@@ -21,7 +21,7 @@ publication attempt ──→ client reported success
 
 Client success and accounting processing are not ordered relative to one another. The upstream producer uses `sarama.NoResponse`, so its success notification is not evidence of broker acknowledgement. In the repeat pilot its reported offset stayed zero while the consumer correctly recorded offset one. The business projection therefore omits producer offset metadata and retains the consumer's Kafka position. Order/message identity, the propagated event reference, and matching topic/partition establish correspondence without timestamp ordering. Broker-confirmed publication would require a separately documented transport configuration change. See the [pinned producer configuration](https://github.com/open-telemetry/opentelemetry-demo/blob/63649d6d6a59de88fb421b88c3c3a6185b6d21ad/src/checkout/kafka/producer.go).
 
-The original Kafka receive link remains an ordinary unannotated SDK link. It is not relabeled causal globally. A new accounting business activity uses the explicitly propagated trace context and records the specific event predecessor. Custom activities are subscribed via `OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES=PORnV.Accounting`, using the existing automatic SDK. See the [OpenTelemetry manual-instrumentation instructions](https://github.com/open-telemetry/opentelemetry-dotnet-instrumentation/blob/v1.11.0/docs/manual-instrumentation.md).
+The original Kafka receive link remains an ordinary unannotated SDK link. It is not relabeled causal globally. A new accounting business activity uses the explicitly propagated trace context and records the specific event predecessor. Custom activities are subscribed via `OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES=porv.Accounting`, using the existing automatic SDK. See the [OpenTelemetry manual-instrumentation instructions](https://github.com/open-telemetry/opentelemetry-dotnet-instrumentation/blob/v1.11.0/docs/manual-instrumentation.md).
 
 ## Limits and validation
 

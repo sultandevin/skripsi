@@ -16,7 +16,7 @@ index 707f907..1136c98 100644
  internal class Consumer : IDisposable
  {
      private const string TopicName = "orders";
-+    private static readonly ActivitySource BusinessEvents = new("PORnV.Accounting");
++    private static readonly ActivitySource BusinessEvents = new("porv.Accounting");
  
      private ILogger _logger;
      private IConsumer<string, byte[]> _consumer;
@@ -46,7 +46,7 @@ index 707f907..1136c98 100644
 -    private void ProcessMessage(Message<string, byte[]> message)
 +    private static void JournalPhase(string phase)
      {
-+        var path = Environment.GetEnvironmentVariable("PORNV_ACTION_JOURNAL");
++        var path = Environment.GetEnvironmentVariable("porv_ACTION_JOURNAL");
 +        if (string.IsNullOrEmpty(path)) return;
          try
          {
@@ -58,7 +58,7 @@ index 707f907..1136c98 100644
 +            }
 +            File.Move(path + ".phase.tmp", path + ".phase", overwrite: true);
 +        }
-+        catch (Exception ex) { Environment.FailFast("PORnV phase ledger write failed", ex); }
++        catch (Exception ex) { Environment.FailFast("porv phase ledger write failed", ex); }
 +    }
  
 +    private void ProcessMessage(ConsumeResult<string, byte[]> received)
@@ -72,14 +72,14 @@ index 707f907..1136c98 100644
 +            ActivityContext.TryParse(Header("traceparent"), Header("tracestate"), out var parent);
 +            using var activity = BusinessEvents.StartActivity("accounting.process", ActivityKind.Internal, parent);
 +            activity?.SetTag("app.order.id", order.OrderId);
-+            activity?.SetTag("app.message.id", Header("pornv-message-id"));
++            activity?.SetTag("app.message.id", Header("porv-message-id"));
 +            activity?.SetTag("messaging.destination.name", received.Topic);
 +            activity?.SetTag("messaging.kafka.destination.partition", received.Partition.Value);
 +            activity?.SetTag("messaging.kafka.message.offset", received.Offset.Value);
 +            // This revision's business action is parsing and recording the order in its log.
              Log.OrderReceivedMessage(_logger, order);
 +            // Separate from the SDK/export path. Failure invalidates this run.
-+            var journalPath = Environment.GetEnvironmentVariable("PORNV_ACTION_JOURNAL");
++            var journalPath = Environment.GetEnvironmentVariable("porv_ACTION_JOURNAL");
 +            if (!string.IsNullOrEmpty(journalPath))
 +            {
 +                try
@@ -87,8 +87,8 @@ index 707f907..1136c98 100644
 +                    var record = new {
 +                        id = $"{activity?.TraceId}:{activity?.SpanId}:event:0",
 +                        type = "order.accounting.processed", order_id = order.OrderId,
-+                        message_id = Header("pornv-message-id"),
-+                        predecessor = Header("pornv-publish-event"),
++                        message_id = Header("porv-message-id"),
++                        predecessor = Header("porv-publish-event"),
 +                        topic = received.Topic, partition = received.Partition.Value,
 +                        offset = received.Offset.Value
 +                    };
@@ -97,15 +97,15 @@ index 707f907..1136c98 100644
 +                    file.Write(bytes);
 +                    file.Flush(flushToDisk: true);
 +                }
-+                catch (Exception ex) { Environment.FailFast("PORnV action ledger write failed", ex); }
++                catch (Exception ex) { Environment.FailFast("porv action ledger write failed", ex); }
 +            }
 +            var tags = new ActivityTagsCollection {
 +                { "app.order.id", order.OrderId },
-+                { "app.message.id", Header("pornv-message-id") }
++                { "app.message.id", Header("porv-message-id") }
 +            };
-+            var predecessor = Header("pornv-publish-event");
++            var predecessor = Header("porv-publish-event");
 +            if (!string.IsNullOrEmpty(predecessor))
-+                tags.Add("pornv.predecessors", new[] { predecessor });
++                tags.Add("porv.predecessors", new[] { predecessor });
 +            activity?.AddEvent(new ActivityEvent("order.accounting.processed", tags: tags));
          }
          catch (Exception ex)
@@ -121,7 +121,7 @@ index c9d40c7..75e4a40 100644
 +// Independent, synced action ledger for the isolated research profile only.
 +// A failed ledger write terminates the process rather than hiding lost evidence.
 +func journalAction(id, kind, orderID, messageID string) {
-+	path := os.Getenv("PORNV_ACTION_JOURNAL")
++	path := os.Getenv("porv_ACTION_JOURNAL")
 +	if path == "" {
 +		return
 +	}
@@ -159,8 +159,8 @@ index c9d40c7..75e4a40 100644
 +	span.AddEvent("order.publish.initiated", trace.WithAttributes(
 +		attribute.String("app.order.id", result.OrderId), attribute.String("app.message.id", messageID)))
 +	msg.Headers = append(msg.Headers,
-+		sarama.RecordHeader{Key: []byte("pornv-message-id"), Value: []byte(messageID)},
-+		sarama.RecordHeader{Key: []byte("pornv-publish-event"), Value: []byte(predecessor)})
++		sarama.RecordHeader{Key: []byte("porv-message-id"), Value: []byte(messageID)},
++		sarama.RecordHeader{Key: []byte("porv-publish-event"), Value: []byte(predecessor)})
  
  	// Send message and handle response
  	startTime := time.Now()
@@ -178,7 +178,7 @@ index c9d40c7..75e4a40 100644
 +					attribute.String("messaging.destination.name", successMsg.Topic),
 +					attribute.Int("messaging.kafka.destination.partition", int(successMsg.Partition))))
 +			} else {
-+				log.Warn("PORnV: producer result belongs to another message; checkpoint omitted")
++				log.Warn("porv: producer result belongs to another message; checkpoint omitted")
 +			}
  			span.SetAttributes(
  				attribute.Bool("messaging.kafka.producer.success", true),

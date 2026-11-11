@@ -9,7 +9,7 @@ OpenTelemetry menyediakan model observasi berupa \ist{trace}, \ist{span}, perist
 
 Penelitian terdahulu telah menghubungkan perilaku yang diamati dengan perilaku yang diharapkan. \citet{sakai2022} mengkaji pembentukan model proses layanan untuk pemeriksaan kesesuaian menggunakan \ist{distributed tracing}. \citet{sun2024} mengusulkan pendekatan berbantuan anotasi untuk mendeteksi inkonsistensi perilaku sistem berbasis \ist{microservices}. Pada ranah protokol terdistribusi, Ellsberg memeriksa implementasi terhadap simulasi protokol \citep{ding2025}, sedangkan TraceLink menghubungkan \ist{trace} implementasi dengan desain terverifikasi melalui ekosistem PGo \citep{hackett2025}. Kajian automata untuk kumpulan \ist{trace} lokal juga menunjukkan bahwa pemeriksaan interaksi tidak harus mengandalkan jam global bersama \citep{weilkennedy2025}.
 
-Proposal ini berfokus pada kesesuaian alur kerja (\ist{workflow}) aplikasi terhadap mesin keadaan (\ist{state machine}) kecil yang ditulis pengembang. Telemetri dihasilkan saat aplikasi berjalan, sedangkan verifikasi dilakukan secara \ist{offline} setelah pengumpulan; penelitian ini merupakan verifikasi \ist{runtime} berbasis observasi eksekusi. Contohnya, pembayaran dan reservasi boleh muncul dalam urutan mana pun, tetapi pengiriman hanya diterima setelah keduanya dan hanya satu kali. Pemeriksa mencari sedikitnya satu urutan peristiwa yang diterima model sekaligus mempertahankan semua hubungan kausal yang diamati. Hasil kompatibel dengan model berarti terdapat urutan yang diizinkan dan sesuai bukti. Hasil ini tidak membuktikan bahwa aplikasi benar-benar menegakkan prasyarat. Jika pembayaran dan pengiriman tidak terurut dalam observasi, pemeriksa dapat menerima urutan pembayaran lebih dahulu meskipun fakta aplikasi menunjukkan pengiriman dilakukan terlalu dini; skenario S7 pada Bab III menguji keterbatasan ini.
+Proposal ini memeriksa kesesuaian alur kerja (\ist{workflow}) terhadap mesin keadaan yang ditulis pengembang. Telemetri dikumpulkan saat aplikasi berjalan dan diverifikasi secara \ist{offline}. Pemeriksa mencari sedikitnya satu urutan yang diterima model dan sesuai dengan hubungan kausal yang diamati. Kompatibilitas tersebut tidak membuktikan bahwa aplikasi benar-benar menegakkan prasyarat bisnis; batas ini dibahas pada Bab II dan diuji pada Bab III.
 
 Pemanfaatan telemetri juga memerlukan penanganan bukti yang tidak lengkap. Tidak ditemukannya pembayaran dalam suatu ekspor dapat berarti pembayaran memang tidak terjadi, tetapi dapat pula berarti peristiwa tersebut tidak berhasil dicatat atau diekspor. Mekanisme \ist{sampling} dan batas perekaman merupakan bagian yang perlu diperhatikan pada instrumentasi OpenTelemetry \citep{otelsdk}. Menyamakan kehilangan observasi dengan kegagalan aplikasi dapat menimbulkan alarm yang tidak berdasar. Oleh sebab itu, penelitian ini membedakan status pelanggaran yang terbukti dari status tidak dapat disimpulkan.
 
@@ -20,28 +20,15 @@ Berdasarkan latar belakang tersebut, masalah penelitian dirumuskan sebagai berik
 \begin{enumerate}
   \item Bagaimana membentuk representasi urutan parsial dari observasi OpenTelemetry berdasarkan kontrak observasi?
   \item Bagaimana memeriksa kompatibilitas observasi dengan spesifikasi alur kerja ketika bukti tidak selalu memadai?
-  \item Bagaimana pemeriksaan urutan parsial dibandingkan dengan pengurutan timestamp dalam ketepatan, cakupan, biaya, dan deteksi kesalahan aplikasi?
+  \item Pada kondisi apa informasi kausal dan pencarian alternatif mengubah ketepatan, cakupan, serta biaya dibandingkan satu urutan topologis dan pengurutan timestamp, dan bagaimana batas deteksi kesalahan aplikasinya?
 \end{enumerate}
 
-\section{Batasan Masalah}
-Ruang lingkup penelitian dibatasi sebagai berikut.
-\begin{enumerate}
-  \item Objek uji mencakup aplikasi terkontrol, alur kerja dari aplikasi \ist{microservices} sumber terbuka yang dikembangkan pihak lain, dan graf sintetis. Aplikasi eksternal dipilih berdasarkan komunikasi asinkron, kesesuaian model alur kerja, kemampuan instrumentasi, dan sumber daya yang tersedia; satu aplikasi eksternal menjadi cakupan wajib, dengan OpenTelemetry Demo rilis 2.0.2 sebagai target awal. Alur checkout--Kafka--accounting telah menjalani uji awal pengumpulan observasi. Kelayakan kasus kesalahan bisnis tetap diperiksa sebelum evaluasi resmi; revisi dan aturan penggantian dijelaskan pada Bab III.
-  \item Spesifikasi utama berupa mesin keadaan berhingga untuk alur kerja terbatas per alur kerja. Penerimaan memakai semantik eksistensial atas urutan topologis sebagaimana dijelaskan pada Bab II. Penelitian tidak mengembangkan bahasa formal baru, tidak memverifikasi konsensus, dan tidak membuktikan \ist{liveness} tanpa batas.
-  \item Verifikasi dilakukan secara \ist{offline} terhadap hasil observasi eksekusi. Istilah \ist{runtime} merujuk pada sumber bukti yang diperoleh saat aplikasi berjalan; pemeriksaan \ist{streaming} dan intervensi otomatis tidak termasuk sasaran awal.
-  \item Masukan awal berupa ekspor OTLP JSON yang dinormalisasi. Dukungan terhadap format biner, semua varian backend tracing, dan instrumentasi otomatis seluruh aplikasi berada di luar lingkup.
-  \item Identitas peristiwa, identitas alur kerja, dan semantik arah dependensi ditentukan dalam kontrak instrumentasi. \ist{Trace} standar tanpa informasi bisnis yang memadai tidak dianggap cukup untuk seluruh aturan.
-  \item Tidak semua \ist{span link} diperlakukan sebagai \ist{happened-before}. Hubungan dipakai hanya jika makna kausal dan titik peristiwanya dapat dipertanggungjawabkan.
-  \item Pembandingan dilakukan pada masukan dan aturan bisnis yang sama. \ist{Timestamp} digunakan hanya oleh pembanding untuk menetapkan urutan; waktu monotonic digunakan untuk pengukuran durasi verifikasi.
-  \item Penjelasan pelanggaran berupa irisan peristiwa relevan yang deterministik. Minimalitas global contoh penyangkal (\ist{counterexample}) dan efektivitas penjelasan melalui studi pengguna berada di luar ruang lingkup.
-\end{enumerate}
-
-\section{Tujuan Penelitian}
+\subsection{Tujuan Penelitian}
 Penelitian bertujuan mengembangkan dan mengevaluasi prototipe verifikasi interaksi layanan asinkron berbasis urutan parsial. Tujuan tersebut dijabarkan menjadi:
 \begin{enumerate}
   \item merumuskan kontrak normalisasi observasi OpenTelemetry menjadi peristiwa dan dependensi kausal;
   \item menerapkan pencarian kesesuaian alur kerja dengan keluaran kompatibel dengan model, tidak kompatibel dengan model, dan tidak dapat disimpulkan;
-  \item membandingkan ketepatan, cakupan keputusan, biaya verifikasi, dan ukuran penjelasan melalui eksperimen berlabel, serta mengevaluasi deteksi kesalahan aplikasi secara terpisah;
+  \item memisahkan validasi implementasi, manfaat informasi kausal, dan manfaat pencarian melalui pembanding wajib, serta mengevaluasi deteksi kesalahan aplikasi dan analisis prasyarat dengan label terpisah;
   \item menghasilkan penjelasan yang menampilkan aturan, alur kerja, serta peristiwa relevan bagi pelanggaran.
 \end{enumerate}
 
@@ -51,4 +38,4 @@ Secara akademis, penelitian diharapkan memberikan bukti empiris mengenai penggun
 Secara metodologis, kontrak observasi membantu memisahkan fakta bisnis, metadata instrumentasi, serta keputusan pemeriksa. Pemisahan tersebut memungkinkan kesalahan aplikasi dibedakan dari kesalahan ekspor atau penafsiran telemetri. Secara praktis, prototipe diharapkan membantu pengembang menelusuri ketidaksesuaian urutan pada alur kerja melalui penjelasan yang lebih terarah daripada membaca seluruh \ist{trace} secara manual.
 
 \section{Sistematika Penulisan}
-Proposal ini terdiri atas empat bab. Bab I menjelaskan latar belakang, masalah, batasan, tujuan, dan manfaat penelitian. Bab II membahas konsep yang digunakan, penelitian terkait, dan posisi penelitian. Bab III menjelaskan metode, kontrak observasi, rancangan pemeriksa, serta evaluasi dan ancaman validitas. Bab IV memuat rencana jadwal pelaksanaan penelitian. Daftar pustaka disajikan setelah Bab IV.
+Proposal ini terdiri atas empat bab. Bab I menjelaskan latar belakang, masalah, tujuan, dan manfaat penelitian. Batasan penelitian dijelaskan pada Bab III. Bab II membahas konsep yang digunakan, penelitian terkait, dan posisi penelitian. Bab III menjelaskan metode, kontrak observasi, rancangan pemeriksa, serta evaluasi dan ancaman validitas. Bab IV memuat rencana jadwal pelaksanaan penelitian. Daftar pustaka disajikan setelah Bab IV.

@@ -20,7 +20,7 @@ python3 experiments/otel-pilot/inspect_run.py /absolute/path/to/run-directory
 
 Inspect the checkout response, accounting process log, accounting OTLP logs, and filtered `order-trace.otlp.json`. The inspection gate checks order correlation and processing evidence; it does not assert completeness or return a research-verifier verdict. The collector's raw `data/*.jsonl` files contain multiple OTLP batches; the inspection script produces one ordinary OTLP JSON object for the selected trace.
 
-Shipping additionally calls quote, even though the upstream shipping Compose dependencies do not list it. The pilot explicitly includes quote. All published host ports and fixed upstream container names are removed. The isolated project/network is `pornv-otel-pilot`; other projects are unaffected.
+Shipping additionally calls quote, even though the upstream shipping Compose dependencies do not list it. The pilot explicitly includes quote. All published host ports and fixed upstream container names are removed. The isolated project/network is `porv-otel-pilot`; other projects are unaffected.
 
 Stop this pilot with:
 
@@ -39,8 +39,8 @@ The separate `business-checkpoints.patch` adds application observations. Read [t
 ```sh
 python3 experiments/otel-pilot/apply_checkpoints.py
 CGO_ENABLED=0 go -C .research/opentelemetry-demo/src/checkout build -o ../../../otel-pilot/tools/checkout .
-docker build -f experiments/otel-pilot/Dockerfile.checkout -t pornv-pilot-checkout:checkpoints-v3 .research/otel-pilot/tools
-docker build -f experiments/otel-pilot/Dockerfile.accounting -t pornv-pilot-accounting:checkpoints-v3 .research/opentelemetry-demo
+docker build -f experiments/otel-pilot/Dockerfile.checkout -t porv-pilot-checkout:checkpoints-v3 .research/otel-pilot/tools
+docker build -f experiments/otel-pilot/Dockerfile.accounting -t porv-pilot-accounting:checkpoints-v3 .research/opentelemetry-demo
 python3 experiments/otel-pilot/reset.py
 python3 experiments/otel-pilot/configure_instrumented.py
 docker compose -f .research/otel-pilot/compose.instrumented.json up -d --no-build

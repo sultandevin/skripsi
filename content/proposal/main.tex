@@ -11,7 +11,7 @@
 \program{Ilmu Komputer}
 \dept{Ilmu Komputer dan Elektronika}
 % Replace pending academic metadata after confirmation.
-\firstsupervisor{Belum ditetapkan}
+\firstsupervisor{Dr.techn. Guntur Budi Herwanto, S.Kom., M.Cs.}
 \firstexaminer{Belum ditetapkan}
 \secondexaminer{Belum ditetapkan}
 \examdate{Belum ditetapkan}
@@ -52,14 +52,14 @@
 \lstlistoflistings
 
 \abstractind
-Interaksi layanan asinkron menghasilkan peristiwa yang dapat berjalan konkuren. Pengurutan berdasarkan \ist{timestamp} fisik dapat salah merepresentasikan hubungan antarperistiwa ketika jam antarlayanan berbeda. Penelitian ini mengembangkan dan mengevaluasi PORV, prototipe verifikasi \ist{runtime} yang memeriksa kesesuaian observasi terhadap spesifikasi alur kerja. Data OpenTelemetry dipetakan menjadi graf urutan parsial melalui kontrak observasi yang menetapkan peristiwa bisnis, identitas alur kerja, dan bukti dependensi kausal. Pemeriksaan dilakukan secara \ist{offline} terhadap ekspor telemetri, menggunakan mesin keadaan berhingga sebagai spesifikasi. Observasi dinyatakan kompatibel dengan model jika sedikitnya satu urutan topologis diterima; hasil tersebut bukan jaminan bahwa aplikasi benar-benar menegakkan seluruh prasyarat bisnis. Bukti yang tidak memadai atau batas pencarian menghasilkan status tidak dapat disimpulkan. Evaluasi menggunakan aplikasi terkontrol, satu alur kerja OpenTelemetry Demo, dan graf sintetis berlabel independen. Pemeriksaan berbasis urutan parsial dibandingkan dengan pengurutan \ist{timestamp} dalam ketepatan, cakupan keputusan, waktu verifikasi, dan ukuran penjelasan. Deteksi kesalahan aplikasi dievaluasi terpisah berdasarkan fakta bisnis. Penelitian diharapkan menghasilkan prototipe, kontrak observasi, dan bukti empiris tentang manfaat serta keterbatasan pemeriksaan alur kerja berdasarkan informasi kausal.
+Interaksi layanan asinkron menghasilkan peristiwa yang dapat berjalan konkuren. Pengurutan berdasarkan \ist{timestamp} fisik dapat salah merepresentasikan hubungan antarperistiwa ketika jam antarlayanan berbeda. Penelitian ini mengembangkan dan mengevaluasi PORV (\ist{Partial-Order Runtime Verification}), prototipe verifikasi \ist{runtime} yang memeriksa kesesuaian observasi terhadap spesifikasi alur kerja. Data OpenTelemetry dipetakan menjadi graf urutan parsial melalui kontrak observasi yang menetapkan peristiwa bisnis, identitas alur kerja, dan bukti dependensi kausal. Pemeriksaan dilakukan secara \ist{offline} terhadap ekspor telemetri, menggunakan mesin keadaan berhingga sebagai spesifikasi. Observasi dinyatakan kompatibel dengan model jika sedikitnya satu urutan topologis diterima; hasil tersebut bukan jaminan bahwa aplikasi benar-benar menegakkan seluruh prasyarat bisnis. Bukti yang tidak memadai atau batas pencarian menghasilkan status tidak dapat disimpulkan. Evaluasi menggunakan aplikasi terkontrol, satu jalur integrasi terbatas OpenTelemetry Demo, dan graf sintetis berlabel independen. Pembanding wajib meliputi satu urutan topologis, timestamp langsung, dan timestamp dengan batas galat jam. Manfaat pencarian diuji pada aplikasi terkontrol dan graf sintetis; jalur eksternal menilai integrasi. Ketepatan, cakupan, waktu verifikasi, dan ukuran penjelasan diukur; deteksi kesalahan aplikasi dan analisis prasyarat kausal terbatas memakai label terpisah. Penelitian diharapkan menghasilkan prototipe, kontrak observasi, dan bukti empiris tentang manfaat serta keterbatasan pemeriksaan alur kerja berdasarkan informasi kausal.
 
 \vspace{0.5cm}
 \noindent\textbf{Kata Kunci:} verifikasi \ist{runtime}, urutan parsial, layanan asinkron, OpenTelemetry, hubungan kausal
 \endabstractind
 
 \abstracteng
-Asynchronous service interactions produce events that may execute concurrently. Ordering these events by physical timestamps can misrepresent their relationships when service clocks differ. This research develops and evaluates PORV, a runtime verification prototype for checking observations against workflow specifications. OpenTelemetry data are mapped to a partial-order graph through an observation contract defining business events, workflow identities, and evidence of causal dependencies. Verification is performed offline on exported telemetry, using a finite-state machine as the specification. An observation is compatible with the model if at least one topological ordering is accepted; this does not guarantee that the application actually enforced every business prerequisite. Insufficient evidence or search limits produce an inconclusive outcome. Evaluation uses a controlled application, one OpenTelemetry Demo workflow, and independently labeled synthetic graphs. Partial-order checking is compared with timestamp ordering in accuracy, decision coverage, verification time, and explanation size. Application-fault detection is evaluated separately using business facts. Expected contributions are a prototype, an observation contract, and empirical evidence about the benefits and limitations of workflow checking based on causal information.
+Asynchronous service interactions produce events that may execute concurrently. Ordering these events by physical timestamps can misrepresent their relationships when service clocks differ. This research develops and evaluates PORV (Partial-Order Runtime Verification), a runtime verification prototype for checking observations against workflow specifications. OpenTelemetry data are mapped to a partial-order graph through an observation contract defining business events, workflow identities, and evidence of causal dependencies. Verification is performed offline on exported telemetry, using a finite-state machine as the specification. An observation is compatible with the model if at least one topological ordering is accepted; this does not guarantee that the application actually enforced every business prerequisite. Insufficient evidence or search limits produce an inconclusive outcome. Evaluation uses a controlled application, one bounded OpenTelemetry Demo integration path, and independently labeled synthetic graphs. Required comparators use one topological ordering, raw timestamps, and timestamps with clock-error bounds. Search benefits are evaluated on controlled and synthetic cases; the external path assesses integration. Accuracy, coverage, verification time, and explanation size are measured; application-fault detection and bounded causal-prerequisite analysis use separate labels. Expected contributions are a prototype, an observation contract, and empirical evidence about the benefits and limitations of workflow checking based on causal information.
 
 \vspace{0.5cm}
 \noindent\textbf{Keywords:} runtime verification, partial order, asynchronous services, OpenTelemetry, causal ordering
@@ -70,8 +70,25 @@ Asynchronous service interactions produce events that may execute concurrently. 
 \include{chapters/bab3-metodologi}
 \include{chapters/bab4-jadwal-penelitian}
 
+\chapter*{GLOSARIUM}
+\addcontentsline{toc}{chapter}{Glosarium}
+\begin{description}
+  \item[Alur kerja] Rangkaian peristiwa bisnis yang mengikuti aturan interaksi tertentu.
+  \item[Happened-before] Hubungan yang menunjukkan bahwa satu peristiwa secara kausal mendahului peristiwa lain.
+  \item[OpenTelemetry] Kumpulan spesifikasi dan perangkat untuk menghasilkan serta mengumpulkan data observabilitas.
+  \item[Span] Representasi operasi dalam suatu trace.
+  \item[Trace] Kumpulan span yang merepresentasikan pelaksanaan suatu permintaan atau proses.
+  \item[Urutan parsial] Pengurutan yang menetapkan hubungan antara sebagian pasangan peristiwa, sehingga peristiwa lain dapat tetap tidak terurut.
+  \item[Verifikasi runtime] Pemeriksaan perilaku sistem menggunakan bukti yang diperoleh saat sistem berjalan.
+\end{description}
+
 \clearpage
 \phantomsection
 \addcontentsline{toc}{chapter}{\bibname}
 \bibliography{references}
+
+\appendix
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\include{chapters/lampiran-integrasi}
 \end{document}

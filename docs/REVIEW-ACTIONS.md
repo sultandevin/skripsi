@@ -31,6 +31,33 @@ Final proofreading and full build cover references, equations, captions, termino
 
 Chapter I distinguishes the initial external target from final fault feasibility. Chapter III specifies the three SDK checkpoints, the `NoResponse` producer interpretation, explicit predecessor edges, both normal event orders, separate action-ledger reconciliation, phase-aware source freezing, broker offset evidence, and graceful collector closure. Completeness is limited to the declared business-event scope; the normal three-action gate is explicitly not a closure policy for missing/extra-action fault scenarios. Trusted action journals are not substituted for an independent business-fault oracle.
 
-The implementation plan now follows the existing Go prototype. The schedule distinguishes preliminary collection work from the pending DFA implementation, independent labels, fault profiles and formal experiments. Detailed runs and controls remain in the pilot notes; the proposal includes only a short feasibility status. Pending academic names, seminar date and official template verification are preserved.
+The implementation plan builds on the existing causal-prerequisite approach. The schedule distinguishes preliminary collection work from the pending DFA implementation, independent labels, fault profiles and formal experiments. Detailed runs and controls remain in the pilot notes; the proposal includes only a short feasibility status. Pending academic names, seminar date and official template verification are preserved.
 
 Verification: the full proposal compiled to 50 A4 pages with all 18 bibliography entries and cross-references resolved. The final log contains no warnings, overfull boxes or underfull boxes. The new checkpoint table/listing, closure procedure and feasibility pages were rendered and visually checked. Long table columns were adjusted for readable wrapping without changing research semantics.
+
+## Evaluation review — 7 October 2026
+
+| Review concern | Adopted change |
+| --- | --- |
+| Definition-favored comparison | Separate oracle/invariance implementation validation from causal-information comparisons, search benefits and independently labeled application faults. |
+| Weak timestamp baseline | Require deterministic topological ordering and a conservative timestamp variant with frozen clock-error intervals and explicit abstention on ambiguous timing. |
+| Search benefit and prerequisite gap | Require swap-invariant and mixed-acceptance cases; retain bounded causal-prerequisite analysis with independent path labels and separate application-fault metrics. |
+| S7 baseline wins | Require reliable-clock early-action cases, reporting timestamp success and existential misses; preserve the unordered graph across distinct processes. |
+| Tiny external evaluation | Explicitly limit the external path to integration evidence, with both normal orders accepted. Controlled application faults remain required; external business-fault claims require independent evidence. |
+
+The topological comparator is now mandatory, superseding the 5 October optional-only entry. Existential acceptance remains the primary semantics. The proposal changes do not claim implemented comparators or completed fault experiments.
+
+Verification: rebuilt the complete multi-file proposal to 53 A4 pages with 18 resolved bibliography entries. The final log contains no warnings, unresolved references, overfull boxes or underfull boxes; the diff passes whitespace checks. Both one-page abstracts, the updated architecture diagram and the comparator/prerequisite sections were visually inspected.
+
+## Statistics, complexity and scope review — 7 October 2026
+
+- Committed statistical methods and independent sampling units; no optional-inference wording remains. Paired comparisons include abstention coverage and cluster-aware uncertainty.
+- Added verified constrained-topological-sorting hardness, derived ideal/configuration bounds for fixed width and controlled-width scaling plots.
+- Set prospective numerical operational targets before calibration and formal corpus generation; recorded the freeze sequence in EVALUATION-PROTOCOL.md.
+- Added primary-source literature on X-Trace, Dapper, Pivot Tracing, ShiViz, Petri-net alignments, decentralized LTL monitoring and offline RV. Source notes disclose metadata differences and distinguish our complexity derivation from cited results.
+- Added risk–coverage analysis with a prespecified clock-bound sweep. Search-benefit evidence is explicitly controlled/synthetic in both abstracts.
+- Reduced optional external fault/closure work first while retaining minimum evidence gates. Consolidated pilot status into one feasibility table with all three attempts, and moved revision/configuration/closure details to an appendix.
+
+The protocol is prospective, not evidence that experiments have been run or that targets have been achieved.
+
+Verification: the complete proposal rebuilt to 60 A4 pages with 30 resolved bibliography entries, no LaTeX warnings, unresolved references, overfull boxes or underfull boxes. Both abstracts remain one page. The complexity bound, paired-analysis text, pilot table, numerical targets and appendix numbering were visually checked. The diff passes whitespace checks.

@@ -34,7 +34,7 @@ for resource in raw.get('resourceSpans', []):
                     'timestamp': event['timeUnixNano'],
                     'correlation': {'app.order.id': metadata.get('app.order.id')},
                     'attributes': metadata,
-                    'predecessors': metadata.get('pornv.predecessors', []),
+                    'predecessors': metadata.get('porv.predecessors', []),
                 })
 if sorted(e['type'] for e in events) != sorted(names):
     raise SystemExit(f'Expected three distinct checkpoints, observed {[e["type"] for e in events]}')

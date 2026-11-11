@@ -54,7 +54,7 @@ collector = {
         for signal in ['traces', 'logs', 'metrics']}}
 }
 (OUT / 'collector.json').write_text(json.dumps(collector, indent=2) + '\n')
-pilot = {'name': 'pornv-otel-pilot', 'services': services,
-         'networks': {'default': {'name': 'pornv-otel-pilot', 'driver': 'bridge'}}}
+pilot = {'name': 'porv-otel-pilot', 'services': services,
+         'networks': {'default': {'name': 'porv-otel-pilot', 'driver': 'bridge'}}}
 (OUT / 'compose.json').write_text(json.dumps(pilot, indent=2) + '\n')
 print(f'Prepared {len(services)} services in {OUT}')
