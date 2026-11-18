@@ -447,28 +447,6 @@ Penulisan dan konsultasi sepanjang periode.
 \section{Cadangan}
 % =====================================================================
 
-\begin{frame}{Analisis Statistik}
-\small\setlength{\itemsep}{6pt}
-\begin{itemize}
-  \item Unit independen: satu graf dasar atau satu eksekusi aplikasi baru. Perubahan jam, kehilangan, dan pengulangan tetap satu kelompok.
-  \item Bootstrap berpasangan 10.000 replikasi untuk selisih kesalahan, cakupan, dan median selisih waktu. Interval 95\%.
-  \item McNemar eksak pada pasangan keputusan biner untuk label aplikasi, dengan koreksi Holm pada keluarga delapan uji.
-  \item FPR/FNR dilaporkan dengan pembilang, penyebut, dan interval binomial eksak pada observasi dasar independen.
-  \item Status tidak dapat disimpulkan dilaporkan terpisah. Ketepatan bersyarat selalu disertai cakupan.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Prasyarat Kausal}
-\small\setlength{\itemsep}{6pt}
-\begin{itemize}
-  \item Pertanyaan: apakah ada lintasan kausal dari prasyarat ke aksi dependen?
-  \item Profil dibatasi pada dependensi eksplisit tanpa pengulangan. Oracle lintasan berbeda dari oracle DFA.
-  \item Tidak adanya lintasan berarti prasyarat tidak didukung bukti. Itu belum tentu kesalahan aplikasi.
-  \item Pada S7, hasil ini melengkapi interpretasi penerimaan eksistensial.
-  \item Kalau dipakai sebagai alarm, TP/FP/FN/TN dihitung ulang terhadap fakta bisnis independen.
-\end{itemize}
-\end{frame}
-
 \begin{frame}{OpenTelemetry}
 \small\setlength{\itemsep}{6pt}
 \begin{itemize}
@@ -481,61 +459,13 @@ OTel menyediakan struktur observasi. Titik bisnis dan makna dependensi tetap har
 \source{OpenTelemetry: Observability Primer, Traces, dan OTLP.}
 \end{frame}
 
-\begin{frame}{Jalur OpenTelemetry Demo}
-\small
-\textbf{OpenTelemetry Demo 2.0.2, satu jalur}
-\begin{itemize}
-  \item $a$: publikasi dimulai. $c$: klien berhasil. $p$: accounting selesai.
-  \item Sisi $a\prec c$ dan $a\prec p$. Model menerima $acp$ dan $apc$.
-  \item $c$ hanya laporan keberhasilan klien (\texttt{sarama.NoResponse}), bukan konfirmasi penyimpanan broker. $p$ menandai pencatatan accounting selesai, bukan perubahan basis data.
-\end{itemize}
-\bigskip
-\begin{tabularx}{\textwidth}{@{}p{2.7cm}X@{}}
-\toprule
-Yang diuji & Integrasi SDK, rekonstruksi dependensi, kelengkapan pengumpulan, dan sensitivitas jam. \\
-\addlinespace
-Tidak diuji & Manfaat pencarian: kedua urutan normal diterima model. Kesalahan bisnis eksternal hanya bila ada fakta aplikasi independen. \\
-\bottomrule
-\end{tabularx}
-\end{frame}
-
-\begin{frame}{Risiko}
-\begin{itemize}
-  \item \textbf{Sisi kausal salah atau bolong.} Kontrak dibekukan sebelum data, rekonsiliasi aksi dijalankan independen, dan bukti yang cacat berakhir sebagai tidak dapat disimpulkan.
-  \medskip
-  \item \textbf{Pencarian meledak.} Lebar urutan parsial dikendalikan, jumlah konfigurasi diukur, dan setiap penyimpangan target dilaporkan apa adanya.
-  \medskip
-  \item \textbf{Evaluasi melingkar.} Oracle graf dan fakta bisnis dibuat tanpa PORV, dan cakupan selalu tampil bersama ketepatan.
-\end{itemize}
-\medskip
-\small Klaim kita berhenti pada profil dan generator yang diuji.
-\end{frame}
-
-\begin{frame}{Kompleksitas}
-\small
-\begin{itemize}\setlength{\itemsep}{4pt}
-  \item Setiap $S$ adalah ideal urutan: jika suatu peristiwa ada di $S$, semua pendahulunya juga ada.
-  \item Teorema Dilworth: poset dengan lebar $w$ terbagi menjadi $w$ rantai dengan panjang $n_1,\dots,n_w$. Ideal ditentukan oleh panjang prefiks tiap rantai.
-\end{itemize}
-\abovedisplayskip=4pt\belowdisplayskip=4pt
-\[
-  |I(G)| \leq \prod_{i=1}^{w}(n_i+1) \leq (n+1)^w,
-  \qquad N_{\text{konfigurasi}} \leq |Q|\,|I(G)|.
-\]
-\begin{itemize}\setlength{\itemsep}{4pt}
-  \item Secara umum masalah ini NP-complete (constrained topological sorting); polinomial untuk $w$ tetap.
-  \item Lebar dihitung dengan pencocokan bipartit pada relasi keterjangkauan.
-\end{itemize}
-\source{Dilworth (1950); Amarilli \& Paperman (2018).}
-\end{frame}
-
 \section{Referensi}
 \begin{frame}[allowframebreaks]{Referensi}
 \scriptsize\compactbib
 \setsansfont[BoldFont=lmsans10-bold.otf,ItalicFont=lmsans10-oblique.otf,
   BoldItalicFont=lmsans10-boldoblique.otf]{lmsans10-regular.otf}
 \bibliographystyle{plain}
-\nocite{lamport1978,sakai2022,sun2024,adriansyah2011,ding2025,hackett2025,weilkennedy2025,amarilli2018,dilworth1950,oteltraces,otlp,otelmessaging}
+\nocite{lamport1978,sakai2022,sun2024,adriansyah2011,ding2025,hackett2025,weilkennedy2025,amarilli2018,oteltraces,otlp,otelmessaging}
 \bibliography{../../content/proposal/references}
 \end{frame}
 \end{document}
