@@ -5,6 +5,14 @@ Dalam penelitian ini, sistem terdistribusi dipandang sebagai kumpulan proses yan
 
 Interaksi asinkron dalam proposal ini mencakup pekerjaan yang dapat dilanjutkan dan diselesaikan secara independen sebelum hasilnya digabungkan. Implementasi dapat menggunakan pesan maupun permintaan antarlayanan yang dijalankan secara konkuren. Transportasi HTTP tidak dengan sendirinya membuktikan bahwa aplikasi bersifat sekuensial; sebaliknya, penggunaan antrean juga tidak otomatis menjamin bahwa dependensi bisnis benar. Karena itu, objek yang diperiksa adalah peristiwa bisnis dan hubungan dependensinya.
 
+\section{Observabilitas dan Telemetri}
+\label{sec:observability}
+Observabilitas dalam penelitian ini merujuk pada kemampuan menilai keadaan internal sistem dari data yang dihasilkan selama sistem berjalan \citep{otelprimer}. Data tersebut disebut telemetri dan umumnya dikelompokkan menjadi tiga sinyal, yaitu log, metrik, dan \ist{trace}. Ketiganya menjawab pertanyaan yang berbeda dan tidak saling menggantikan.
+
+Log mencatat peristiwa diskret sebagai teks atau struktur kejadian \citep{otellogs}. Log kaya akan konteks, tetapi formatnya ditentukan aplikasi, volumenya besar, dan hubungan antarentri dari layanan berbeda tidak terbentuk secara otomatis. Metrik menyimpan agregat numerik dalam deret waktu, misalnya jumlah permintaan atau waktu respons \citep{otelmetrics}. Metrik efisien untuk pemantauan dan peringatan, tetapi tidak mempertahankan identitas permintaan maupun urutan peristiwa individual. \ist{Trace} merekam jalur satu permintaan melalui operasi yang saling terkait, sehingga hubungan lintas layanan dapat ditelusuri \citep{oteltraces,dapper2010}.
+
+OpenTelemetry menyediakan spesifikasi, SDK, dan kolektor yang netral terhadap vendor untuk menghasilkan, mengumpulkan, dan mengekspor ketiga sinyal tersebut \citep{otelprimer}. Data dipertukarkan melalui OTLP \citep{otlp}. Spesifikasi ini menetapkan cara konteks dan atribut dibawa, tetapi tidak menetapkan makna bisnis aplikasi. Penelitian ini memilih \ist{trace} sebagai sumber utama karena \ist{trace} mempertahankan struktur per permintaan dan korelasi antarlayanan yang dibutuhkan untuk membentuk graf kausal. Log dan metrik tidak dipakai sebagai sumber urutan peristiwa bisnis karena tidak mempertahankan urutan dan hubungan antarlayanan secara langsung, meskipun keduanya dapat membawa konteks \ist{trace}.
+
 \section{Happened-Before dan Urutan Parsial}
 \label{sec:partial-order}
 Misalkan $E$ merupakan himpunan peristiwa. Relasi $\prec$ menyatakan urutan kausal ketat: $a\prec b$ berarti $a$ mendahului $b$ berdasarkan bukti kausal. Relasi dibentuk dari urutan lokal yang benar-benar diketahui, pengiriman dan penerimaan pesan yang bersesuaian, serta penutupan transitifnya \citep{lamport1978}. Dalam graf berarah tanpa siklus, relasi tersebut setara dengan keterjangkauan melalui lintasan berarah yang tidak kosong.

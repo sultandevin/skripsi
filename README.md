@@ -8,7 +8,7 @@ The research now checks whether at least one causally compatible event sequence 
 
 The proposal calls the research prototype **PORV**. The tool, GitHub repository links, paths, and `porv` metadata namespace keep their existing implementation names.
 
-The draft follows the reference's `content/proposal/` organization and four chapters. Supervisor, examiners, seminar date, and calendar schedule are still pending. The current schedule uses six relative months. See [docs/DRAFT-DECISIONS.md](docs/DRAFT-DECISIONS.md) for provisional research choices and [CHANGELOG.md](CHANGELOG.md) for major changes.
+The draft follows the reference's `content/proposal/` organization and four chapters. Examiners and seminar date are still pending. The schedule runs November 2026--January 2027. See [docs/DRAFT-DECISIONS.md](docs/DRAFT-DECISIONS.md) for provisional research choices and [CHANGELOG.md](CHANGELOG.md) for major changes.
 
 The studied reference is kept separately in `.reference/skripsi/`. See [REFERENCE-NOTES.md](REFERENCE-NOTES.md) for its structure, formatting, source organization, and the snapshot commit.
 
@@ -37,6 +37,7 @@ Run these commands from this workspace:
 ```sh
 make reference   # Compile the separate reference document
 make proposal    # Compile diagrams, bibliography, and the full proposal
+make presentation # Compile the UGM proposal slides with XeLaTeX
 make proposal-diagrams # Regenerate diagram PDFs independently
 make watch       # Rebuild our proposal as source files change; Ctrl+C to stop
 make clean       # Remove auxiliary compilation files, retaining PDFs
@@ -44,6 +45,7 @@ make clean       # Remove auxiliary compilation files, retaining PDFs
 
 Output paths:
 
+- Presentation PDF: `presentation/proposal/main.pdf` (source and template notes in [presentation/proposal/README.md](presentation/proposal/README.md)).
 - Reference PDF: `build/reference/main.pdf`.
 - Proposal PDF: `content/proposal/main.pdf` (reviewable copy included in Git).
 - Build PDF and auxiliary files: `build/proposal/` (ignored by Git).

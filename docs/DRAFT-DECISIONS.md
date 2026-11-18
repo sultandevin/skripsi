@@ -31,9 +31,9 @@ Recorded on 2 October 2026 (Asia/Jakarta). This file is an editorial record, not
 
 | Item | Current treatment |
 | --- | --- |
-| Supervisor and examiners | `Belum ditetapkan` in `content/proposal/main.tex`; no names inferred from the reference. |
+| Supervisor and examiners | Supervisor named in `content/proposal/main.tex`; examiners remain `Belum ditetapkan`. |
 | Seminar date | `Belum ditetapkan`; draft wording avoids claiming a completed defense. |
-| Research start and duration | Provisional B1–B6 schedule, without invented calendar dates. |
+| Research start and duration | November 2026--January 2027, as stated in Bab IV. |
 | Main rule interpretation | Resolved by the user: accept if at least one compatible sequence is allowed. State-machine syntax, application-specific models, and search limits remain implementation choices to calibrate. |
 | Experimental machine and final SDK/runtime versions | To be selected and recorded before official collection. |
 | Replication count, size matrix, clock offsets | Explicit initial design choices for calibration, not supplied facts or finished results. |

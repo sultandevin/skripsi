@@ -4,6 +4,7 @@ Major changes only. Dates and times use Asia/Jakarta (WIB). Add a row when a mat
 
 | When (WIB) | Major change | Short description |
 | --- | --- | --- |
+| 2026-11-13 | Reviewer typo and structure revisions | Promoted Tujuan Penelitian to Section 1.3, fixed appendix table to A.1 and listings to 3.1/3.2, redesigned Figure 3.2 to show per-stage outputs, added an observability and telemetry section before the tracing sections, and moved the schedule to November 2026--January 2027. |
 | 2026-10-07 | Statistics, complexity and targets specified | Added paired statistical methods, fixed-width ideal bounds and verified general hardness, width scaling, prospective numerical targets before calibration, risk–coverage analysis, verified related work and a reproduction appendix; consolidated pilot status and trimmed optional external scope. |
 | 2026-10-07 | Evaluation review strengthened | Required deterministic topological and bounded-skew timestamp comparators; retained bounded prerequisite analysis with separate labels; split correctness validation from search and application-fault benefit; added S7 baseline wins and narrowed the external path to integration evidence. |
 | 2026-10-07 | Prototype display name changed to PORV | Removed the n from the proposal/research name; kept the `porv` tool, GitHub links, paths, metadata namespace and instrumentation identifiers unchanged. |

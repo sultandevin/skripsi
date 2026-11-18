@@ -1,0 +1,416 @@
+\documentclass[11pt,aspectratio=169,t]{beamer}
+\usepackage[no-math]{fontspec}
+\usepackage{lmodern}
+\usetheme{ugm1}
+\usefonttheme{professionalfonts}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath,amssymb,booktabs,tabularx}
+\usetikzlibrary{arrows.meta,positioning,automata}
+\setmainfont[Path=fonts/,Extension=.otf,UprightFont=*-Regular,
+  BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-Bold-Italic]{Gama-Sans}
+\setsansfont[Path=fonts/,Extension=.otf,UprightFont=*-Regular,
+  BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-Bold-Italic]{Gama-Sans}
+\setbeamerfont{title}{size=\fontsize{15pt}{18pt},family=\gamasans,series=\bfseries}
+\setbeamerfont{frametitle}{size=\fontsize{17pt}{20pt},family=\gamasans,series=\bfseries}
+\setbeamertemplate{frametitle}{%
+  \vspace*{0.65cm}%
+  \begin{beamercolorbox}[wd=0.91\textwidth,sep=0pt]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle\strut
+  \end{beamercolorbox}%
+  \vspace*{0.25cm}}
+\setbeamertemplate{footline}{\hfill\usebeamercolor[fg]{frametitle}\scriptsize\insertframenumber\hspace{0.7cm}\vspace{0.65cm}}
+\setbeamertemplate{bibliography item}[text]
+\pdfstringdefDisableCommands{\def\\{ }}
+\newfontfamily{\dashfont}[BoldFont=lmsans10-bold.otf,
+  ItalicFont=lmsans10-oblique.otf,BoldItalicFont=lmsans10-boldoblique.otf]{lmsans10-regular.otf}
+\newcommand{\dash}{{\dashfont\textendash}}
+\newcommand{\source}[1]{\par\medskip{\scriptsize\color{gray}#1}}
+\tikzset{event/.style={draw=ugmblue,rounded corners,align=center,
+  minimum height=0.8cm,inner sep=6pt,font=\small},
+  flow/.style={-{Stealth},thick,draw=ugmblue},
+  cfg/.style={draw=ugmblue,rounded corners,inner sep=3pt,font=\scriptsize},
+  acc/.style={draw=ugmblue,rounded corners,inner sep=3pt,font=\scriptsize,
+    fill=ugmblue!12},
+  rej/.style={draw=gray,rounded corners,inner sep=3pt,font=\scriptsize,
+    text=gray}}
+
+\title{Verifikasi Runtime Berbasis Partial Order\\pada Interaksi Layanan Asinkron\\Menggunakan OpenTelemetry}
+\subtitle{Seminar Proposal Skripsi\\Program Studi Ilmu Komputer, FMIPA UGM}
+\author{Sultan Devino Suyudi · 23/521686/PA/22442\\[4pt]
+Pembimbing: Dr.techn. Guntur Budi Herwanto, S.Kom., M.Cs.}
+\date{}
+
+\begin{document}
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+\usebackgroundtemplate{\backgroundcontent}
+
+\begin{frame}{Kausalitas membatasi urutan, timestamp memilih satu}
+\centering
+\begin{tikzpicture}[node distance=0.7cm and 1.1cm,
+  every node/.append style={font=\footnotesize}]
+  \node[event] (a) {Pesanan dibuat};
+  \node[event,below left=of a] (b) {Pembayaran};
+  \node[event,below right=of a] (c) {Reservasi};
+  \node[event,below=1.5cm of a] (d) {Pengiriman};
+  \draw[flow] (a)--(b); \draw[flow] (a)--(c);
+  \draw[flow] (b)--(d); \draw[flow] (c)--(d);
+\end{tikzpicture}
+\medskip
+
+\small
+Timestamp memberi satu urutan. Kausalitas hanya menuntut sebagian pasangan berurutan.
+\medskip
+
+\textbf{Yang ingin dijawab:} bagaimana bukti kausal dan pencarian urutan yang mungkin
+mengubah keputusan verifikasi, ketepatan, cakupan, dan biaya?
+\end{frame}
+
+\begin{frame}{Pengujian model offline pada alur pesanan}
+\small
+Satu ekspor OpenTelemetry, satu alur kerja, dan model DFA yang ditulis pengembang.
+\smallskip
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.46\textwidth}
+\textbf{Yang masuk}
+\begin{itemize}
+  \item Peristiwa bisnis dan ID alur pesanan.
+  \item Dependensi kausal yang bisa dibuktikan.
+  \item Empat layanan terkontrol, graf sintetis, dan satu jalur OTel Demo 2.0.2.
+\end{itemize}
+\end{column}
+\begin{column}{0.46\textwidth}
+\textbf{Di luar cakupan}
+
+Konsensus, liveness tanpa batas, streaming, serta kebenaran seluruh aplikasi.
+
+\medskip
+\textbf{Luaran:} kontrak observasi, prototipe, korpus berlabel, dan peta batas pemakaian.
+\end{column}
+\end{columns}
+\source{Studi terkait: Sakai \& Takahashi (2022), Sun dkk. (2024), Amarilli \& Paperman (2018).}
+\end{frame}
+
+\begin{frame}{Catatan pesanan membentuk graf yang bisa diperiksa}
+\centering
+\vspace{0.35cm}
+\begin{tikzpicture}[node distance=0.45cm,
+  box/.style={event,text width=2.62cm,minimum height=1.9cm,inner sep=7pt,font=\footnotesize}]
+  \node[box] (a) {Ekspor peristiwa\\[5pt]{\scriptsize\texttt{order.created}}};
+  \node[box,right=of a] (b) {Cocokkan catatan\\[5pt]{\scriptsize\texttt{pembayaran berhasil}}};
+  \node[box,right=of b] (c) {Susun graf\\[5pt]{\scriptsize\texttt{pesanan -> pembayaran}}};
+  \node[box,right=of c] (d) {Uji model\\[5pt]{\scriptsize\texttt{DFA}}};
+  \draw[flow] (a)--(b); \draw[flow] (b)--(c); \draw[flow] (c)--(d);
+\end{tikzpicture}
+\par\bigskip
+\noindent\begin{minipage}{\textwidth}\emergencystretch=1.5em
+\raggedright\small Contoh: \texttt{payment.completed} cocok dengan catatan aksi “pembayaran berhasil”, lalu konteks pesan menghubungkannya ke \texttt{order.created}.
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Satu saksi menerima model, pencarian memeriksa pilihan yang mungkin}
+\small
+Untuk graf $G=(V,D)$ dan model DFA $P$:
+\abovedisplayskip=3pt\belowdisplayskip=3pt
+\[
+  \operatorname{kompatibel}(G,P)
+  \iff \exists\pi\in\operatorname{TopSort}(G):
+  \lambda(\pi)\in L(P).
+\]
+\textbf{Kompatibel $\not\Rightarrow$ aplikasi benar.} Graf mengizinkan kedua urutan. DFA secara terpisah menerima $abcd$ tetapi menolak $acbd$; satu urutan diterima sudah cukup untuk kompatibel.
+\begin{columns}[T]
+\begin{column}{0.42\textwidth}
+\centering
+\begin{tikzpicture}[level distance=0.52cm,
+  level 2/.style={sibling distance=3.6cm}, every node/.style={font=\small},
+  cfg/.append style={font=\small,inner sep=3.5pt},
+  acc/.append style={font=\small,inner sep=3.5pt},
+  rej/.append style={font=\small,inner sep=3.5pt}]
+\node[cfg]{$\varnothing$}
+  child { node[cfg]{$a$}
+    child { node[cfg]{$ab$}
+      child { node[cfg]{$abc$}
+        child { node[acc]{$abcd$ $\checkmark$} } } }
+    child { node[cfg]{$ac$}
+      child { node[rej]{$acb$}
+        child { node[rej]{$acbd$ $\times$} } } } };
+\end{tikzpicture}
+{\scriptsize
+\begin{tabular}{@{}ll@{\quad}ll@{}}
+$a$ & pesanan dibuat & $b$ & pembayaran \\
+$c$ & reservasi & $d$ & pengiriman
+\end{tabular}}
+\end{column}
+\begin{column}{0.56\textwidth}
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \item \textbf{Langkah:} pilih peristiwa setelah semua pendahulunya. Ikuti transisi DFA dan simpan tiap pasangan $(S,q)$ sekali.
+  \item \textbf{Biaya dan hasil:} $|Q|(n+1)^w$. Saksi berarti kompatibel. Pilihan habis berarti tidak kompatibel. Batas 10 detik atau $10^6$ konfigurasi berarti belum dapat disimpulkan.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Bukti lengkap menentukan apakah hasilnya tegas}
+\small
+\begin{tabularx}{\textwidth}{@{}p{3.4cm}X@{}}
+\toprule
+Keputusan & Syarat \\
+\midrule
+Kompatibel & Bukti lengkap, dan kita menemukan satu urutan yang diterima model. \\
+\addlinespace
+Tidak kompatibel & Bukti lengkap, dan pencarian tuntas tanpa satu pun urutan yang diterima. \\
+\addlinespace
+Tidak dapat disimpulkan & Bukti tidak lengkap atau ambigu, referensi rusak, ada siklus, atau batas pencarian tercapai. \\
+\bottomrule
+\end{tabularx}
+\bigskip
+Kita cek kelengkapan dengan mencocokkan catatan aksi dan ekspor. Masukan berformat salah dilaporkan sebagai kesalahan masukan.
+\end{frame}
+
+\begin{frame}{Satu graf memisahkan manfaat kausal dari manfaat pencarian}
+\small
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{@{}Xccc@{}}
+\toprule
+Pembanding & Sisi kausal & Batas jam & Cari alternatif \\
+\midrule
+Timestamp langsung & Tidak & Tidak & Tidak \\
+Timestamp dengan batas galat & Tidak & Ya & Tidak \\
+Satu urutan topologis & Ya & Tidak & Tidak \\
+PORV & Ya & Tidak & Ya \\
+\bottomrule
+\end{tabularx}
+\bigskip
+
+Timestamp diuji dengan pergeseran 0, $\pm100$ ms, $\pm1$ s, dan $\pm5$ menit. Kita ukur ketepatan, cakupan, dan biaya.
+\vfill
+\begin{center}
+\normalsize\textbf{PORV menggabungkan kausalitas dengan pencarian urutan alternatif.}
+\end{center}
+\end{frame}
+
+\begin{frame}{Tiga korpus memberi tiga jenis bukti}
+\vspace{0.8cm}
+\begin{columns}[T]
+\begin{column}{0.31\textwidth}
+\textbf{Graf sintetis}
+\medskip
+
+Oracle: semua urutan topologis.
+\end{column}
+\begin{column}{0.34\textwidth}
+\textbf{Aplikasi terkontrol}
+\medskip
+
+Oracle: catatan aksi dan fakta bisnis.
+\end{column}
+\begin{column}{0.31\textwidth}
+\textbf{OTel Demo}
+\medskip
+
+Oracle: aksi, ekspor, dan posisi broker.
+\end{column}
+\end{columns}
+\bigskip
+\centering\normalsize Kita laporkan kesesuaian observasi, kesalahan aplikasi, dan dukungan lintasan secara terpisah.
+\vfill
+\end{frame}
+
+\begin{frame}{Sepuluh skenario menguji keputusan dan batas bukti}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{1.2cm}X p{4.5cm}@{}}
+\toprule
+Skenario & Perlakuan & Harapan observasi \\
+\midrule
+S1\dash{}S2 & Sekuensial dan konkuren yang sesuai & Kompatibel \\
+\addlinespace
+S3 & Pergeseran timestamp, graf tetap & Keputusan PORV tetap \\
+\addlinespace
+S4\dash{}S6 & Kirim terlalu dini, aksi wajib hilang, aksi ganda & Tidak kompatibel bila bukti lengkap \\
+\addlinespace
+S7 & Prasyarat tidak terurut, masih ada saksi & Kompatibel, kesalahan terlewat \\
+\addlinespace
+S8\dash{}S9 & Bukti hilang atau graf bermasalah & Tidak dapat disimpulkan, atau masukan salah \\
+\addlinespace
+S10 & Alternatif alur kerja & Sesuai oracle independen \\
+\bottomrule
+\end{tabularx}
+\source{S5: aksi tidak terjadi. S8: aksi terjadi, rekaman hilang. Batas pencarian diuji terpisah.}
+\end{frame}
+
+\begin{frame}{S7: alur pesanan diterima meski pengiriman mendahului pembayaran}
+\vspace{0.15cm}
+\setlength{\columnsep}{0.2cm}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.5\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.85,transform shape,node distance=0.6cm and 0.32cm,
+  every node/.append style={font=\Large},event/.append style={minimum height=1.15cm,inner sep=9pt}]
+  \node[event] (a) {Pesanan dibuat};
+  \node[event,below left=of a] (b) {Pembayaran};
+  \node[event,below right=of a] (c) {Pengiriman};
+  \draw[flow] (a)--(b); \draw[flow] (a)--(c);
+  \draw[gray,thick,dashed,{Stealth}-{Stealth}] (b)--(c)
+    node[midway,above=2pt,font=\small,text=gray]{tanpa urutan kausal};
+\end{tikzpicture}
+\end{column}
+\begin{column}{0.38\textwidth}
+\centering
+\begin{tikzpicture}[x=0.88cm,y=1cm]
+  \draw[gray,thick,-{Stealth}] (0,0) -- (5.8,0);
+  \node[below=2pt,font=\scriptsize,text=gray] at (5.1,0) {waktu};
+  \fill[ugmblue] (0.6,0) circle (3pt);
+  \node[above=5pt,font=\small,align=center] at (0.6,0) {pesanan\\dibuat};
+  \fill[red] (2.5,0) circle (4pt);
+  \node[above=5pt,font=\small,text=red] at (2.5,0) {pengiriman};
+  \fill[ugmblue] (4.9,0) circle (3pt);
+  \node[above=5pt,font=\small] at (4.9,0) {pembayaran};
+  \draw[red,very thick,dashed] (2.5,-0.55)--(4.9,-0.55);
+  \node[below=3pt,font=\small,text=red] at (3.7,-0.55) {prasyarat dilanggar};
+  \node[below=0.8cm,font=\scriptsize] at (3.4,-0.55) {urutan timestamp pada ekspor};
+\end{tikzpicture}
+\end{column}
+\end{columns}
+\vspace{0.25cm}
+\begin{center}
+\footnotesize\textbf{Oracle aksi bisnis independen mencatat:}\\
+\footnotesize\textbf{pengiriman tercatat sebelum pembayaran.}\\
+\footnotesize PORV tetap menerima alur ini.
+\end{center}
+\end{frame}
+
+\begin{frame}{Target dikunci sebelum eksperimen dimulai}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Desain prospektif}
+\begin{itemize}
+  \item $n=4,8,12,16,20$; $w=1,2,4$; DFA 2\dash{}16 keadaan.
+  \item Sedikitnya 30 unit dasar independen per sel terpilih.
+  \item Pergeseran jam 0, $\pm100$ ms, $\pm1$ s, $\pm5$ menit.
+  \item Manifest dibekukan sebelum korpus resmi.
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Target evaluasi (belum hasil)}
+\begin{itemize}
+  \item Metrik: ketepatan, FPR/FNR, cakupan, waktu, jumlah konfigurasi, ukuran penjelasan.
+  \item Target: 100\% sesuai oracle pada suite graf kecil yang lengkap.
+  \item Profil utama: target cakupan $\geq95\%$ dan berhenti karena batas $\leq5\%$.
+\end{itemize}
+\end{column}
+\end{columns}
+\medskip
+\small Hasil awal demo dilaporkan terpisah di slide berikutnya; target di atas belum dievaluasi.
+\end{frame}
+
+\begin{frame}{Checkout, Kafka, accounting}
+\small
+\textbf{OpenTelemetry Demo 2.0.2, satu jalur}
+\begin{itemize}
+  \item $a$: publikasi dimulai. $c$: klien berhasil. $p$: accounting selesai.
+  \item Sisi $a\prec c$ dan $a\prec p$. Model menerima $acp$ dan $apc$.
+  \item Keberhasilan klien menyatakan klien menerima respons. Titik accounting menandai proses selesai.
+\end{itemize}
+\bigskip
+\begin{tabularx}{\textwidth}{@{}p{2.7cm}X@{}}
+\toprule
+Sudah ada & Dua pengumpulan lengkap. Satu tidak dapat disimpulkan karena kolektor berhenti terlalu awal (7 Oktober 2026). \\
+\addlinespace
+Berikutnya & Pencarian DFA, tiga pembanding, eksperimen kesalahan bisnis berlabel independen. \\
+\bottomrule
+\end{tabularx}
+\medskip
+Pencarian belum teruji di sini, karena kedua urutan normal diterima.
+\end{frame}
+
+\begin{frame}{Tiga risiko menguji batas klaim}
+\begin{itemize}
+  \item \textbf{Sisi kausal salah atau bolong.} Kontrak dibekukan sebelum data, rekonsiliasi aksi dijalankan independen, dan bukti yang cacat berakhir sebagai tidak dapat disimpulkan.
+  \medskip
+  \item \textbf{Pencarian meledak.} Lebar urutan parsial dikendalikan, jumlah konfigurasi diukur, dan setiap penyimpangan target dilaporkan apa adanya.
+  \medskip
+  \item \textbf{Evaluasi melingkar.} Oracle graf dan fakta bisnis dibuat tanpa PORV, dan cakupan selalu tampil bersama ketepatan.
+\end{itemize}
+\medskip
+\small Klaim kita berhenti pada profil dan generator yang diuji.
+\end{frame}
+
+\begin{frame}{Kalibrasi selesai sebelum data resmi dibuka}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}Xccc@{}}
+\toprule
+Kegiatan & Nov 2026 & Des 2026 & Jan 2027 \\
+\midrule
+Literatur, semantik, kontrak & $\bullet$ & $\bullet$ & \\ \addlinespace
+Implementasi dan aplikasi uji & $\bullet$ & $\bullet$ & \\ \addlinespace
+Kalibrasi dan pembekuan & & $\bullet$ & \\ \addlinespace
+Eksperimen resmi & & $\bullet$ & $\bullet$ \\ \addlinespace
+Analisis dan penjelasan & & & $\bullet$ \\ \addlinespace
+Penulisan dan konsultasi & $\bullet$ & $\bullet$ & $\bullet$ \\ \addlinespace
+Revisi dan persiapan seminar & & & $\bullet$ \\
+\bottomrule
+\end{tabularx}
+\bigskip
+Kalau waktu mepet, perluasan kesalahan eksternal dan stress test opsional yang kita potong. Oracle, pembanding, dan kasus S7 tetap.
+\end{frame}
+
+\begin{frame}{Hasil penelitian akan memetakan kapan PORV berguna}
+\begin{enumerate}
+  \item Kontrak observasi bisnis dan dependensi kausal pada OpenTelemetry.
+  \medskip
+  \item Prototipe PORV dengan tiga keputusan dan penjelasan deterministik.
+  \medskip
+  \item Korpus berlabel dan protokol eksperimen yang bisa direproduksi.
+  \medskip
+  \item Bukti empiris tentang manfaat informasi kausal, manfaat pencarian, biaya, dan batas deteksi.
+\end{enumerate}
+\bigskip
+Cukup satu urutan yang diterima, atau semua urutan harus diterima?
+\end{frame}
+
+\appendix
+\begin{frame}{Cadangan: analisis statistik}
+\small\setlength{\itemsep}{6pt}
+\begin{itemize}
+  \item Unit independen: satu graf dasar atau satu eksekusi aplikasi baru. Perubahan jam, kehilangan, dan pengulangan tetap satu kelompok.
+  \item Bootstrap berpasangan 10.000 replikasi untuk selisih kesalahan, cakupan, dan median selisih waktu. Interval 95\%.
+  \item McNemar eksak pada pasangan keputusan biner untuk label aplikasi, dengan koreksi Holm pada keluarga delapan uji.
+  \item FPR/FNR dilaporkan dengan pembilang, penyebut, dan interval binomial eksak pada observasi dasar independen.
+  \item Status tidak dapat disimpulkan dilaporkan terpisah. Ketepatan bersyarat selalu disertai cakupan.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cadangan: pemeriksaan prasyarat kausal}
+\small\setlength{\itemsep}{6pt}
+\begin{itemize}
+  \item Pertanyaan: apakah ada lintasan kausal dari prasyarat ke aksi dependen?
+  \item Profil dibatasi pada dependensi eksplisit tanpa pengulangan. Oracle lintasan berbeda dari oracle DFA.
+  \item Tidak adanya lintasan berarti prasyarat tidak didukung bukti. Itu belum tentu kesalahan aplikasi.
+  \item Pada S7, hasil ini melengkapi interpretasi penerimaan eksistensial.
+  \item Kalau dipakai sebagai alarm, TP/FP/FN/TN dihitung ulang terhadap fakta bisnis independen.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cadangan: OpenTelemetry}
+\small\setlength{\itemsep}{6pt}
+\begin{itemize}
+  \item \textbf{Trace:} rangkaian operasi untuk satu permintaan lintas layanan.
+  \item \textbf{Span:} rekaman satu operasi, dengan atribut dan peristiwa.
+  \item \textbf{OTLP:} protokol pertukaran telemetri. Penelitian ini membaca ekspornya dalam JSON.
+\end{itemize}
+\medskip
+OTel menyediakan struktur observasi. Titik bisnis dan makna dependensi tetap harus ditetapkan pengembang.
+\source{OpenTelemetry: Observability Primer, Traces, dan OTLP.}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Referensi terpilih}
+\footnotesize
+\setsansfont[BoldFont=lmsans10-bold.otf,ItalicFont=lmsans10-oblique.otf,
+  BoldItalicFont=lmsans10-boldoblique.otf]{lmsans10-regular.otf}
+\bibliographystyle{plain}
+\nocite{lamport1978,sakai2022,sun2024,amarilli2018,otelapi,otelmessaging,otelprimer,oteltraces,otlp}
+\bibliography{../../content/proposal/references}
+\end{frame}
+\end{document}

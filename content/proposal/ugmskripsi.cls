@@ -87,7 +87,8 @@
   \setcounter{chapter}{0}%
   \setcounter{section}{0}%
   \gdef\@chapapp{\appendixname}%
-  \gdef\thechapter{\@Alph\c@chapter}}
+  \gdef\thechapter{\@Alph\c@chapter}%
+  \gdef\thechapternum{\@Alph\c@chapter}}
 \renewcommand{\chapter}{\clearpage\thispagestyle{chapterheading}%
   \global\@topnum\z@ %Prevents figures from going at top of page
   \@afterindenttrue %Indent the 1st paragraph
@@ -129,12 +130,13 @@
 \renewcommand{\paragraph}{\subparagraph}
 
 \@addtoreset {equation}{chapter}
+\def\thechapternum{\@arabic\c@chapter}
 \renewcommand\theequation
-  {\ifnum \c@chapter>\z@ \@arabic\c@chapter.\fi \@arabic\c@equation}
+  {\ifnum \c@chapter>\z@ \thechapternum.\fi \@arabic\c@equation}
 \renewcommand \thefigure
-     {\ifnum \c@chapter>\z@ \@arabic\c@chapter.\fi \@arabic\c@figure}
+     {\ifnum \c@chapter>\z@ \thechapternum.\fi \@arabic\c@figure}
 \renewcommand \thetable
-     {\ifnum \c@chapter>\z@ \@arabic\c@chapter.\fi \@arabic\c@table}
+     {\ifnum \c@chapter>\z@ \thechapternum.\fi \@arabic\c@table}
 
 %------------------------------------------------------------
 %Redefine caption names

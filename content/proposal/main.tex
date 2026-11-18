@@ -28,6 +28,10 @@
   columns=fullflexible,keepspaces=true,showstringspaces=false,tabsize=2}
 \lstdefinelanguage{yaml}{keywords={true,false,null},sensitive=false,
   comment=[l]{\#},morestring=[b]',morestring=[b]"}
+\makeatletter
+\AtBeginDocument{%
+  \renewcommand{\thelstlisting}{\ifnum\c@chapter>\z@ \thechapternum.\fi\arabic{lstlisting}}}
+\makeatother
 \newcommand{\ist}[1]{\textit{#1}}
 \newcommand{\kode}[1]{\texttt{#1}}
 
