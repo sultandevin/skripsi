@@ -177,7 +177,7 @@ RM3 & Pada kondisi apa informasi kausal dan pencarian alternatif mengubah ketepa
   \item urutan lokal yang dijamin instrumentasi;
   \item awal span induk ke awal span anak;
   \item kirim ke proses pesan dengan ID pesan cocok;
-  \item referensi bertanda kausal (\texttt{porv.predecessors}).
+  \item referensi/link bertanda kausal (\texttt{porv.predecessors}, \texttt{porv.causal}).
 \end{itemize}
 \end{column}
 \begin{column}{0.40\textwidth}
@@ -356,6 +356,7 @@ S10 & Alternatif alur kerja & Sesuai oracle independen \\
   \node[above=5pt,font=\small] at (4.9,0) {pembayaran};
   \draw[red,very thick,dashed] (2.5,-0.55)--(4.9,-0.55);
   \node[below=3pt,font=\small,text=red] at (3.7,-0.55) {prasyarat dilanggar};
+  \node[below=0.75cm,font=\scriptsize,text=gray] at (3.0,-0.55) {urutan aksi nyata menurut catatan aksi (oracle)};
 \end{tikzpicture}
 \end{column}
 \end{columns}
@@ -420,10 +421,13 @@ Berikutnya: pencarian DFA, tiga pembanding, eksperimen kesalahan bisnis.
 \textbf{Nov 2026:} literatur, kontrak, implementasi.
 \smallskip
 
-\textbf{Des 2026:} kalibrasi, pembekuan, eksperimen.
+\textbf{Des 2026:} implementasi selesai, kalibrasi dan pembekuan, eksperimen dimulai.
 \smallskip
 
-\textbf{Jan 2027:} eksperimen, analisis, penulisan.
+\textbf{Jan 2027:} eksperimen, analisis, revisi.
+\smallskip
+
+Penulisan dan konsultasi sepanjang periode.
 \end{column}
 \begin{column}{0.31\textwidth}
 \textbf{Luaran}
@@ -448,7 +452,7 @@ Berikutnya: pencarian DFA, tiga pembanding, eksperimen kesalahan bisnis.
 \section{Cadangan}
 % =====================================================================
 
-\begin{frame}{Cadangan: analisis statistik}
+\begin{frame}{Analisis statistik}
 \small\setlength{\itemsep}{6pt}
 \begin{itemize}
   \item Unit independen: satu graf dasar atau satu eksekusi aplikasi baru. Perubahan jam, kehilangan, dan pengulangan tetap satu kelompok.
@@ -459,7 +463,7 @@ Berikutnya: pencarian DFA, tiga pembanding, eksperimen kesalahan bisnis.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Cadangan: pemeriksaan prasyarat kausal}
+\begin{frame}{Pemeriksaan prasyarat kausal}
 \small\setlength{\itemsep}{6pt}
 \begin{itemize}
   \item Pertanyaan: apakah ada lintasan kausal dari prasyarat ke aksi dependen?
@@ -470,7 +474,7 @@ Berikutnya: pencarian DFA, tiga pembanding, eksperimen kesalahan bisnis.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Cadangan: OpenTelemetry}
+\begin{frame}{OpenTelemetry}
 \small\setlength{\itemsep}{6pt}
 \begin{itemize}
   \item \textbf{Trace:} rangkaian operasi untuk satu permintaan lintas layanan.
@@ -482,13 +486,13 @@ OTel menyediakan struktur observasi. Titik bisnis dan makna dependensi tetap har
 \source{OpenTelemetry: Observability Primer, Traces, dan OTLP.}
 \end{frame}
 
-\begin{frame}{Cadangan: jalur checkout, Kafka, accounting}
+\begin{frame}{Jalur checkout, Kafka, accounting}
 \small
 \textbf{OpenTelemetry Demo 2.0.2, satu jalur}
 \begin{itemize}
   \item $a$: publikasi dimulai. $c$: klien berhasil. $p$: accounting selesai.
   \item Sisi $a\prec c$ dan $a\prec p$. Model menerima $acp$ dan $apc$.
-  \item Keberhasilan klien menyatakan klien menerima respons, bukan konfirmasi penyimpanan broker. Titik accounting menandai proses selesai.
+  \item $c$ hanya laporan keberhasilan klien (\texttt{sarama.NoResponse}), bukan konfirmasi penyimpanan broker. $p$ menandai pencatatan accounting selesai, bukan perubahan basis data.
 \end{itemize}
 \bigskip
 \begin{tabularx}{\textwidth}{@{}p{2.7cm}X@{}}
@@ -502,7 +506,7 @@ Berikutnya & Pencarian DFA, tiga pembanding, eksperimen kesalahan bisnis berlabe
 Pencarian belum teruji di sini, karena kedua urutan normal diterima.
 \end{frame}
 
-\begin{frame}{Cadangan: tiga risiko menguji batas klaim}
+\begin{frame}{Tiga risiko menguji batas klaim}
 \begin{itemize}
   \item \textbf{Sisi kausal salah atau bolong.} Kontrak dibekukan sebelum data, rekonsiliasi aksi dijalankan independen, dan bukti yang cacat berakhir sebagai tidak dapat disimpulkan.
   \medskip
@@ -514,7 +518,7 @@ Pencarian belum teruji di sini, karena kedua urutan normal diterima.
 \small Klaim kita berhenti pada profil dan generator yang diuji.
 \end{frame}
 
-\begin{frame}{Cadangan: kompleksitas dan lebar poset}
+\begin{frame}{Kompleksitas dan lebar poset}
 \small
 \begin{itemize}\setlength{\itemsep}{4pt}
   \item Setiap $S$ adalah ideal urutan: jika suatu peristiwa ada di $S$, semua pendahulunya juga ada.
@@ -532,6 +536,7 @@ Pencarian belum teruji di sini, karena kedua urutan normal diterima.
 \source{Dilworth (1950); Amarilli \& Paperman (2018).}
 \end{frame}
 
+\section{Referensi}
 \begin{frame}[allowframebreaks]{Referensi terpilih}
 \scriptsize\compactbib
 \setsansfont[BoldFont=lmsans10-bold.otf,ItalicFont=lmsans10-oblique.otf,
