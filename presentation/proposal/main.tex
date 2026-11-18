@@ -58,7 +58,7 @@ Pembimbing: Dr.techn. Guntur Budi Herwanto, S.Kom., M.Cs.}
 \section{Latar Belakang}
 % =====================================================================
 
-\begin{frame}{Kausalitas membatasi urutan, timestamp memilih satu}
+\begin{frame}{Kausalitas dan Timestamp}
 \centering
 \begin{tikzpicture}[node distance=0.7cm and 1.1cm,
   every node/.append style={font=\footnotesize}]
@@ -79,7 +79,7 @@ Pembimbing: Dr.techn. Guntur Budi Herwanto, S.Kom., M.Cs.}
 \note{Pada alur pesanan, pembayaran dan reservasi berjalan konkuren dan boleh selesai dalam urutan apa pun; yang wajib hanyalah keduanya mendahului pengiriman. Mengurutkan dengan timestamp memaksa satu urutan total dan bisa keliru karena jam tiap layanan berbeda. Relasi happened-before dari Lamport hanya mengurutkan pasangan yang memang punya bukti kausal.}
 \end{frame}
 
-\begin{frame}{Telemetri teknis belum tentu bukti bisnis}
+\begin{frame}{Telemetri dan Bukti Bisnis}
 \small
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.47\textwidth}
@@ -109,7 +109,7 @@ Menyamakan keduanya menimbulkan alarm tanpa dasar.
 \note{Masalah kedua: data teknis tidak sama dengan peristiwa bisnis. Awal span pembayaran belum berarti pembayaran berhasil, jadi titik pencatatan harus ditetapkan. Masalah ketiga: peristiwa yang tidak terlihat di ekspor bisa saja terjadi tetapi tidak terekam. Karena itu kami butuh kontrak observasi dan keputusan ketiga, yaitu tidak dapat disimpulkan.}
 \end{frame}
 
-\begin{frame}{Penelitian terkait belum memisahkan dampak urutan dan kualitas bukti}
+\begin{frame}{Penelitian Terkait}
 \footnotesize
 \renewcommand{\arraystretch}{1.0}
 \begin{tabularx}{\textwidth}{@{}p{4.3cm}XX@{}}
@@ -133,7 +133,7 @@ Weil-Kennedy dkk. (2025) & Trace lokal dengan automata & Kontrak observasi OpenT
 \section{Rumusan Masalah}
 % =====================================================================
 
-\begin{frame}{Tiga pertanyaan penelitian}
+\begin{frame}{Rumusan Masalah dan Tujuan}
 \footnotesize
 \renewcommand{\arraystretch}{1.2}
 \begin{tabularx}{\textwidth}{@{}p{0.6cm}Xp{4.6cm}@{}}
@@ -155,7 +155,7 @@ RM3 & Pada kondisi apa informasi kausal dan pencarian alternatif mengubah ketepa
 \section{Metode}
 % =====================================================================
 
-\begin{frame}{Kontrak observasi mengubah ekspor menjadi graf kausal per alur kerja}
+\begin{frame}{Kontrak Observasi}
 \smallitems
 \centering
 \vspace{0.1cm}
@@ -193,7 +193,7 @@ RM3 & Pada kondisi apa informasi kausal dan pencarian alternatif mengubah ketepa
 \note{Kontrak observasi menetapkan titik bisnis, identitas alur kerja seperti order.id, dan arti setiap sisi. Sisi hanya berasal dari bukti yang dapat dipertanggungjawabkan; timestamp disimpan untuk pembanding dan penjelasan, tetapi tidak dipakai membentuk sisi lintas layanan. Atribut porv bukan atribut standar OpenTelemetry dan kami laporkan sebagai bagian kontrak.}
 \end{frame}
 
-\begin{frame}{Satu saksi menerima model, pencarian memeriksa pilihan yang mungkin}
+\begin{frame}{Pencarian Urutan}
 \smallitems\small
 Untuk graf $G=(V,D)$ dan model DFA $P$ ($\operatorname{TopSort}(G)$: himpunan urutan topologis):
 \abovedisplayskip=3pt\belowdisplayskip=3pt
@@ -236,7 +236,7 @@ $c$ & reservasi & $d$ & pengiriman
 \note{Observasi kompatibel jika ada sedikitnya satu urutan topologis yang, setelah dipetakan ke simbol bisnis, diterima DFA. S adalah peristiwa yang sudah diproses dan q keadaan DFA; setiap pasangan disimpan sekali. Di contoh ini model ketat tidak punya transisi c setelah a, jadi cabang ac langsung berhenti; cabang kiri sampai ke abcd yang diterima, jadi itu saksinya. Masalah umumnya NP-complete menurut Amarilli dan Paperman, tetapi jumlah konfigurasi polinomial untuk lebar w tetap, sehingga lebar menjadi faktor eksperimen.}
 \end{frame}
 
-\begin{frame}{Bukti lengkap menentukan apakah hasilnya tegas}
+\begin{frame}{Keputusan}
 \centering
 \begin{tikzpicture}[node distance=0.35cm]
   \node[gate] (s) {Skema\\valid?};
@@ -264,7 +264,7 @@ Tidak dapat disimpulkan & Bukti tidak lengkap atau ambigu, referensi rusak, ada 
 \note{Gerbang bukti dijalankan sebelum pencarian. Kelengkapan hanya diberikan pada pengumpulan terkontrol setelah catatan aksi direkonsiliasi dengan ekspor; penerimaan DFA tidak pernah dipakai sebagai bukti kelengkapan. Penolakan butuh pencarian tuntas, sehingga batas sumber daya menghasilkan tidak dapat disimpulkan, bukan penolakan.}
 \end{frame}
 
-\begin{frame}{Satu graf memisahkan manfaat kausal dari manfaat pencarian}
+\begin{frame}{Pembanding}
 \small
 \renewcommand{\arraystretch}{1.25}
 \begin{tabularx}{\textwidth}{@{}Xccc@{}}
@@ -290,7 +290,7 @@ Timestamp diuji dengan pergeseran 0, $\pm100$ ms, $\pm1$ s, dan $\pm5$ menit. Ki
 \section{Metrik dan Evaluasi}
 % =====================================================================
 
-\begin{frame}{Tiga korpus dan sepuluh skenario menguji keputusan dan batas bukti}
+\begin{frame}{Korpus dan Skenario}
 \footnotesize
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.27\textwidth}
@@ -327,7 +327,7 @@ S10 & Alternatif alur kerja & Sesuai oracle independen \\
 \note{Tiga korpus memberi tiga jenis bukti: graf sintetis memvalidasi implementasi dan skala, aplikasi terkontrol menguji deteksi kesalahan aplikasi, dan OTel Demo menguji integrasi dengan SDK nyata. Label selalu berasal dari oracle independen, bukan dari keluaran PORV. Bedakan S5 dan S8: pada S5 aksinya memang tidak terjadi, pada S8 aksinya terjadi tetapi rekamannya hilang.}
 \end{frame}
 
-\begin{frame}{S7 menunjukkan batas semantik eksistensial}
+\begin{frame}{Skenario S7}
 \vspace{0.1cm}
 \setlength{\columnsep}{0.2cm}
 \begin{columns}[c,onlytextwidth]
@@ -369,7 +369,7 @@ S10 & Alternatif alur kerja & Sesuai oracle independen \\
 \note{Pada varian aplikasi, penegakan prasyarat dimatikan sehingga pengiriman terjadi sebelum pembayaran, dibuktikan oleh catatan aksi. Graf tidak mengurutkan keduanya, jadi ada urutan yang diterima dan PORV menyatakan kompatibel. Itu benar terhadap label observasi, tetapi pada label aplikasi dihitung sebagai kesalahan yang terlewat. Ini batas yang sengaja kami ukur, bukan disembunyikan.}
 \end{frame}
 
-\begin{frame}{Metrik dan target dikunci sebelum eksperimen dimulai}
+\begin{frame}{Metrik dan Target}
 \smallitems\small
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
@@ -402,7 +402,7 @@ S10 & Alternatif alur kerja & Sesuai oracle independen \\
 \section{Penutup}
 % =====================================================================
 
-\begin{frame}{Rencana kerja, jadwal, dan luaran penelitian}
+\begin{frame}{Rencana, Jadwal, dan Luaran}
 \smallitems\footnotesize
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.31\textwidth}
@@ -452,7 +452,7 @@ Penulisan dan konsultasi sepanjang periode.
 \section{Cadangan}
 % =====================================================================
 
-\begin{frame}{Analisis statistik}
+\begin{frame}{Analisis Statistik}
 \small\setlength{\itemsep}{6pt}
 \begin{itemize}
   \item Unit independen: satu graf dasar atau satu eksekusi aplikasi baru. Perubahan jam, kehilangan, dan pengulangan tetap satu kelompok.
@@ -463,7 +463,7 @@ Penulisan dan konsultasi sepanjang periode.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Pemeriksaan prasyarat kausal}
+\begin{frame}{Prasyarat Kausal}
 \small\setlength{\itemsep}{6pt}
 \begin{itemize}
   \item Pertanyaan: apakah ada lintasan kausal dari prasyarat ke aksi dependen?
@@ -486,7 +486,7 @@ OTel menyediakan struktur observasi. Titik bisnis dan makna dependensi tetap har
 \source{OpenTelemetry: Observability Primer, Traces, dan OTLP.}
 \end{frame}
 
-\begin{frame}{Jalur checkout, Kafka, accounting}
+\begin{frame}{Jalur OpenTelemetry Demo}
 \small
 \textbf{OpenTelemetry Demo 2.0.2, satu jalur}
 \begin{itemize}
@@ -504,7 +504,7 @@ Tidak diuji & Manfaat pencarian: kedua urutan normal diterima model. Kesalahan b
 \end{tabularx}
 \end{frame}
 
-\begin{frame}{Tiga risiko menguji batas klaim}
+\begin{frame}{Risiko}
 \begin{itemize}
   \item \textbf{Sisi kausal salah atau bolong.} Kontrak dibekukan sebelum data, rekonsiliasi aksi dijalankan independen, dan bukti yang cacat berakhir sebagai tidak dapat disimpulkan.
   \medskip
@@ -516,7 +516,7 @@ Tidak diuji & Manfaat pencarian: kedua urutan normal diterima model. Kesalahan b
 \small Klaim kita berhenti pada profil dan generator yang diuji.
 \end{frame}
 
-\begin{frame}{Kompleksitas dan lebar poset}
+\begin{frame}{Kompleksitas}
 \small
 \begin{itemize}\setlength{\itemsep}{4pt}
   \item Setiap $S$ adalah ideal urutan: jika suatu peristiwa ada di $S$, semua pendahulunya juga ada.
@@ -535,7 +535,7 @@ Tidak diuji & Manfaat pencarian: kedua urutan normal diterima model. Kesalahan b
 \end{frame}
 
 \section{Referensi}
-\begin{frame}[allowframebreaks]{Referensi terpilih}
+\begin{frame}[allowframebreaks]{Referensi}
 \scriptsize\compactbib
 \setsansfont[BoldFont=lmsans10-bold.otf,ItalicFont=lmsans10-oblique.otf,
   BoldItalicFont=lmsans10-boldoblique.otf]{lmsans10-regular.otf}
