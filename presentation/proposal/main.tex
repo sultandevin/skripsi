@@ -310,13 +310,13 @@ Timestamp diuji dengan pergeseran 0, $\pm100$ ms, $\pm1$ s, dan $\pm5$ menit. Ki
 \end{column}
 \begin{column}{0.70\textwidth}
 \renewcommand{\arraystretch}{1.0}
-\begin{tabularx}{\textwidth}{@{}p{1.1cm}Xp{4.1cm}@{}}
+\begin{tabularx}{\textwidth}{@{}p{1.1cm}Xp{4.6cm}@{}}
 \toprule
 Skenario & Perlakuan & Harapan observasi \\
 \midrule
 S1\dash{}S3 & Sesuai, konkuren, pergeseran jam & Kompatibel; keputusan PORV tetap \\
 S4\dash{}S6 & Kirim dini, aksi wajib hilang, aksi ganda & Tidak kompatibel (bukti lengkap) \\
-S7 & Prasyarat tidak terurut & Kompatibel, kesalahan terlewat \\
+\textbf{S7} & \textbf{Prasyarat tidak terurut} & \textbf{Kompatibel, kesalahan terlewat} \\
 S8\dash{}S9 & Telemetri hilang, bukti bermasalah & Tidak dapat disimpulkan / masukan salah \\
 S10 & Alternatif alur kerja & Sesuai oracle independen \\
 \bottomrule
@@ -324,49 +324,7 @@ S10 & Alternatif alur kerja & Sesuai oracle independen \\
 \end{column}
 \end{columns}
 \source{S5: aksi tidak terjadi. S8: aksi terjadi, rekaman hilang. Label observasi, aplikasi, dan lintasan dilaporkan terpisah.}
-\note{Tiga korpus memberi tiga jenis bukti: graf sintetis memvalidasi implementasi dan skala, aplikasi terkontrol menguji deteksi kesalahan aplikasi, dan OTel Demo menguji integrasi dengan SDK nyata. Label selalu berasal dari oracle independen, bukan dari keluaran PORV. Bedakan S5 dan S8: pada S5 aksinya memang tidak terjadi, pada S8 aksinya terjadi tetapi rekamannya hilang.}
-\end{frame}
-
-\begin{frame}{Skenario S7}
-\vspace{0.1cm}
-\setlength{\columnsep}{0.2cm}
-\begin{columns}[c,onlytextwidth]
-\begin{column}{0.5\textwidth}
-\centering
-\begin{tikzpicture}[scale=0.8,transform shape,node distance=0.6cm and 0.32cm,
-  every node/.append style={font=\Large},event/.append style={minimum height=1.15cm,inner sep=9pt}]
-  \node[event] (a) {Pesanan dibuat};
-  \node[event,below left=of a] (b) {Pembayaran};
-  \node[event,below right=of a] (c) {Pengiriman};
-  \draw[flow] (a)--(b); \draw[flow] (a)--(c);
-  \draw[gray,thick,dashed,{Stealth}-{Stealth}] (b)--(c)
-    node[midway,above=2pt,font=\small,text=gray]{tanpa urutan kausal};
-\end{tikzpicture}
-\end{column}
-\begin{column}{0.38\textwidth}
-\centering
-\begin{tikzpicture}[x=0.88cm,y=1cm]
-  \draw[gray,thick,-{Stealth}] (0,0) -- (5.8,0);
-  \node[below=2pt,font=\scriptsize,text=gray] at (5.1,0) {waktu};
-  \fill[ugmblue] (0.6,0) circle (3pt);
-  \node[above=5pt,font=\small,align=center] at (0.6,0) {pesanan\\dibuat};
-  \fill[red] (2.5,0) circle (4pt);
-  \node[above=5pt,font=\small,text=red] at (2.5,0) {pengiriman};
-  \fill[ugmblue] (4.9,0) circle (3pt);
-  \node[above=5pt,font=\small] at (4.9,0) {pembayaran};
-  \draw[red,very thick,dashed] (2.5,-0.55)--(4.9,-0.55);
-  \node[below=3pt,font=\small,text=red] at (3.7,-0.55) {prasyarat dilanggar};
-  \node[below=0.75cm,font=\scriptsize,text=gray] at (3.0,-0.55) {urutan aksi nyata menurut catatan aksi (oracle)};
-\end{tikzpicture}
-\end{column}
-\end{columns}
-\vspace{0.2cm}
-\small
-\begin{itemize}\setlength{\itemsep}{2pt}
-  \item Label observasi: \textbf{kompatibel} (benar). Label aplikasi: \textbf{kesalahan terlewat}.
-  \item Pelengkap: analisis prasyarat kausal, serta pembanding timestamp dengan jam andal yang dilaporkan apa adanya.
-\end{itemize}
-\note{Pada varian aplikasi, penegakan prasyarat dimatikan sehingga pengiriman terjadi sebelum pembayaran, dibuktikan oleh catatan aksi. Graf tidak mengurutkan keduanya, jadi ada urutan yang diterima dan PORV menyatakan kompatibel. Itu benar terhadap label observasi, tetapi pada label aplikasi dihitung sebagai kesalahan yang terlewat. Ini batas yang sengaja kami ukur, bukan disembunyikan.}
+\note{Tiga korpus memberi tiga jenis bukti: graf sintetis memvalidasi implementasi dan skala, aplikasi terkontrol menguji deteksi kesalahan aplikasi, dan OTel Demo menguji integrasi dengan SDK nyata. Label selalu berasal dari oracle independen, bukan dari keluaran PORV. Bedakan S5 dan S8: pada S5 aksinya memang tidak terjadi, pada S8 aksinya terjadi tetapi rekamannya hilang. S7 menunjukkan batas deteksi: penegakan prasyarat dimatikan sehingga pengiriman terjadi sebelum pembayaran, tetapi tidak ada sisi kausal di antara keduanya, sehingga ada urutan yang diterima dan PORV menyatakan kompatibel. Itu benar terhadap label observasi, tetapi dihitung sebagai kesalahan yang terlewat pada label aplikasi.}
 \end{frame}
 
 \begin{frame}{Metrik dan Target}

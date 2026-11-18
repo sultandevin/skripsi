@@ -1,7 +1,7 @@
 # Seminar proposal slides
 
 Indonesian, 16:9 Beamer presentation of the current proposal in `content/proposal/`.
-The main talk has a title slide and 12 content slides grouped into the study
+The main talk has a title slide and 11 content slides grouped into the study
 program's recommended sections (Latar Belakang, Rumusan Masalah, Metode, Metrik
 dan Evaluasi, then a closing slide), followed by one backup slide (OpenTelemetry) and two pages
 of selected references. Each content slide carries Beamer speaker notes
