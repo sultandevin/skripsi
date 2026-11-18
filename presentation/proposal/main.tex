@@ -216,9 +216,7 @@ Untuk graf $G=(V,D)$ dan model DFA $P$ ($\operatorname{TopSort}(G)$: himpunan ur
     child { node[cfg]{$ab$}
       child { node[cfg]{$abc$}
         child { node[acc]{$abcd$ $\checkmark$} } } }
-    child { node[cfg]{$ac$}
-      child { node[rej]{$acb$}
-        child { node[rej]{$acbd$ $\times$} } } } };
+    child { node[rej,label={[font=\scriptsize,text=gray,align=center,yshift=-3pt]below:{DFA tidak punya\\transisi $c$}}]{$ac$ $\times$} } };
 \end{tikzpicture}
 {\scriptsize
 \begin{tabular}{@{}ll@{\quad}ll@{}}
@@ -235,7 +233,7 @@ $c$ & reservasi & $d$ & pengiriman
 \end{itemize}
 \end{column}
 \end{columns}
-\note{Observasi kompatibel jika ada sedikitnya satu urutan topologis yang, setelah dipetakan ke simbol bisnis, diterima DFA. S adalah peristiwa yang sudah diproses dan q keadaan DFA; setiap pasangan disimpan sekali. Di contoh ini cabang kiri sampai ke abcd yang diterima, jadi itu saksinya. Masalah umumnya NP-complete menurut Amarilli dan Paperman, tetapi jumlah konfigurasi polinomial untuk lebar w tetap, sehingga lebar menjadi faktor eksperimen.}
+\note{Observasi kompatibel jika ada sedikitnya satu urutan topologis yang, setelah dipetakan ke simbol bisnis, diterima DFA. S adalah peristiwa yang sudah diproses dan q keadaan DFA; setiap pasangan disimpan sekali. Di contoh ini model ketat tidak punya transisi c setelah a, jadi cabang ac langsung berhenti; cabang kiri sampai ke abcd yang diterima, jadi itu saksinya. Masalah umumnya NP-complete menurut Amarilli dan Paperman, tetapi jumlah konfigurasi polinomial untuk lebar w tetap, sehingga lebar menjadi faktor eksperimen.}
 \end{frame}
 
 \begin{frame}{Bukti lengkap menentukan apakah hasilnya tegas}
