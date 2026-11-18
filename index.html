@@ -1,0 +1,1571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PORV Defense Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg-soft:#fafafa; --fg:#0a0a0a; --fg-2:#3f3f46; --muted:#71717a; --border:#e4e4e7; --border-strong:#a1a1aa;
+  --card:#ffffff; --code-bg:#f4f4f5; --accent:#0070f3; --accent-soft:#e6f0ff;
+  --note:#0070f3; --note-bg:#eef5ff; --tip:#16a34a; --tip-bg:#ecfdf3; --warn:#d97706; --warn-bg:#fff8eb;
+  --say:#7c3aed; --say-bg:#f5f0ff; --danger:#dc2626; --danger-bg:#fef2f2;
+  --node:#ffffff; --node-done:#0070f3; --node-done-fg:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a0a0a; --bg-soft:#111113; --fg:#ededed; --fg-2:#c4c4c8; --muted:#8f8f99; --border:#26262b; --border-strong:#52525b;
+    --card:#111113; --code-bg:#18181b; --accent:#3b9bff; --accent-soft:#0d2340;
+    --note:#3b9bff; --note-bg:#0d1b2e; --tip:#34d399; --tip-bg:#0b2018; --warn:#fbbf24; --warn-bg:#241a06;
+    --say:#a78bfa; --say-bg:#1a1330; --danger:#f87171; --danger-bg:#2a1010;
+    --node:#18181b; --node-done:#3b9bff; --node-done-fg:#0a0a0a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a0a0a; --bg-soft:#111113; --fg:#ededed; --fg-2:#c4c4c8; --muted:#8f8f99; --border:#26262b; --border-strong:#52525b;
+  --card:#111113; --code-bg:#18181b; --accent:#3b9bff; --accent-soft:#0d2340;
+  --note:#3b9bff; --note-bg:#0d1b2e; --tip:#34d399; --tip-bg:#0b2018; --warn:#fbbf24; --warn-bg:#241a06;
+  --say:#a78bfa; --say-bg:#1a1330; --danger:#f87171; --danger-bg:#2a1010;
+  --node:#18181b; --node-done:#3b9bff; --node-done-fg:#0a0a0a;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--fg);font:15.5px/1.7 Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+code,kbd,pre,.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+code{background:var(--code-bg);border:1px solid var(--border);padding:.1em .35em;border-radius:5px;font-size:.86em}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.6}
+pre code{background:none;border:0;padding:0;font-size:inherit}
+header.top{position:sticky;top:0;z-index:40;height:60px;display:flex;align-items:center;gap:14px;padding:0 20px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:saturate(180%) blur(10px)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--fg);letter-spacing:-.01em;white-space:nowrap}
+.logo .mark{width:26px;height:26px;border-radius:7px;background:var(--fg);color:var(--bg);display:grid;place-items:center;font-size:13px;font-weight:700}
+.logo small{font-weight:500;color:var(--muted);font-size:13px}
+.searchbtn{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:240px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-soft);color:var(--muted);font:inherit;font-size:14px;cursor:pointer}
+.searchbtn kbd{margin-left:auto;font-size:11px;border:1px solid var(--border);border-radius:4px;padding:1px 5px;background:var(--bg)}
+.iconbtn{border:1px solid var(--border);background:var(--bg);color:var(--fg);border-radius:8px;width:36px;height:36px;display:grid;place-items:center;cursor:pointer;font-size:16px}
+.menubtn{display:none}
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr) 220px;max-width:1440px;margin:0 auto}
+nav.side{position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;padding:22px 14px 40px 20px;border-right:1px solid var(--border)}
+.side .grp{margin-bottom:18px}
+.side .grp h4{margin:0 0 6px 10px;font-size:12px;font-weight:600;color:var(--fg);letter-spacing:.02em}
+.side a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);font-size:14px;line-height:1.45}
+.side a:hover{color:var(--fg);background:var(--bg-soft);text-decoration:none}
+.side a.active{color:var(--accent);background:var(--accent-soft);font-weight:500}
+main{padding:36px 56px 80px;min-width:0}
+.page{display:none;max-width:760px}
+.page.show{display:block}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:6px}
+.page h1{font-size:34px;line-height:1.2;letter-spacing:-.025em;margin:0 0 10px}
+.lead{font-size:17.5px;color:var(--fg-2);margin:0 0 26px}
+.page h2{font-size:23px;letter-spacing:-.015em;margin:44px 0 10px;padding-top:6px;border-top:1px solid var(--border);padding-top:28px}
+.page h3{font-size:17.5px;margin:28px 0 6px}
+.page p,.page li{color:var(--fg-2)}
+.page strong{color:var(--fg)}
+.page ul,.page ol{padding-left:22px}
+.page li{margin:4px 0}
+.anchor{opacity:0;margin-left:6px;color:var(--muted);font-weight:400}
+h2:hover .anchor,h3:hover .anchor{opacity:1}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 20px;display:block;overflow-x:auto}
+th,td{border-bottom:1px solid var(--border);padding:9px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--fg);background:var(--bg-soft);white-space:nowrap}
+td{color:var(--fg-2)}
+.callout{border:1px solid var(--border);border-left:3px solid var(--note);background:var(--note-bg);border-radius:8px;padding:12px 16px;margin:18px 0}
+.callout>b:first-child{display:block;font-size:13px;letter-spacing:.02em;margin-bottom:2px;color:var(--note)}
+.callout p{margin:.3em 0}
+.callout.tip{border-left-color:var(--tip);background:var(--tip-bg)} .callout.tip>b:first-child{color:var(--tip)}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-bg)} .callout.warn>b:first-child{color:var(--warn)}
+.callout.say{border-left-color:var(--say);background:var(--say-bg)} .callout.say>b:first-child{color:var(--say)}
+.callout.danger{border-left-color:var(--danger);background:var(--danger-bg)} .callout.danger>b:first-child{color:var(--danger)}
+.say p{font-style:italic}
+.math{font-family:"JetBrains Mono",monospace;background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:14px 0;text-align:center;font-size:15px;overflow-x:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.card{border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:var(--card)}
+.card h5{margin:0 0 4px;font-size:14.5px;color:var(--fg)}
+.card p{margin:0;font-size:14px}
+a.card:hover{border-color:var(--accent);text-decoration:none}
+.pill{display:inline-block;font-size:12px;border:1px solid var(--border);border-radius:99px;padding:1px 9px;color:var(--muted);margin-right:4px;background:var(--bg-soft)}
+.pill.ok{color:var(--tip);border-color:color-mix(in srgb,var(--tip) 40%,transparent)}
+.pill.bad{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 40%,transparent)}
+.pill.unk{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+figure{margin:18px 0;border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--bg-soft)}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px;text-align:center}
+svg text{fill:var(--fg);font-family:Inter,system-ui,sans-serif}
+svg .n{fill:var(--node);stroke:var(--border-strong);stroke-width:1.5}
+svg .n.done{fill:var(--node-done);stroke:var(--node-done)}
+svg .n.cur{stroke:var(--warn);stroke-width:3}
+svg .n.done + text,svg text.on{fill:var(--node-done-fg)}
+svg .e{stroke:var(--muted);stroke-width:1.6;fill:none}
+svg .e.dash{stroke-dasharray:5 4}
+svg .e.red{stroke:var(--danger)}
+svg .box{fill:var(--card);stroke:var(--border-strong);stroke-width:1.2}
+svg .box.acc{fill:var(--accent-soft);stroke:var(--accent)}
+svg .sub{fill:var(--muted);font-size:11px}
+svg .arrowhead{fill:var(--muted)}
+.pager{display:flex;gap:12px;margin-top:56px;padding-top:24px;border-top:1px solid var(--border)}
+.pager a{flex:1;border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--fg)}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager small{display:block;color:var(--muted);font-size:12.5px}
+.pager .next{text-align:right}
+aside.toc{position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;padding:36px 16px 40px 8px;font-size:13px}
+.toc h4{margin:0 0 8px;font-size:12.5px;color:var(--fg)}
+.toc a{display:block;color:var(--muted);padding:3px 0;line-height:1.4}
+.toc a.l3{padding-left:12px}
+.toc a.on{color:var(--accent)}
+/* widgets */
+.widget{border:1px solid var(--border);border-radius:12px;padding:16px;margin:20px 0;background:var(--card)}
+.widget .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.btn{border:1px solid var(--border);background:var(--bg-soft);color:var(--fg);border-radius:7px;padding:6px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.btn:hover{border-color:var(--border-strong)}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+select,input[type=range]{font:inherit;font-size:13.5px}
+select{border:1px solid var(--border);background:var(--bg-soft);color:var(--fg);border-radius:7px;padding:5px 8px}
+.steps{max-height:240px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;font-size:13px;margin-top:10px}
+.steps div{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--muted)}
+.steps div.cur{background:var(--accent-soft);color:var(--fg)}
+.verdicts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:10px}
+.verdicts .card{padding:10px 12px}
+.verdicts .card p{font-size:13px}
+/* Q&A */
+.qa{border:1px solid var(--border);border-radius:10px;margin:10px 0;background:var(--card)}
+.qa summary{cursor:pointer;padding:12px 16px;font-weight:500;color:var(--fg);list-style:none;display:flex;gap:10px;align-items:flex-start}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::before{content:"+";color:var(--muted);font-weight:600;width:12px;flex:none}
+.qa[open] summary::before{content:"−"}
+.qa .body{padding:0 16px 14px 38px}
+.qa .tag{margin-left:auto;flex:none}
+.flash{border:1px solid var(--border);border-radius:14px;padding:26px;background:var(--card);min-height:200px}
+.flash .q{font-size:20px;font-weight:600;color:var(--fg);line-height:1.4}
+/* search */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:100;align-items:flex-start;justify-content:center;padding-top:10vh}
+.modal.open{display:flex}
+.modal .box{width:min(640px,92vw);background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal input{width:100%;border:0;border-bottom:1px solid var(--border);padding:16px 18px;font:inherit;font-size:16px;background:var(--bg);color:var(--fg);outline:none}
+.results{max-height:55vh;overflow-y:auto}
+.results a{display:block;padding:10px 18px;border-bottom:1px solid var(--border);color:var(--fg)}
+.results a:hover,.results a.sel{background:var(--accent-soft);text-decoration:none}
+.results small{display:block;color:var(--muted);font-size:12.5px}
+@media (max-width:1180px){.layout{grid-template-columns:250px minmax(0,1fr)} aside.toc{display:none} main{padding:30px 36px 70px}}
+@media (max-width:820px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.side{position:fixed;top:60px;left:0;width:290px;z-index:50;background:var(--bg);transform:translateX(-105%);transition:transform .2s}
+  nav.side.open{transform:none;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+  .menubtn{display:grid}
+  main{padding:24px 16px 60px}
+  .searchbtn{min-width:0} .searchbtn span.t{display:none} .searchbtn kbd{display:none}
+  .logo small{display:none}
+  .page h1{font-size:28px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs></svg>
+<header class="top">
+  <button class="iconbtn menubtn" id="menuBtn" aria-label="Menu">☰</button>
+  <a class="logo" href="#overview"><span class="mark">P</span>PORV Defense Docs <small>· proposal seminar prep</small></a>
+  <button class="searchbtn" id="searchBtn"><span>⌕</span><span class="t">Search docs…</span><kbd>⌘K</kbd></button>
+  <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
+</header>
+<div class="layout">
+<nav class="side" id="side"></nav>
+<main id="main">
+
+<!-- ================= GETTING STARTED ================= -->
+<article class="page" id="overview" data-group="Getting Started" data-title="Overview">
+<div class="crumb">Getting Started</div>
+<h1>Your PORV proposal defense, explained from zero</h1>
+<p class="lead">This guide covers everything in your proposal: the background ideas you need, the research itself, how it compares to other papers, and a question bank with answers you can say out loud in Indonesian. It's written like a friend explaining it over coffee.</p>
+
+<div class="cards">
+  <div class="card"><h5>Title (ID)</h5><p>Verifikasi Runtime Berbasis Partial Order pada Interaksi Layanan Asinkron Menggunakan OpenTelemetry</p></div>
+  <div class="card"><h5>Title (EN)</h5><p>Partial-Order-Based Runtime Verification of Asynchronous Service Interactions Using OpenTelemetry</p></div>
+  <div class="card"><h5>Who</h5><p>Sultan Devino Suyudi · 23/521686/PA/22442 · Ilmu Komputer FMIPA UGM</p></div>
+  <div class="card"><h5>Supervisor</h5><p>Dr.techn. Guntur Budi Herwanto, S.Kom., M.Cs.</p></div>
+</div>
+
+<h2 id="pitch">The 30-second version</h2>
+<p>When an online shop takes an order, several services do work at the same time. <strong>Payment</strong> and <strong>stock reservation</strong> can happen in either order, but <strong>shipping</strong> has to wait for both. If you check this by sorting events by timestamp, you get exactly <em>one</em> order. That order can be wrong, because every machine's clock is slightly off, and it's also arbitrary, because concurrent events have no "real" order.</p>
+<p><strong>PORV</strong> (Partial-Order Runtime Verification) does something different. From OpenTelemetry data, it builds a graph that contains only the "A must come before B" relations it can actually <em>prove</em>. Then it asks one question: <em>is there at least one ordering that respects this graph and that the developer's state machine (DFA) accepts?</em> There are three possible answers: <span class="pill ok">compatible</span>, <span class="pill bad">incompatible</span>, or <span class="pill unk">inconclusive</span> (used when the evidence is incomplete or the search hits a limit).</p>
+<p>The evaluation compares PORV with three simpler baselines. This separates <strong>how much causal information helps</strong> from <strong>how much searching alternative orderings helps</strong>. The proposal also says plainly what PORV <em>can't</em> catch (scenario S7).</p>
+
+<div class="callout say"><b>SAY IT IN THE DEFENSE (opening)</b>
+<p>"Penelitian ini memeriksa apakah observasi dari layanan asinkron sesuai dengan model alur kerja yang ditulis pengembang. Kami tidak mengurutkan peristiwa dengan timestamp, tetapi membentuk graf urutan parsial dari bukti kausal di OpenTelemetry, lalu mencari apakah ada sedikitnya satu urutan topologis yang diterima DFA. Hasilnya kompatibel, tidak kompatibel, atau tidak dapat disimpulkan bila bukti kurang. Kami membandingkannya dengan tiga pembanding untuk memisahkan manfaat informasi kausal dari manfaat pencarian."</p></div>
+
+<h2 id="map">The whole thesis on one picture</h2>
+<figure>
+<svg viewBox="0 0 720 250">
+  <rect class="box" x="10" y="20" width="120" height="50" rx="8"/><text x="70" y="42" text-anchor="middle" font-size="13">Async services</text><text x="70" y="58" text-anchor="middle" class="sub">business points</text>
+  <rect class="box" x="160" y="20" width="120" height="50" rx="8"/><text x="220" y="42" text-anchor="middle" font-size="13">OTLP JSON</text><text x="220" y="58" text-anchor="middle" class="sub">exported telemetry</text>
+  <rect class="box acc" x="310" y="20" width="130" height="50" rx="8"/><text x="375" y="42" text-anchor="middle" font-size="13">Contract + normalize</text><text x="375" y="58" text-anchor="middle" class="sub">validate, completeness K<tspan font-size="9">w</tspan></text>
+  <rect class="box acc" x="470" y="20" width="110" height="50" rx="8"/><text x="525" y="42" text-anchor="middle" font-size="13">Causal graph</text><text x="525" y="58" text-anchor="middle" class="sub">per workflow G<tspan font-size="9">w</tspan></text>
+  <rect class="box acc" x="600" y="20" width="110" height="50" rx="8"/><text x="655" y="42" text-anchor="middle" font-size="13">PORV search</text><text x="655" y="58" text-anchor="middle" class="sub">∃ order ∈ L(DFA)?</text>
+  <line class="e" x1="130" y1="45" x2="158" y2="45" marker-end="url(#arr)"/><line class="e" x1="280" y1="45" x2="308" y2="45" marker-end="url(#arr)"/><line class="e" x1="440" y1="45" x2="468" y2="45" marker-end="url(#arr)"/><line class="e" x1="580" y1="45" x2="598" y2="45" marker-end="url(#arr)"/>
+  <rect class="box" x="420" y="120" width="170" height="50" rx="8"/><text x="505" y="142" text-anchor="middle" font-size="13">3 baselines</text><text x="505" y="158" text-anchor="middle" class="sub">timestamp · ±ε · one topo order</text>
+  <rect class="box" x="140" y="120" width="190" height="50" rx="8"/><text x="235" y="142" text-anchor="middle" font-size="13">Independent oracle</text><text x="235" y="158" text-anchor="middle" class="sub">scenario + app facts (not PORV!)</text>
+  <rect class="box acc" x="250" y="195" width="300" height="46" rx="8"/><text x="400" y="216" text-anchor="middle" font-size="13">Paired results</text><text x="400" y="232" text-anchor="middle" class="sub">decision · time · coverage · explanation</text>
+  <line class="e" x1="525" y1="70" x2="505" y2="118" marker-end="url(#arr)"/><line class="e" x1="655" y1="70" x2="520" y2="193" marker-end="url(#arr)"/><line class="e" x1="505" y1="170" x2="460" y2="193" marker-end="url(#arr)"/><line class="e" x1="235" y1="170" x2="320" y2="193" marker-end="url(#arr)"/>
+</svg>
+<figcaption>Same input goes to PORV and to every baseline. Labels come from an oracle, never from the verifier (avoids circular evaluation).</figcaption>
+</figure>
+
+<h2 id="how">How to use this guide</h2>
+<ol>
+<li><strong>Prerequisites</strong> (≈2–3 h): read these in order if any term in the title feels shaky. Each page ends with a "how this shows up in your thesis" note.</li>
+<li><strong>The Research</strong> (≈2 h): one page per part of Chapter I–IV. Play with the interactive <a href="#algorithm">search stepper</a> and <a href="#baselines">clock-skew demo</a>.</li>
+<li><strong>Related Work</strong>: be able to say for every paper "they do X, we do Y".</li>
+<li><strong>Defense Prep</strong>: the slide script, the <a href="#questions">question bank</a> (in English with Indonesian answers), and <a href="#practice">practice mode</a>. Use practice mode the day before.</li>
+</ol>
+<div class="callout tip"><b>TIP</b><p>Press <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd> anywhere to search every page. Use the ◐ button to switch light/dark.</p></div>
+</article>
+
+<article class="page" id="cheatsheet" data-group="Getting Started" data-title="One-page cheat sheet">
+<div class="crumb">Getting Started</div>
+<h1>One-page cheat sheet</h1>
+<p class="lead">Numbers and one-liners you must know cold. Examiners love asking "why that number?", and the answer to most of those is on this page.</p>
+
+<h2 id="formula">The key formula</h2>
+<div class="math">compatible(G, P) ⇔ ∃ π ∈ Lin(G) : λ(π) ∈ L(P)</div>
+<p>"The observation is compatible with the model if <strong>there exists</strong> at least one topological order π of the causal graph G whose symbol word λ(π) is accepted by the DFA P."</p>
+<div class="math">#configurations ≤ |Q| · ∏(nᵢ+1) ≤ |Q|·(n+1)<sup>w</sup> &nbsp;&nbsp;(general: |Q|·2ⁿ)</div>
+
+<h2 id="numbers">Numbers</h2>
+<table>
+<tr><th>What</th><th>Value</th><th>Why / note</th></tr>
+<tr><td>Events per workflow n</td><td>4, 8, 12, 16, 20</td><td>main profile; "small offline workflows"</td></tr>
+<tr><td>Poset width w</td><td>1, 2, 4 (8 = stress test)</td><td>width controls search size; w ≤ n</td></tr>
+<tr><td>DFA size |Q|</td><td>2–16 states</td><td>small developer-written models</td></tr>
+<tr><td>Independent units per cell</td><td>≥ 30</td><td>design minimum; precision shown with CIs, no power promise</td></tr>
+<tr><td>Clock skew</td><td>0, ±100 ms, ±1 s, ±5 min</td><td>reproducible stress test, <em>not</em> a production estimate</td></tr>
+<tr><td>Search limits</td><td>10 s core time, 10⁶ configurations</td><td>first reached stops search → inconclusive</td></tr>
+<tr><td>Coverage target</td><td>≥ 95% decided; ≤ 5% stopped by limits</td><td>main profile, complete evidence</td></tr>
+<tr><td>Small-graph oracle suite</td><td>100% agreement, no abstain</td><td>validates implementation</td></tr>
+<tr><td>Bootstrap</td><td>10,000 reps, percentile 95% CI, fixed seed</td><td>error diff, coverage diff, median time diff</td></tr>
+<tr><td>McNemar exact</td><td>8 tests, Holm, α = 0.05</td><td>4 comparisons × {app correct, app faulty}</td></tr>
+<tr><td>Error-bound multiplier k</td><td>{0, ½, 1, 2}; k = 1 main</td><td>sensitivity of interval baseline</td></tr>
+<tr><td>Timing</td><td>5 warm-ups, ≥ 30 measured reps</td><td>median, IQR, p95 in ms</td></tr>
+<tr><td>Optional loads</td><td>100/500 (stress), 1,000/5,000 (extension)</td><td>first to be cut if late</td></tr>
+<tr><td>External target</td><td>OpenTelemetry Demo 2.0.2, commit 63649d6</td><td>checkout → Kafka → accounting; Apache-2.0</td></tr>
+<tr><td>Feasibility (7 Oct 2026)</td><td>3 runs: 2 complete, 1 inconclusive</td><td>collector stopped before export closed</td></tr>
+<tr><td>Schedule</td><td>Nov 2026 – Jan 2027</td><td>calibration & freeze in December</td></tr>
+</table>
+
+<h2 id="three-rq">Three research questions (short)</h2>
+<ol>
+<li><strong>Representation:</strong> how to build a partial-order graph from OTel via an observation contract?</li>
+<li><strong>Checking:</strong> how to check compatibility with a workflow spec when evidence isn't always sufficient?</li>
+<li><strong>Value & limits:</strong> when do causal info and alternative search change accuracy, coverage, and cost vs. one topological order and timestamps, and where does app-fault detection stop working?</li>
+</ol>
+
+<h2 id="never">Never say these</h2>
+<div class="callout danger"><b>TRAPS</b>
+<ul>
+<li>"PORV proves the application is correct." ✗ It shows the <em>observation</em> is <em>compatible with the model</em>.</li>
+<li>"PORV detects all ordering bugs." ✗ S7 shows a real bug it misses.</li>
+<li>"Timestamps are useless." ✗ They're a baseline, and in S7 with a reliable clock they catch what PORV misses.</li>
+<li>"Span links / parent–child mean happened-before." ✗ Only specific, contract-guaranteed points.</li>
+<li>"OTLP export tells us data is complete." ✗ Completeness K<sub>w</sub> comes only from controlled collection + reconciliation.</li>
+<li>"Missing event = the app failed." ✗ It could be lost telemetry (S5 vs S8).</li>
+<li>"Our idea of checking multiple orderings is new." ✗ Weil-Kennedy et al. and others do it. The novelty is the integration + contract + evaluation design.</li>
+</ul></div>
+</article>
+
+<!-- ================= PREREQUISITES ================= -->
+<article class="page" id="pre-distributed" data-group="Prerequisites" data-title="Distributed & async systems">
+<div class="crumb">Prerequisites</div>
+<h1>Distributed & asynchronous systems</h1>
+<p class="lead">What "asynchronous service interaction" means, and why order gets messy.</p>
+
+<h2 id="ds">Distributed system</h2>
+<p>A <strong>distributed system</strong> is a set of processes (programs, usually on different machines) that cooperate by <strong>sending messages</strong>. They have no shared memory and, importantly, <strong>no shared clock</strong>. <strong>Microservices</strong> are one way to build such a system: each service owns one responsibility (orders, payments, stock, shipping) and its own data.</p>
+
+<h2 id="sync">Synchronous vs asynchronous</h2>
+<table>
+<tr><th></th><th>Synchronous</th><th>Asynchronous</th></tr>
+<tr><td>Idea</td><td>Caller waits for the answer</td><td>Caller continues; work finishes independently later</td></tr>
+<tr><td>Example</td><td>HTTP request → wait → response</td><td>Publish to a queue (Kafka); or fire several HTTP calls concurrently</td></tr>
+<tr><td>Ordering</td><td>Mostly sequential, easy to reason about</td><td>Things overlap; many interleavings possible</td></tr>
+</table>
+<p>Your proposal is careful here (§2.1): <em>the transport doesn't decide it</em>. HTTP can be used concurrently, and a queue doesn't guarantee the business dependencies are right. So PORV doesn't look at the transport. It looks at <strong>business events and their dependencies</strong>.</p>
+
+<h2 id="running">The running example: an order</h2>
+<figure>
+<svg viewBox="0 0 520 170">
+  <rect class="box" x="10" y="65" width="110" height="40" rx="8"/><text x="65" y="90" text-anchor="middle" font-size="13">order.created</text>
+  <rect class="box" x="200" y="15" width="140" height="40" rx="8"/><text x="270" y="40" text-anchor="middle" font-size="13">payment.succeeded</text>
+  <rect class="box" x="200" y="115" width="140" height="40" rx="8"/><text x="270" y="140" text-anchor="middle" font-size="13">stock.reserved</text>
+  <rect class="box" x="400" y="65" width="110" height="40" rx="8"/><text x="455" y="90" text-anchor="middle" font-size="13">shipping.started</text>
+  <line class="e" x1="120" y1="78" x2="198" y2="40" marker-end="url(#arr)"/><line class="e" x1="120" y1="92" x2="198" y2="132" marker-end="url(#arr)"/>
+  <line class="e" x1="340" y1="40" x2="398" y2="78" marker-end="url(#arr)"/><line class="e" x1="340" y1="132" x2="398" y2="92" marker-end="url(#arr)"/>
+  <text x="270" y="85" text-anchor="middle" class="sub">no edge: either order OK</text>
+</svg>
+<figcaption>Figure 2.1 of your proposal. Payment and stock may finish in any order; shipping depends on both.</figcaption>
+</figure>
+<p>Why is this hard to check? Messages get delayed or retried, services fail partially, and logs end up on different machines with different clocks. Each service only sees its own part.</p>
+<div class="callout"><b>IN YOUR THESIS</b><p>Out of scope: consensus protocols (Raft/Paxos), replicas agreeing on values, and infinite executions (liveness). The focus is <strong>dependencies between business work in different services</strong>.</p></div>
+</article>
+
+<article class="page" id="pre-time" data-group="Prerequisites" data-title="Time, clocks & happened-before">
+<div class="crumb">Prerequisites</div>
+<h1>Time, clocks & happened-before</h1>
+<p class="lead">This is the heart of the motivation: timestamps give you one order, while causality only constrains <em>some</em> pairs.</p>
+
+<h2 id="clocks">Physical clocks lie (a little)</h2>
+<p>Every machine has its own clock. Clocks <strong>drift</strong>, and synchronization (NTP) leaves errors from milliseconds up to much more. The difference between two clocks is called <strong>clock skew</strong>. If payment's server clock is 200 ms ahead, a payment that really happened <em>after</em> shipping can get an <em>earlier</em>-looking timestamp, or the other way round.</p>
+<p>A <strong>timestamp</strong> is just "what the local clock said". The proposal's key sentence: <em>differences in timestamps are not enough evidence to establish cause–effect across processes.</em></p>
+
+<h2 id="hb">Lamport's happened-before (1978)</h2>
+<p>Leslie Lamport defined a relation <code>a → b</code> ("a happened before b"; your proposal writes <code>a ≺ b</code>) using only things we can actually <em>know</em>:</p>
+<ol>
+<li><strong>Same process:</strong> if a comes before b in the same sequential execution, then a ≺ b.</li>
+<li><strong>Messages:</strong> sending a message ≺ receiving that same message.</li>
+<li><strong>Transitivity:</strong> if a ≺ b and b ≺ c, then a ≺ c.</li>
+</ol>
+<p>If neither a ≺ b nor b ≺ a, the two are <strong>concurrent</strong>: nothing connects them, so no order between them is "the true one".</p>
+
+<h2 id="partial">Partial order vs total order</h2>
+<p>Think of getting dressed: socks before shoes, underwear before trousers, but shirt and socks in any order. That's a <strong>partial order</strong>: only <em>some</em> pairs are ordered. A <strong>total order</strong> puts <em>every</em> pair in order, like one line of events.</p>
+<ul>
+<li>Sorting by timestamps = forcing a <strong>total</strong> order, and so choosing one interleaving out of many.</li>
+<li>Happened-before = a <strong>(strict) partial order</strong>: irreflexive (not a ≺ a), transitive, and so antisymmetric.</li>
+</ul>
+
+<h2 id="unordered">"Unordered" vs "concurrent": a subtle point the examiners may test</h2>
+<p>Your proposal (§2.3) deliberately says <strong>tidak terurut</strong> (unordered in the observation) rather than <strong>konkuren</strong>. Here's why. With <em>incomplete</em> telemetry, a missing path between two events might mean they really were concurrent, <em>or</em> it might mean the edge evidence was lost. Not seeing an edge isn't the same as proving concurrency.</p>
+<div class="callout say"><b>SAY</b><p>"Kami memakai istilah <i>tidak terurut</i> karena ketiadaan lintasan pada telemetri yang tidak lengkap bisa berarti bukti hilang, bukan pasti konkuren."</p></div>
+
+<h2 id="logical">Logical clocks: Lamport clocks & vector clocks</h2>
+<ul>
+<li><strong>Lamport clock:</strong> one counter per process, incremented on events and on receive (max+1). If a ≺ b then L(a) &lt; L(b), but the converse fails, so it can't detect concurrency.</li>
+<li><strong>Vector clock</strong> (Fidge 1988, Mattern 1989): one counter <em>per process</em>. a ≺ b ⇔ V(a) &lt; V(b) componentwise. It captures causality exactly.</li>
+</ul>
+<p>Your proposal <strong>doesn't propose a new clock</strong> and <strong>doesn't assume OTel spans carry vector clocks</strong> (they don't). Vector clocks are the <em>conceptual foundation</em>. The edges in PORV come from evidence declared in the observation contract.</p>
+
+<h2 id="predicates">Possibly / definitely (Chase & Garg 1998)</h2>
+<p>Global predicate detection asks whether a property <em>possibly</em> held in some consistent global state, or <em>definitely</em> held in all of them. That's the same flavour as "exists vs for all orderings". Your proposal says it's related but different: PORV checks whether one <em>word</em> is accepted by a DFA, and it doesn't borrow their complexity results as its own. Omer et al. (2026) monitor branching-time temporal specs over partial-order executions; PORV is restricted to finite workflows.</p>
+</article>
+
+<article class="page" id="pre-graphs" data-group="Prerequisites" data-title="Graphs, DAGs & topological sort">
+<div class="crumb">Prerequisites</div>
+<h1>Graphs, DAGs & topological sort</h1>
+<p class="lead">PORV turns observations into a graph. Here's the vocabulary.</p>
+
+<h2 id="dag">Directed graph and DAG</h2>
+<p>A directed graph <code>G = (V, D)</code> has vertices V (here: <strong>events</strong>) and directed edges D (here: <strong>"must come before" evidence</strong>). A <strong>DAG</strong> is a directed <em>acyclic</em> graph: you can never follow arrows back to where you started.</p>
+<ul>
+<li><strong>Reachability:</strong> a ≺ b in the poset ⇔ there's a non-empty directed path a ⇝ b. (The proposal: "in a DAG the relation equals reachability through a non-empty directed path.")</li>
+<li><strong>Transitive closure:</strong> add an edge for every reachable pair.</li>
+<li><strong>Cycle</strong> (a before b before a) = contradictory evidence. PORV doesn't "fix" it; the decision becomes <span class="pill unk">inconclusive</span> (scenario S9).</li>
+</ul>
+
+<h2 id="topo">Topological order = linear extension</h2>
+<p>A <strong>topological order</strong> (also called <strong>linear extension</strong>) lists all vertices in one line so that every edge points forward. A DAG can have <strong>many</strong> of them. In the order example:</p>
+<ul><li><code>created → paid → reserved → shipped</code> (a b c d)</li><li><code>created → reserved → paid → shipped</code> (a c b d)</li></ul>
+<p>With no edges at all, n events have n! linear extensions. That's why you can't just enumerate them for big graphs.</p>
+
+<h2 id="kahn">Kahn's algorithm (the "one topological order" baseline)</h2>
+<pre><code>repeat:
+  pick an event with in-degree 0          ← PORV baseline: smallest ID (frozen lexicographic rule)
+  output it, remove its outgoing edges
+until no events left                       (if some remain → there was a cycle)</code></pre>
+<p>Cost <code>O(|V| + |E|)</code>. Graph building and cycle checking in PORV are also <code>O(|V_w| + |D_w|)</code>. The expensive part is the <em>search</em>, not building the graph.</p>
+<div class="callout"><b>IN YOUR THESIS</b><p>The "one deterministic topological order" baseline uses the <strong>same graph and DFA</strong> as PORV but tries <strong>only one</strong> order. Comparing it to PORV isolates the value of <strong>searching alternatives</strong>.</p></div>
+</article>
+
+<article class="page" id="pre-posets" data-group="Prerequisites" data-title="Width, antichains & Dilworth">
+<div class="crumb">Prerequisites</div>
+<h1>Width, antichains, ideals & Dilworth</h1>
+<p class="lead">This is the math behind "the search is polynomial when the width is fixed". Expect at least one question on it.</p>
+
+<h2 id="chains">Chains and antichains</h2>
+<ul>
+<li><strong>Chain:</strong> a set of events that are all ordered with each other (a line). Example: created ≺ paid ≺ shipped.</li>
+<li><strong>Antichain:</strong> a set of events where <em>no two</em> are ordered. Example: {paid, reserved}.</li>
+<li><strong>Width w:</strong> the size of the <strong>largest antichain</strong>, i.e. the most events that can be "in flight at once". Order example: w = 2.</li>
+</ul>
+
+<h2 id="dilworth">Dilworth's theorem (1950)</h2>
+<p>The minimum number of chains needed to cover the poset is exactly the width w. So you can always split the events into w lines with lengths n₁ … n_w.</p>
+<p><strong>How the proposal computes w:</strong> minimum chain cover via <strong>bipartite matching</strong> on the reachability relation. Make a left and right copy of the vertices and connect u<sub>L</sub>–v<sub>R</sub> when u ≺ v. Then <code>min chains = n − |maximum matching|</code>. This is reported as a separate structural analysis.</p>
+
+<h2 id="ideals">Order ideals = "what's been processed so far"</h2>
+<p>An <strong>ideal</strong> (downset) S is a set of events where, if an event is in S, all its predecessors are too. Every prefix of any topological order is an ideal. So the search state "set of processed events" is always an ideal.</p>
+<figure>
+<svg viewBox="0 0 560 120">
+  <g font-size="13" text-anchor="middle">
+  <rect class="box" x="10" y="45" width="50" height="30" rx="6"/><text x="35" y="65">∅</text>
+  <rect class="box" x="100" y="45" width="60" height="30" rx="6"/><text x="130" y="65">{a}</text>
+  <rect class="box" x="200" y="10" width="70" height="30" rx="6"/><text x="235" y="30">{a,b}</text>
+  <rect class="box" x="200" y="80" width="70" height="30" rx="6"/><text x="235" y="100">{a,c}</text>
+  <rect class="box" x="310" y="45" width="80" height="30" rx="6"/><text x="350" y="65">{a,b,c}</text>
+  <rect class="box acc" x="430" y="45" width="110" height="30" rx="6"/><text x="485" y="65">{a,b,c,d}</text></g>
+  <line class="e" x1="60" y1="60" x2="98" y2="60" marker-end="url(#arr)"/><line class="e" x1="160" y1="55" x2="198" y2="28" marker-end="url(#arr)"/><line class="e" x1="160" y1="65" x2="198" y2="92" marker-end="url(#arr)"/>
+  <line class="e" x1="270" y1="28" x2="308" y2="55" marker-end="url(#arr)"/><line class="e" x1="270" y1="92" x2="308" y2="65" marker-end="url(#arr)"/><line class="e" x1="390" y1="60" x2="428" y2="60" marker-end="url(#arr)"/>
+</svg>
+<figcaption>The 6 ideals of the order graph (a = created, b = paid, c = reserved, d = shipped). Each path from ∅ to the end is one topological order. This is the lattice on slide 4.</figcaption>
+</figure>
+
+<h2 id="bound">Why this gives the bound</h2>
+<p>An ideal is determined by "how far along each chain you are": a prefix length 0…nᵢ for each of the w chains. So</p>
+<div class="math">|I(G)| ≤ ∏ᵢ (nᵢ + 1) ≤ (n + 1)<sup>w</sup></div>
+<p>Not every combination is valid (edges between chains rule some out), hence "≤". Multiply by |Q| DFA states for the number of configurations (S, q).</p>
+<table>
+<tr><th>Shape (n = 20)</th><th>Ideals (roughly)</th></tr>
+<tr><td>w = 1 (one chain)</td><td>21: exactly one order, so search is trivial</td></tr>
+<tr><td>w = 4, four chains of 5, no cross edges</td><td>6⁴ = 1,296 (× |Q| ≤ 16 → ≤ 20,736 configs)</td></tr>
+<tr><td>Loose bound (n+1)<sup>w</sup>, w = 4</td><td>21⁴ = 194,481</td></tr>
+<tr><td>w = 20 (no edges at all)</td><td>2²⁰ ≈ 1,048,576. That's why there's a 10⁶ limit</td></tr>
+</table>
+<p>Also: at any configuration, the events you can pick next form an antichain, so there are <strong>at most w candidates</strong> per step.</p>
+</article>
+
+<article class="page" id="pre-automata" data-group="Prerequisites" data-title="Finite automata (DFA)">
+<div class="crumb">Prerequisites</div>
+<h1>Finite automata (DFA)</h1>
+<p class="lead">The workflow specification is a small state machine that the developer writes.</p>
+
+<h2 id="def">Definition</h2>
+<div class="math">P = (Q, Σ, δ, q₀, F)</div>
+<ul>
+<li><strong>Q</strong>: states ("where are we in the workflow")</li>
+<li><strong>Σ</strong>: alphabet of business symbols (created, paid, reserved, shipped)</li>
+<li><strong>δ</strong>: a <em>partial</em> transition function Q × Σ → Q. If a transition is undefined, that step is rejected</li>
+<li><strong>q₀</strong>: start state; <strong>F</strong>: accepting states</li>
+</ul>
+<p>A <strong>word</strong> (<em>kata</em>) is a sequence of symbols. The <strong>language</strong> L(P) is the set of words that lead from q₀ to a state in F. Checking one word takes time linear in its length.</p>
+
+<h2 id="example">Listing 3.1, explained</h2>
+<pre><code>name: checkout
+correlation: order.id          ← group events by this business ID
+initial: new
+accepting: [completed]
+events:                        ← symbol : OTel business point
+  created:  order.created
+  paid:     payment.succeeded
+  reserved: stock.reserved
+  shipped:  shipping.started
+transitions:
+  - [new, created, opened]
+  - [opened, paid, paid_only]
+  - [opened, reserved, reserved_only]
+  - [paid_only, reserved, ready]
+  - [reserved_only, paid, ready]
+  - [ready, shipped, completed]</code></pre>
+<figure>
+<svg viewBox="0 0 640 150">
+  <g font-size="12" text-anchor="middle">
+  <circle class="n" cx="40" cy="75" r="26"/><text x="40" y="79">new</text>
+  <circle class="n" cx="150" cy="75" r="28"/><text x="150" y="79">opened</text>
+  <circle class="n" cx="290" cy="30" r="28"/><text x="290" y="34">paid_only</text>
+  <circle class="n" cx="290" cy="120" r="28"/><text x="290" y="124">res_only</text>
+  <circle class="n" cx="430" cy="75" r="26"/><text x="430" y="79">ready</text>
+  <circle class="n" cx="580" cy="75" r="30"/><circle class="n" cx="580" cy="75" r="25" fill="none"/><text x="580" y="79">completed</text>
+  <line class="e" x1="66" y1="75" x2="120" y2="75" marker-end="url(#arr)"/><text x="93" y="68" class="sub">created</text>
+  <line class="e" x1="174" y1="62" x2="262" y2="36" marker-end="url(#arr)"/><text x="205" y="38" class="sub">paid</text>
+  <line class="e" x1="174" y1="88" x2="262" y2="114" marker-end="url(#arr)"/><text x="205" y="122" class="sub">reserved</text>
+  <line class="e" x1="318" y1="36" x2="406" y2="64" marker-end="url(#arr)"/><text x="375" y="40" class="sub">reserved</text>
+  <line class="e" x1="318" y1="114" x2="406" y2="86" marker-end="url(#arr)"/><text x="375" y="122" class="sub">paid</text>
+  <line class="e" x1="456" y1="75" x2="548" y2="75" marker-end="url(#arr)"/><text x="502" y="68" class="sub">shipped</text></g>
+</svg>
+<figcaption>Accepts "created paid reserved shipped" and "created reserved paid shipped". Rejects "created paid shipped" (no transition for shipped from paid_only) and a second "shipped".</figcaption>
+</figure>
+
+<h2 id="lambda">Labelling λ and context events (ε)</h2>
+<p><strong>λ</strong> maps each event to a business symbol. Events that aren't in the model's alphabet (e.g. an internal processing step) get the label <strong>ε</strong>. They <em>don't change the DFA state</em>, but they <strong>stay in the graph</strong> so their ordering constraints aren't lost (a ≺ x ≺ b still forces a before b). The mapping is frozen before experiments, and real business events can't be hidden as "context".</p>
+
+<h2 id="whydfa">Why a DFA and not LTL / Petri nets / BPMN?</h2>
+<ul>
+<li>Workflows here are <strong>finite and small</strong>. A DFA is the simplest thing that captures "allowed sequences", and developers can write it.</li>
+<li>Deterministic: given a word, there's exactly one run, so it's cheap to check and pairs naturally with the (S, q) search.</li>
+<li><strong>LTL</strong> is for infinite traces and liveness (out of scope). <strong>Petri nets</strong> model concurrency <em>inside the model</em>. In PORV, the concurrency lives in the <em>observation</em> (the partial order), and the DFA only says which sequences are allowed.</li>
+<li>The proposal explicitly says it doesn't develop a new formal language.</li>
+</ul>
+</article>
+
+<article class="page" id="pre-otel" data-group="Prerequisites" data-title="Observability & OpenTelemetry">
+<div class="crumb">Prerequisites</div>
+<h1>Observability & OpenTelemetry</h1>
+<p class="lead">Where the evidence comes from, and why you can't just trust it blindly.</p>
+
+<h2 id="signals">Observability and the three signals</h2>
+<p><strong>Observability</strong> means judging a system's internal state from the data it emits while running. That data is called <strong>telemetry</strong>.</p>
+<table>
+<tr><th>Signal</th><th>What it is</th><th>Why not the main source for PORV</th></tr>
+<tr><td>Logs</td><td>Discrete text/structured records</td><td>App-specific format, high volume, no automatic cross-service links</td></tr>
+<tr><td>Metrics</td><td>Numeric aggregates over time (count, latency)</td><td>Lose request identity and individual event order</td></tr>
+<tr><td><strong>Traces</strong></td><td>The path of one request through related operations</td><td><strong>Chosen</strong>: they keep per-request structure and cross-service correlation</td></tr>
+</table>
+
+<h2 id="otel">OpenTelemetry (OTel)</h2>
+<p>OTel is a vendor-neutral standard: a <strong>specification</strong>, <strong>SDKs</strong> (libraries in your code), and a <strong>Collector</strong> (receives, processes, and exports data). Data travels over <strong>OTLP</strong> (OpenTelemetry Protocol), which has a <strong>JSON</strong> encoding. PORV reads exported OTLP JSON.</p>
+<div class="callout warn"><b>KEY LIMITATION (you'll say this often)</b><p>OTel defines how <em>context and attributes are carried</em>. It does <strong>not</strong> define the <em>business meaning</em>. That's why the thesis needs an <strong>observation contract</strong>.</p></div>
+
+<h2 id="span">Trace, span, span event, attributes</h2>
+<ul>
+<li><strong>Trace</strong>: all spans for one request (shared <code>trace_id</code>).</li>
+<li><strong>Span</strong>: one operation, with <code>span_id</code>, <code>parent_span_id</code>, name, start/end time, attributes, events, links, and status. It has a <em>duration</em>.</li>
+<li><strong>Span event</strong>: a named, timestamped <em>point</em> inside a span. PORV uses these as <strong>business points</strong>.</li>
+<li><strong>Attributes</strong>: key–value pairs, e.g. <code>order.id = 42</code>, used to group events into a workflow.</li>
+</ul>
+<pre><code>// illustrative shape (simplified OTLP JSON)
+{ "traceId": "4bf9…", "spanId": "00f0…", "parentSpanId": "a3c2…",
+  "name": "charge", "startTimeUnixNano": "...", "endTimeUnixNano": "...",
+  "attributes": [{ "key": "order.id", "value": { "stringValue": "42" } }],
+  "events": [{ "name": "payment.succeeded", "timeUnixNano": "...",
+               "attributes": [{ "key": "porv.predecessors", ... }] }] }</code></pre>
+
+<h2 id="point">Why a point, not a whole span?</h2>
+<p><code>payment.requested</code> (span starts) ≠ <code>payment.succeeded</code> (money actually taken). If you used span start as proof of payment, you could judge the flow wrongly. So the contract records success <strong>after the business action has been committed</strong>, using a span event or a special span that starts at the success point.</p>
+
+<h2 id="relations">Parent–child, links, context propagation</h2>
+<ul>
+<li><strong>Parent → child:</strong> the parent's <em>start</em> comes before the child's <em>start</em> (the child's context is created from it). But the parent's <em>end</em>, or events the parent records later, are <strong>not</strong> automatically before the child. In async code, a parent can finish before its child does.</li>
+<li><strong>Links:</strong> connect a span to other span contexts (e.g. batch processing). They're generic, so <strong>not</strong> treated as causal unless the contract explicitly marks them (<code>porv.causal</code>) with a stated direction.</li>
+<li><strong>Context propagation / W3C Trace Context:</strong> the <code>traceparent</code> header carries the trace/span ID across services.</li>
+<li><strong>Messaging semantic conventions</strong> (status: <em>development</em>): producer/consumer spans for queues. Even so, PORV must distinguish one message vs several consumers vs retries. Matching by operation name or timestamp isn't allowed.</li>
+</ul>
+
+<h2 id="identity">Same trace ≠ same order</h2>
+<p>A business ID like <code>order.id</code> is still needed. One workflow can span <strong>several traces</strong>, and one trace might touch several orders.</p>
+
+<h2 id="sampling">Sampling and incompleteness</h2>
+<p><strong>Sampling</strong> keeps only some traces, and SDKs have recording limits. So "payment not in the export" might mean the payment never happened <em>or</em> it wasn't recorded or exported. A valid OTLP format ≠ all business facts observed. Format validity and semantic completeness are <strong>two separate checks</strong>.</p>
+</article>
+
+<article class="page" id="pre-kafka" data-group="Prerequisites" data-title="Kafka in 5 minutes">
+<div class="crumb">Prerequisites</div>
+<h1>Kafka in 5 minutes</h1>
+<p class="lead">Needed for the external OTel Demo path (checkout → Kafka → accounting).</p>
+<ul>
+<li><strong>Producer</strong>: sends messages (checkout service).</li>
+<li><strong>Broker</strong>: the Kafka server that stores messages.</li>
+<li><strong>Topic / partition</strong>: a named log, split into partitions. Order is guaranteed only within a partition.</li>
+<li><strong>Offset</strong>: a message's position in a partition (0, 1, 2…).</li>
+<li><strong>Consumer</strong>: reads messages (accounting service).</li>
+<li><strong>Headers</strong>: metadata on a message. The contract carries message ID and predecessor reference here.</li>
+</ul>
+<h2 id="noresponse">sarama.NoResponse: why it matters</h2>
+<p>The checkout service uses the Go client <strong>sarama</strong>, configured with <code>NoResponse</code> (acks = 0). The producer <strong>doesn't wait for the broker to confirm storage</strong>. So "client succeeded" (event <code>c</code>) <strong>isn't proof</strong> the broker stored the message, and the producer offset isn't reliable either. That's why the study checks <strong>broker offset ranges separately</strong> and takes the position from the consumer side.</p>
+<div class="callout"><b>ALSO</b><p>"Log call returned" (accounting's event <code>p</code>) doesn't guarantee the log was persisted. The proposal is honest about this: <code>p</code> means "the logging action in this revision finished", not "a database changed".</p></div>
+</article>
+
+<article class="page" id="pre-rv" data-group="Prerequisites" data-title="Runtime verification & conformance">
+<div class="crumb">Prerequisites</div>
+<h1>Runtime verification & conformance checking</h1>
+<p class="lead">Where PORV sits among verification techniques.</p>
+<h2 id="spectrum">The verification spectrum</h2>
+<table>
+<tr><th>Technique</th><th>Checks</th><th>Strength</th></tr>
+<tr><td>Testing</td><td>Chosen inputs</td><td>Cheap, incomplete</td></tr>
+<tr><td>Model checking</td><td>All behaviours of a <em>model</em></td><td>Exhaustive, but on a model, and suffers state explosion</td></tr>
+<tr><td><strong>Runtime verification (RV)</strong></td><td>An <em>actual execution</em> against a spec</td><td>Real behaviour, but only what you observed</td></tr>
+</table>
+<p><strong>Leucker & Schallhart (2009):</strong> RV checks observed behaviour against a specification. <strong>Online</strong> RV checks while the program runs; <strong>offline</strong> RV checks recorded traces afterwards. Mahé et al. (2022) explicitly do offline RV on collections of local traces.</p>
+<div class="callout say"><b>"IS IT REALLY RUNTIME IF OFFLINE?"</b><p>"Istilah runtime merujuk pada sumber bukti yang diperoleh saat aplikasi berjalan; keputusan diberikan setelah ekspor ditutup. Ini sejalan dengan verifikasi runtime offline menurut Leucker & Schallhart serta Mahé dkk."</p></div>
+<h2 id="threevalued">Three-valued verdicts</h2>
+<p>RV often uses verdicts like true / false / ? (e.g. LTL₃), because a finite observation sometimes can't decide. PORV's <span class="pill ok">compatible</span> / <span class="pill bad">incompatible</span> / <span class="pill unk">inconclusive</span> follows the same spirit, but "?" here comes from <strong>evidence quality</strong> or <strong>resource limits</strong>.</p>
+<h2 id="conformance">Conformance checking (process mining)</h2>
+<p>Process mining compares an <strong>event log</strong> with a <strong>process model</strong>. <strong>Adriansyah et al. (2011)</strong> use cost-based <strong>alignments</strong> with A* search on <strong>Petri nets</strong>: they count inserted/skipped activities to measure deviation. Their log traces are <strong>total orders</strong>. PORV keeps the observation as a <strong>partial order</strong> and asks a yes/no existence question <strong>without inserting or deleting</strong> business actions.</p>
+<h2 id="decentral">Decentralised monitoring</h2>
+<p><strong>Bauer & Falcone (2012)</strong> split an LTL formula into local monitors on each component. PORV is <strong>centralised</strong>, runs <strong>after collection</strong>, and uses a finite DFA plus evidence gates. Decentralised monitoring is a scope comparison, not something PORV implements.</p>
+</article>
+
+<article class="page" id="pre-complexity" data-group="Prerequisites" data-title="Complexity: NP-complete & parameters">
+<div class="crumb">Prerequisites</div>
+<h1>Complexity: NP-complete, but polynomial for fixed width</h1>
+<p class="lead">"Isn't this exponential?" Yes, in general. Here's how to answer calmly.</p>
+<h2 id="classes">P, NP, NP-hard, NP-complete in plain words</h2>
+<ul>
+<li><strong>P</strong>: solvable in polynomial time.</li>
+<li><strong>NP</strong>: a proposed solution (a certificate) can be <em>checked</em> in polynomial time.</li>
+<li><strong>NP-hard</strong>: at least as hard as every NP problem.</li>
+<li><strong>NP-complete</strong>: in NP <em>and</em> NP-hard. No polynomial algorithm is known.</li>
+</ul>
+<h2 id="cts">Constrained topological sorting</h2>
+<p>"Does the DAG have a topological order whose word is in a regular language?" is <strong>constrained topological sorting</strong>. <strong>Amarilli & Paperman (ICALP 2018)</strong> proved it's <strong>NP-hard even for a fixed language</strong> like <code>(ab)*</code>. With an explicit DFA, a candidate order is checkable in polynomial time, so it's in NP, and therefore <strong>NP-complete</strong>.</p>
+<div class="callout warn"><b>BE PRECISE</b><p>This doesn't mean every small workflow model is that hard. And the proposal doesn't claim the algorithm is new: memoised search over (S, q) is known conceptually. The contribution is <strong>measuring its cost</strong> under a declared contract and width profile.</p></div>
+<h2 id="param">Parameterised view</h2>
+<ul>
+<li>General bound: <code>|Q| · 2ⁿ</code> configurations.</li>
+<li>With width w: <code>|Q| · (n+1)ʷ</code>, which is polynomial for fixed w, with the exponent depending on w.</li>
+<li>Per configuration: at most w candidates (an antichain). A simple implementation scans <code>O(n + m)</code>, plus set copying and memo management.</li>
+<li>Therefore <strong>width is a controlled experimental factor</strong> (w = 1, 2, 4; 8 as a stress test), not just "number of service branches".</li>
+</ul>
+<h2 id="memo">What memoisation buys</h2>
+<p>Different orders can reach the <em>same</em> (S, q). Example: "paid then reserved" and "reserved then paid" both reach S = {created, paid, reserved}, q = ready. Storing visited (S, q) means each pair is explored at most once, so cost depends on the number of configurations, not the (possibly factorial) number of orders.</p>
+</article>
+
+<article class="page" id="pre-stats" data-group="Prerequisites" data-title="Metrics & statistics">
+<div class="crumb">Prerequisites</div>
+<h1>Metrics & statistics</h1>
+<p class="lead">The evaluation chapter is stats-heavy. Here's each method in plain words.</p>
+
+<h2 id="confusion">Confusion matrix (positive = incompatible)</h2>
+<p>For <strong>observation-conformance labels</strong>, the <strong>positive class</strong> is "incompatible with model".</p>
+<table>
+<tr><th></th><th>Verifier rejects</th><th>Verifier accepts</th></tr>
+<tr><td><strong>Truly incompatible</strong></td><td>TP</td><td>FN (missed)</td></tr>
+<tr><td><strong>Truly compatible</strong></td><td>FP (false alarm)</td><td>TN</td></tr>
+</table>
+<div class="math">FPR = FP/(FP+TN) · FNR = FN/(FN+TP) · Precision = TP/(TP+FP) · Recall = TP/(TP+FN)</div>
+<p>A zero denominator is reported as <strong>undefined</strong>, never as 0. <strong>Inconclusive is outside the binary matrix.</strong></p>
+
+<h2 id="coverage">Coverage, abstain & risk</h2>
+<div class="math">C = (N<sub>compatible</sub> + N<sub>incompatible</sub>) / N<sub>all inputs</sub></div>
+<p>Why? A checker that always says "I don't know" makes zero errors. Coverage stops that from looking good. <strong>Risk</strong> = error rate among the inputs that were <em>decided</em>. Lower risk with lower coverage is a <strong>trade-off</strong>, not a free improvement, which is why there's a <strong>risk–coverage plot</strong>. Abstains are split into "insufficient evidence" vs "search limit".</p>
+
+<h2 id="labels">Three separate label sets (very important)</h2>
+<table>
+<tr><th>Label</th><th>Question</th><th>Source (oracle)</th></tr>
+<tr><td>Observation conformance (existential)</td><td>Does an accepted order exist?</td><td>Brute-force enumeration (small graphs) / constructions with known witness</td></tr>
+<tr><td>Application fault</td><td>Did the app actually break a business rule?</td><td>Scenario, action logs, independent business facts. Positive = known fault; incompatible = alarm; compatible = no alarm; inconclusive = abstain</td></tr>
+<tr><td>Path support (prerequisite)</td><td>Is there a causal path prerequisite ⇝ action?</td><td>Independent path oracle</td></tr>
+</table>
+<p>They're <strong>never merged</strong>. Example: in S7, PORV is <em>correct</em> on the observation label (compatible) but <em>misses</em> the fault on the app label.</p>
+
+<h2 id="units">Independent units & pseudo-replication</h2>
+<p>An <strong>independent unit</strong> is one base graph from a distinct seed, or one app execution from a fresh state. Clock shifts, telemetry loss, and timing repetitions of the <em>same</em> unit stay in <strong>one group</strong>. Counting them as extra samples would inflate confidence (pseudo-replication). Repeating timing on the same trace adds timing samples, <em>not</em> detection samples.</p>
+
+<h2 id="bootstrap">Bootstrap percentile CI</h2>
+<p>Resample the independent units (with replacement, within source/scenario strata, keeping method pairs together) <strong>10,000 times</strong> with a fixed seed, recompute the statistic each time, and take the 2.5th and 97.5th percentiles → 95% CI. It's used for differences in error rate, coverage, and median paired time difference, and needs no normality assumption.</p>
+
+<h2 id="mcnemar">McNemar exact test</h2>
+<p>This is for <strong>paired binary outcomes</strong>: both methods judged the same inputs. Only the <strong>discordant pairs</strong> matter: b = A right & B wrong, c = A wrong & B right. Under H₀ (equal accuracy), b ~ Binomial(b + c, ½). It's exact because discordant counts can be small. Only pairs where <em>both</em> gave a binary decision are used; the number used and excluded is reported. No discordant pairs → p = 1; no eligible pairs → undefined.</p>
+
+<h2 id="holm">Holm correction</h2>
+<p>There are 4 comparisons (PORV vs each of 3 baselines + vs prerequisite analysis) × 2 classes (app correct / app faulty) = <strong>8 tests</strong>. Sort the p-values from smallest to largest and compare p₍ᵢ₎ with α/(m − i + 1): 0.05/8, 0.05/7, …. Stop at the first failure. This controls family-wise error at 0.05 and is uniformly more powerful than Bonferroni. The family size stays 8 even if some tests are unavailable.</p>
+
+<h2 id="cp">Clopper–Pearson exact interval</h2>
+<p>This is an exact binomial CI for FPR/FNR, reported with numerator and denominator. It works even with zero errors: 0/30 gives an upper bound ≈ <strong>11.6%</strong>. So "0 errors" never means "0% error rate". It's only used for independent Bernoulli observations, not clustered controls.</p>
+
+<h2 id="timing">Timing statistics</h2>
+<p>Report the <strong>median, IQR, and p95</strong> in ms. <strong>Core time</strong> is measured after parsing/normalization; <strong>end-to-end time</strong> runs from reading input to serializing the report. There are 5 warm-ups (JIT/cache) and ≥ 30 measured reps. Runs stopped by the limit are <strong>censored</strong> at the limit. Effects and intervals are the main results; p-values only support interpretation.</p>
+</article>
+
+<!-- ================= THE RESEARCH ================= -->
+<article class="page" id="problem" data-group="The Research" data-title="Problem & motivation">
+<div class="crumb">The Research · Bab I</div>
+<h1>The problem & motivation</h1>
+<p class="lead">Slide 2: "Kausalitas membatasi urutan, timestamp memilih satu."</p>
+<h2 id="four">Four sub-problems in the background</h2>
+<ol>
+<li><strong>Timestamps misrepresent relationships.</strong> Clocks differ across services, and sorting forces a single total order on events that are actually concurrent.</li>
+<li><strong>Technical observation ≠ business event.</strong> The start of a payment span isn't a successful payment, so the point where you record matters.</li>
+<li><strong>Evidence can be incomplete.</strong> Sampling and loss mean "not observed" isn't the same as "didn't happen". Treating loss as failure creates baseless alarms.</li>
+<li><strong>Evaluation must separate causes.</strong> Does a better result come from causal information, from searching alternatives, or from evidence quality?</li>
+</ol>
+<h2 id="gap">The gap (as stated in Bab I)</h2>
+<p>What's missing is an approach with a <strong>clear observation contract</strong>, <strong>simple interaction rules</strong>, and an <strong>evaluation that separates the effect of timestamp ordering from the effect of evidence quality</strong>. Partial orders and conformance checking each exist already. The contribution is designing and evaluating workflow conformance checking <strong>on OpenTelemetry data</strong> for async apps, including the limits of interpreting span relationships and explaining violations.</p>
+<div class="callout say"><b>SAY (motivation in 3 sentences)</b><p>"Timestamp memberi satu urutan, padahal kausalitas hanya menuntut sebagian pasangan berurutan. Selain itu, span teknis tidak sama dengan peristiwa bisnis, dan peristiwa yang tidak terekam belum tentu tidak terjadi. Karena itu kami butuh kontrak observasi, pemeriksaan berbasis urutan parsial, dan status tidak dapat disimpulkan."</p></div>
+</article>
+
+<article class="page" id="rq" data-group="The Research" data-title="Research questions & objectives">
+<div class="crumb">The Research · Bab I</div>
+<h1>Research questions, objectives & benefits</h1>
+<p class="lead">Memorize the Indonesian wording. Every examiner question can be mapped back to one of these.</p>
+<h2 id="rumusan">Rumusan Masalah</h2>
+<table>
+<tr><th>#</th><th>Original (ID)</th><th>In plain English</th></tr>
+<tr><td>RM1</td><td>Bagaimana membentuk representasi urutan parsial dari observasi OpenTelemetry berdasarkan kontrak observasi?</td><td>How do we turn OTel data into a causal graph we can trust?</td></tr>
+<tr><td>RM2</td><td>Bagaimana memeriksa kompatibilitas observasi dengan spesifikasi alur kerja ketika bukti tidak selalu memadai?</td><td>How do we check the graph against the DFA, and say "don't know" when evidence is weak?</td></tr>
+<tr><td>RM3</td><td>Pada kondisi apa informasi kausal dan pencarian alternatif mengubah ketepatan, cakupan, serta biaya dibandingkan satu urutan topologis dan pengurutan timestamp, dan bagaimana batas deteksi kesalahan aplikasinya?</td><td>When does this actually help vs simpler methods, at what cost, and what can't it detect?</td></tr>
+</table>
+<h2 id="tujuan">Tujuan (objectives) → method → evidence</h2>
+<table>
+<tr><th>Objective</th><th>Answers</th><th>Where in method</th><th>How we know it worked</th></tr>
+<tr><td>1. Contract normalizing OTel → events + causal dependencies</td><td>RM1</td><td>§3.2.2</td><td>Validation tests, real SDK export processed end-to-end, OTel Demo closure</td></tr>
+<tr><td>2. Search with outputs compatible / incompatible / inconclusive</td><td>RM2</td><td>§3.2.3</td><td>100% oracle agreement on small-graph suite; bad evidence → inconclusive</td></tr>
+<tr><td>3. Separate implementation validation, causal-info benefit, search benefit; evaluate app-fault detection & prerequisite analysis with separate labels</td><td>RM3</td><td>§3.2.4, §3.4</td><td>Paired comparisons, McNemar+Holm, bootstrap CIs, risk–coverage, S7</td></tr>
+<tr><td>4. Explanations showing rule, workflow, relevant events</td><td>RM2 (support)</td><td>§3.2.5</td><td>Witness/explanation present & correct; R<sub>slice</sub> measured</td></tr>
+</table>
+<h2 id="manfaat">Manfaat (benefits)</h2>
+<ul>
+<li><strong>Academic:</strong> empirical evidence on using causal info to check async interactions, plus a labelled dataset and protocol others can reuse.</li>
+<li><strong>Methodological:</strong> the contract separates business facts, instrumentation metadata, and checker decisions, so app errors can be told apart from export/interpretation errors.</li>
+<li><strong>Practical:</strong> developers get targeted explanations instead of reading whole traces manually.</li>
+</ul>
+<h2 id="outputs">Expected outputs (slide 15)</h2>
+<ol><li>Business observation contract & causal dependencies on OTel.</li><li>PORV prototype with three decisions and deterministic explanations.</li><li>Labelled corpus + reproducible experiment protocol.</li><li>Empirical evidence on causal-info benefit, search benefit, cost, and detection limits.</li></ol>
+</article>
+
+<article class="page" id="semantics" data-group="The Research" data-title="Core idea: existential compatibility">
+<div class="crumb">The Research · §2.5</div>
+<h1>Core idea: existential compatibility</h1>
+<p class="lead">If you understand this page, you understand the thesis.</p>
+<div class="math">compatible(G, P) ⇔ ∃ π ∈ Lin(G) : λ(π) ∈ L(P)</div>
+<h2 id="parts">Reading it piece by piece</h2>
+<table>
+<tr><th>Symbol</th><th>Meaning</th></tr>
+<tr><td>G = (V, D)</td><td>Causal graph of one workflow: events V, proven "before" edges D</td></tr>
+<tr><td>Lin(G) / TopSort(G)</td><td>All topological orders (linear extensions) of G</td></tr>
+<tr><td>π</td><td>One such order</td></tr>
+<tr><td>λ(π)</td><td>Its word: events mapped to business symbols, ε-events dropped</td></tr>
+<tr><td>L(P)</td><td>Words the DFA accepts</td></tr>
+<tr><td>∃</td><td>"At least one". This is the <strong>existential</strong> part</td></tr>
+</table>
+<div class="callout say"><b>READ ALOUD (ID)</b><p>"Observasi kompatibel dengan model jika ada sedikitnya satu urutan topologis graf yang, setelah dipetakan ke simbol bisnis, diterima oleh DFA."</p></div>
+<h2 id="why">Why "there exists"?</h2>
+<p>If two events are unordered, the evidence can't tell us which came first. If <em>some</em> allowed ordering fits the model, then <strong>the observation can be explained by the model</strong>, and we have no evidence-based grounds to call it a violation. Rejection means <strong>no</strong> ordering consistent with the evidence fits. That's a strong, defensible claim.</p>
+<h2 id="notcorrect">Compatible ≠ correct</h2>
+<div class="callout warn"><b>THE MOST IMPORTANT CAVEAT</b><p>"Kompatibel ⇏ aplikasi benar." Example: payment and shipping are unordered in a complete observation. The order "payment → shipping" is accepted, so the result is compatible. But that <em>doesn't prove</em> payment was a causal predecessor of shipping. The app might have shipped without waiting (scenario <a href="#scenarios">S7</a>).</p></div>
+<h2 id="alts">Three possible semantics, compared</h2>
+<table>
+<tr><th>Semantics</th><th>Question</th><th>Strength</th><th>In thesis?</th></tr>
+<tr><td><strong>Existential</strong></td><td>Does at least one causal order fit the model?</td><td>Weakest claim, safest rejection (no false alarm from concurrency)</td><td><strong>Main</strong></td></tr>
+<tr><td>Universal</td><td>Do <em>all</em> causal orders fit?</td><td>Stronger: "the app enforces the order". Missing edges cause false alarms</td><td>No (named as stronger alternative)</td></tr>
+<tr><td>Prerequisite path</td><td>Is there a causal <em>path</em> prerequisite ⇝ dependent action?</td><td>Stronger for explicit dependencies</td><td>Second analysis, own labels</td></tr>
+</table>
+<p>Closing question on slide 15: <em>"Cukup satu urutan yang diterima, atau semua urutan harus diterima?"</em> Be ready to discuss it (see <a href="#questions">Question bank</a>).</p>
+<h2 id="search-stops">Asymmetry of the search</h2>
+<ul><li><strong>Accept</strong>: you can stop at the first witness.</li><li><strong>Reject</strong>: you must exhaust all reachable configurations.</li><li><strong>Limit hit</strong>: inconclusive, <em>never</em> rejection.</li></ul>
+<h2 id="incomplete">With incomplete evidence</h2>
+<p>A missing event or edge changes the set of orders and words. So a whole-workflow decision needs the <strong>completeness contract K<sub>w</sub></strong>. Without it, the status is inconclusive. Compatible only holds for the stated model, observation, and workflow scope. It's not a proof of the whole implementation or of liveness.</p>
+</article>
+
+<article class="page" id="contract" data-group="The Research" data-title="The observation contract">
+<div class="crumb">The Research · §3.2.2</div>
+<h1>The observation contract</h1>
+<p class="lead">Contribution #1 (RM1). OTel gives structure; the contract gives meaning.</p>
+<h2 id="sources">Three sources of information</h2>
+<ol>
+<li><strong>Standard OTel info:</strong> trace/span IDs, parent–child, links, span events, messaging context. These give structure and correlation, but no business dependencies.</li>
+<li><strong>Business instrumentation:</strong> workflow ID (<code>order.id</code>) and business points (<code>payment.succeeded</code>). The developer decides their meaning and timing, stored via standard attributes and span events.</li>
+<li><strong>Extra causal metadata:</strong> local sequence numbers or predecessor references, used when standard context can't express the needed relation.</li>
+</ol>
+<p>Completeness is a <strong>guarantee of controlled collection</strong>, not an automatic property of OTLP.</p>
+<h2 id="record">Normalized event record</h2>
+<p>Each event has a unique ID, event type, service, trace/span ID, workflow ID, and predecessor references. <strong>The timestamp is kept for baselines and explanations, but never used to infer cross-service edges.</strong> One business event must not silently become several counted actions.</p>
+<p>Events are grouped by <code>order.id</code>. Intermediate events that don't match a rule are <strong>kept</strong> (they may be on a causal path). References to <em>another order</em> are flagged as an <strong>evidence defect</strong>, so a prerequisite can't be "satisfied" by another order.</p>
+<h2 id="edges">Accepted edge sources (D<sub>w</sub>)</h2>
+<table>
+<tr><th>✓ Accepted</th><th>✗ Not accepted</th></tr>
+<tr><td>1. Local execution order guaranteed by instrumentation (sequence number / predecessor ref)</td><td>"Same service" without the same execution sequence (one process handles concurrent work)</td></tr>
+<tr><td>2. Parent span <em>start</em> → child span <em>start</em></td><td>Parent <em>end</em> / later parent events → child</td></tr>
+<tr><td>3. Message send → processing, with matching message ID & context</td><td>Matching by operation name or timestamp</td></tr>
+<tr><td>4. Links / predecessor refs explicitly given causal meaning (<code>porv.causal</code>, direction stated)</td><td>Generic links without contract direction; timestamps of any kind</td></tr>
+</table>
+<h2 id="attrs">PORV-specific attributes</h2>
+<ul>
+<li><code>porv.predecessors</code>: list of predecessor event IDs <em>in the same workflow</em>. Each means "must appear before me".</li>
+<li><code>porv.causal</code>: boolean on a link saying "this link has causal meaning per the contract". Both endpoints and the direction must still be explicit.</li>
+<li>These are <strong>not standard OTel attributes</strong>. The serialization format is frozen with the contract before experiments. (The construct-validity section says extra attributes are reported, so "uses OpenTelemetry" doesn't hide the extra instrumentation.)</li>
+</ul>
+<h2 id="validation">Input validation</h2>
+<ul>
+<li>Checks: duplicate IDs, correlation values, unresolved references, cycles.</li>
+<li>Schema-invalid export → <strong>input error</strong> (reported separately).</li>
+<li>Cycle → not forced into a partial order; <strong>inconclusive</strong> until explained.</li>
+</ul>
+<h2 id="kw">Completeness flag K<sub>w</sub></h2>
+<p>K<sub>w</sub> is given <strong>only</strong> to controlled collections where all business points and needed causal references were collected and there's no known loss.</p>
+<ul>
+<li>Request closing or span end time <strong>doesn't</strong> prove K<sub>w</sub>.</li>
+<li><strong>Action logs</strong>, written on a path separate from telemetry, are reconciled one by one with the export (including events in other trace contexts).</li>
+<li>If a source is mid-action, logs can't be reconciled, or there's an uncovered failure → no completeness.</li>
+<li><strong>DFA acceptance is never used as completeness evidence</strong> (that would be circular).</li>
+<li>In fault scenarios, "normal action count" isn't a completeness condition: an intentionally skipped action (S5) differs from a performed-but-lost one (S8).</li>
+<li>In telemetry-loss tests, K<sub>w</sub> is revoked and the loss is recorded.</li>
+</ul>
+</article>
+
+<article class="page" id="algorithm" data-group="The Research" data-title="The search algorithm">
+<div class="crumb">The Research · §3.2.3</div>
+<h1>The search algorithm</h1>
+<p class="lead">Contribution #2 (RM2). A memoized search over configurations (S, q). Try the stepper below.</p>
+<h2 id="config">Configurations</h2>
+<ul>
+<li>A configuration is <strong>(S, q)</strong>: S ⊆ V<sub>w</sub> = processed events (always an ideal), q ∈ Q = DFA state. Start at <strong>(∅, q₀)</strong>.</li>
+<li>Event v ∉ S may be picked only if <strong>all its direct predecessors are in S</strong>.</li>
+<li>If λ(v) = ε, the state stays; otherwise δ(q, λ(v)) must exist. Step → (S ∪ {v}, q′).</li>
+<li>S = V<sub>w</sub> and q ∈ F → <strong>stop with a witness</strong> → compatible.</li>
+<li>All reachable configurations explored, no witness → <strong>incompatible</strong>.</li>
+<li><strong>Memo</strong> on (S, q): never explore the same pair twice. Candidates are ordered by ID, so the witness is deterministic.</li>
+<li>Limits (10 s core time or 10⁶ configurations, whichever comes first) → <strong>inconclusive</strong>, not rejection.</li>
+</ul>
+<pre><code>search(G, P):
+  memo ← {(∅, q0)};  stack ← [(∅, q0, [])]
+  while stack not empty:
+    if time > 10s or |memo| > 10^6: return INCONCLUSIVE
+    (S, q, path) ← pop(stack)
+    if S = V:
+      if q ∈ F: return COMPATIBLE(witness = path)
+      continue
+    for v in ready(S) sorted by id:          # all preds of v in S
+      q' ← q if λ(v) = ε else δ(q, λ(v))
+      if q' undefined: continue               # DFA forbids this step
+      if (S∪{v}, q') ∉ memo:
+        memo.add((S∪{v}, q')); push((S∪{v}, q', path+[v]))
+  return INCOMPATIBLE                         # exhaustive, no witness</code></pre>
+
+<h2 id="stepper">Interactive stepper</h2>
+<div class="widget" id="stepper-w">
+  <div class="row"><b style="font-size:14px">Model accepts:</b>
+    <select id="stModel">
+      <option value="abcd">only a·b·c·d (pay before reserve)</option>
+      <option value="acbd">only a·c·b·d (reserve before pay)</option>
+      <option value="both">both (Listing 3.1)</option>
+      <option value="none">only a·d·b·c (impossible order)</option>
+    </select></div>
+  <svg viewBox="0 0 420 170" id="stSvg" style="max-width:460px">
+    <line class="e" x1="82" y1="80" x2="180" y2="42" marker-end="url(#arr)"/><line class="e" x1="82" y1="96" x2="180" y2="132" marker-end="url(#arr)"/>
+    <line class="e" x1="236" y1="42" x2="334" y2="80" marker-end="url(#arr)"/><line class="e" x1="236" y1="132" x2="334" y2="96" marker-end="url(#arr)"/>
+    <g text-anchor="middle" font-size="14" font-weight="600">
+    <circle class="n" data-n="a" cx="60" cy="88" r="22"/><text x="60" y="93">a</text>
+    <circle class="n" data-n="b" cx="208" cy="35" r="22"/><text x="208" y="40">b</text>
+    <circle class="n" data-n="c" cx="208" cy="140" r="22"/><text x="208" y="145">c</text>
+    <circle class="n" data-n="d" cx="356" cy="88" r="22"/><text x="356" y="93">d</text></g>
+    <g class="sub" text-anchor="middle"><text x="60" y="126">created</text><text x="208" y="70">paid</text><text x="208" y="112">reserved</text><text x="356" y="126">shipped</text></g>
+  </svg>
+  <div class="row"><button class="btn" id="stPrev">◀ Prev</button><button class="btn primary" id="stNext">Next ▶</button><button class="btn" id="stRun">Run all</button><button class="btn" id="stReset">Reset</button><span class="mono" id="stState" style="font-size:13px;color:var(--muted)"></span></div>
+  <div class="steps" id="stSteps"></div>
+  <div class="verdicts" id="stVerdicts"></div>
+</div>
+<div class="callout tip"><b>TRY THIS</b><p>Pick "only a·c·b·d". The <strong>one-topological-order baseline</strong> (Kahn, smallest ID first) produces a·b·c·d and rejects it. PORV backtracks and finds the witness a·c·b·d. That's exactly the <strong>value of searching alternatives</strong>. With "both", search gives no advantage. Pick "impossible order" to see exhaustive rejection.</p></div>
+
+<h2 id="cost">Cost summary</h2>
+<ul>
+<li>Graph build + cycle check: O(|V<sub>w</sub>| + |D<sub>w</sub>|).</li>
+<li>Configurations ≤ |Q| · ∏(nᵢ+1) ≤ |Q|(n+1)<sup>w</sup>; general |Q|·2ⁿ.</li>
+<li>Time ≈ |Q|(n+1)<sup>w</sup> × polynomial factor (scanning, set copying, memo). Memory also counts the size of each configuration's representation.</li>
+<li>The general problem is NP-complete (Amarilli & Paperman). Polynomial for fixed w.</li>
+<li>Width is computed separately (bipartite matching) and reported as structure analysis if not needed by the core.</li>
+<li>Scale plots show time, #configurations, and stop proportion vs n for each w, with the model and acceptance type held constant.</li>
+<li>Many small graphs ≠ one big workflow with many order choices. The proposal never treats these as equivalent.</li>
+</ul>
+</article>
+
+<article class="page" id="decisions" data-group="The Research" data-title="Three decisions">
+<div class="crumb">The Research · Table 3.1</div>
+<h1>Three decisions (+ input error)</h1>
+<table>
+<tr><th>Decision</th><th>Condition</th><th>Interpretation boundary</th></tr>
+<tr><td><span class="pill ok">Kompatibel</span></td><td>Complete evidence and a topological order accepted by the model exists</td><td>An allowed explanation exists; <em>doesn't</em> guarantee all orders are correct</td></tr>
+<tr><td><span class="pill bad">Tidak kompatibel</span></td><td>Complete evidence and exhaustive search proves no accepted order</td><td>Observation doesn't fit the model; says nothing about <em>all</em> app properties</td></tr>
+<tr><td><span class="pill unk">Tidak dapat disimpulkan</span></td><td>Incomplete/ambiguous evidence, broken refs, cycle, or resource limit reached</td><td>Counted as neither acceptance nor rejection</td></tr>
+<tr><td><span class="pill">Kesalahan masukan</span></td><td>Malformed input (schema)</td><td>Reported separately</td></tr>
+</table>
+<figure>
+<svg viewBox="0 0 640 140">
+  <g font-size="12" text-anchor="middle">
+  <rect class="box" x="5" y="45" width="110" height="44" rx="8"/><text x="60" y="65">Schema OK?</text><text x="60" y="80" class="sub">no → input error</text>
+  <rect class="box" x="140" y="45" width="130" height="44" rx="8"/><text x="205" y="65">Refs OK, acyclic?</text><text x="205" y="80" class="sub">no → inconclusive</text>
+  <rect class="box" x="295" y="45" width="110" height="44" rx="8"/><text x="350" y="65">K<tspan font-size="9">w</tspan> complete?</text><text x="350" y="80" class="sub">no → inconclusive</text>
+  <rect class="box acc" x="430" y="45" width="90" height="44" rx="8"/><text x="475" y="72">Search</text>
+  <text x="590" y="30">witness → ✓</text><text x="590" y="72">exhausted → ✗</text><text x="590" y="114">limit → ?</text></g>
+  <line class="e" x1="115" y1="67" x2="138" y2="67" marker-end="url(#arr)"/><line class="e" x1="270" y1="67" x2="293" y2="67" marker-end="url(#arr)"/><line class="e" x1="405" y1="67" x2="428" y2="67" marker-end="url(#arr)"/>
+  <line class="e" x1="520" y1="60" x2="550" y2="34" marker-end="url(#arr)"/><line class="e" x1="520" y1="67" x2="545" y2="67" marker-end="url(#arr)"/><line class="e" x1="520" y1="76" x2="555" y2="105" marker-end="url(#arr)"/>
+</svg>
+<figcaption>Evidence gates come first; the DFA search only runs on complete, well-formed graphs.</figcaption>
+</figure>
+<div class="callout"><b>WHY INCONCLUSIVE IS A FEATURE</b><p>Equating lost observations with app failure creates baseless alarms. The slide puts it this way: "Bukti lengkap menentukan apakah hasilnya tegas." Coverage is always reported next to accuracy, so abstaining can't be used to cheat.</p></div>
+</article>
+
+<article class="page" id="baselines" data-group="The Research" data-title="Baselines (comparators)">
+<div class="crumb">The Research · §3.2.4</div>
+<h1>Baselines: separating causal benefit from search benefit</h1>
+<p class="lead">Slide 7: "Satu graf memisahkan manfaat kausal dari manfaat pencarian."</p>
+<table>
+<tr><th>Strategy</th><th>Causal edges</th><th>Clock bound</th><th>Search alternatives</th></tr>
+<tr><td>Raw timestamp</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>Timestamp ± error bound</td><td>No</td><td>Yes</td><td>No</td></tr>
+<tr><td>One topological order (Kahn)</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td><strong>PORV</strong></td><td><strong>Yes</strong></td><td>No</td><td><strong>Yes</strong></td></tr>
+</table>
+<p>All strategies get the <strong>same events, symbol mapping, DFA, and evidence gates</strong>. Only the ordering strategy differs, which makes it a controlled comparison.</p>
+<h2 id="isolate">What each comparison isolates</h2>
+<ul>
+<li><strong>Timestamp vs one topological order</strong> → value of <strong>causal information</strong>.</li>
+<li><strong>One topological order vs PORV</strong> → value of <strong>exploring alternatives</strong>.</li>
+</ul>
+<h2 id="raw">Raw timestamp</h2>
+<p>Sort ascending by physical time (ID breaks ties), run the one resulting word, and don't search further if it's rejected. Missing timestamp → inconclusive. If the timestamp order contradicts a causal edge, that's flagged in the report but <strong>not fixed using the graph</strong> (a "graph-corrected timestamp" would be a different baseline). It's explicitly <em>not</em> "the best available verifier", just a controlled contrast.</p>
+<h2 id="interval">Timestamp with clock-error bound</h2>
+<p>Each event becomes an interval <code>I<sub>e</sub> = [t<sub>e</sub> − ε<sub>e</sub>, t<sub>e</sub> + ε<sub>e</sub>]</code>, where ε<sub>e</sub> is the source clock's absolute error bound (incl. resolution), frozen before measurement. e is <em>surely</em> before f only if <code>sup I<sub>e</sub> &lt; inf I<sub>f</sub></code>. The DFA runs only if the intervals determine <strong>one total order</strong> over the model's events; otherwise → inconclusive. Expect <strong>lower coverage</strong> on overlapping intervals, analysed with risk–coverage. Sensitivity uses k ∈ {0, ½, 1, 2} × ε. Shifts beyond the bound are reported as clock-assumption violations.</p>
+<h2 id="kahnbase">One deterministic topological order</h2>
+<p>Kahn with smallest ID first, <strong>no timestamps</strong>, same graph and DFA. It runs one order and doesn't retry after a rejection.</p>
+<h2 id="facts">Two useful facts (great for answering "when does it matter?")</h2>
+<ol>
+<li><strong>If the timestamp order is a valid topological order and is accepted, PORV must also accept.</strong> So "baseline accepts but PORV rejects" can only happen if timestamps contradict causality (or there's an implementation bug).</li>
+<li><strong>If the DFA's verdict doesn't change when you swap any two adjacent unordered events, all topological orders give the same verdict.</strong> In that class, one order is enough and search adds nothing. (Intuition: Mazurkiewicz trace theory, where the language is closed under commuting independent events.) The corpus therefore must include graphs with both accepted and rejected orders.</li>
+</ol>
+
+<h2 id="skewdemo">Interactive: clock skew vs verdicts</h2>
+<div class="widget" id="skew">
+  <p style="margin:0 0 6px;font-size:14px">True times: created 0 ms, reserved 80 ms, paid 120 ms, shipped 300 ms. Model = Listing 3.1 (accepts both a·b·c·d and a·c·b·d). Skew the <strong>payment</strong> service's clock:</p>
+  <div class="row"><span style="font-size:13.5px;width:150px">payment clock skew</span><input type="range" id="skS" min="-1000" max="1000" step="10" value="0" style="flex:1;min-width:140px"><span class="mono" id="skSv" style="width:120px;font-size:13px"></span></div>
+  <div class="row"><span style="font-size:13.5px;width:150px">error bound ε (each)</span><input type="range" id="skE" min="0" max="150" step="5" value="10" style="flex:1;min-width:140px"><span class="mono" id="skEv" style="width:120px;font-size:13px"></span></div>
+  <div class="row"><button class="btn" data-sk="0">0</button><button class="btn" data-sk="100">+100 ms</button><button class="btn" data-sk="-100">−100 ms</button><button class="btn" data-sk="1000">+1 s</button><button class="btn" data-sk="-300000">−5 min</button><button class="btn" data-sk="300000">+5 min</button></div>
+  <div id="skOut"></div>
+</div>
+<div class="callout tip"><b>WHAT TO NOTICE</b><p>PORV never changes (the graph doesn't use timestamps; that's success criterion #3 / scenario S3). Raw timestamps raise a <strong>false alarm</strong> once payment looks later than shipping or earlier than order creation. The interval baseline stays safe but <strong>abstains</strong> whenever intervals overlap (paid and reserved are only 40 ms apart).</p></div>
+</article>
+
+<article class="page" id="prereq" data-group="The Research" data-title="Causal prerequisite analysis">
+<div class="crumb">The Research · §3.2.4</div>
+<h1>Second analysis: causal prerequisite paths</h1>
+<p class="lead">Backup slide 16. It complements the existential check where it's blind (S7).</p>
+<ul>
+<li><strong>Question:</strong> is there a causal path from the prerequisite (e.g. payment.succeeded) to the dependent action (shipping.started)?</li>
+<li><strong>Profile:</strong> explicit dependency rules only, <strong>no repetition</strong>. Rule type, dependent action, business-ID matching, and repetition policy are frozen before the corpus.</li>
+<li><strong>Outputs:</strong> prerequisite supported / not supported / inconclusive. Complete evidence + no path → not supported. Incomplete → inconclusive (same gate).</li>
+<li><strong>Non-vacuous:</strong> existence and count of required actions are stated separately, so a missing dependent action doesn't make the check pass trivially.</li>
+<li><strong>No path ≠ automatically "done too early".</strong> Calling it an enforcement violation needs a business requirement about causality <em>and</em> a contract that records it. App-fault labels still come from independent facts.</li>
+<li>It's <strong>not derived from an arbitrary DFA</strong>, not equal to universal semantics, and validated against its own <strong>path oracle</strong> (not the existential label).</li>
+<li>If used as an alarm, TP/FP/FN/TN are recomputed against business facts. An alarm on a correct app counts as FP on the app label even if it's "right" on the path label.</li>
+<li>It reuses the <strong>preliminary prototype</strong>, aligned with the new evidence gates.</li>
+</ul>
+</article>
+
+<article class="page" id="explain" data-group="The Research" data-title="Explanations">
+<div class="crumb">The Research · §3.2.5</div>
+<h1>Explaining (in)compatibility</h1>
+<ul>
+<li><strong>Accept</strong> → one <strong>witness order</strong>.</li>
+<li><strong>Reject</strong> → model, workflow ID, relevant events, ordering constraints, and a <strong>summary of the exhaustive search</strong>.</li>
+<li>One failing order is <strong>not</strong> a sufficient counterexample under existential semantics, because another order might be accepted. The exploration over the full graph is what justifies the conclusion; the event slice only helps explain it.</li>
+<li>Simple cases (shipping known to precede payment) show the path and the conflicting transition. If a correct summary isn't available → <strong>report the whole workflow graph</strong>.</li>
+<li>No claim of a <em>minimal</em> counterexample. No user study (both out of scope).</li>
+</ul>
+<div class="math">R<sub>slice</sub> = n<sub>slice</sub> / n<sub>workflow</sub></div>
+<p>Size = number of unique event IDs shown, relative to the <em>violating workflow</em> (not the whole corpus). Serialized bytes are also recorded. A small ratio <strong>doesn't</strong> prove the explanation is easy to understand; correctness is checked first.</p>
+</article>
+
+<article class="page" id="evaluation" data-group="The Research" data-title="Evaluation design">
+<div class="crumb">The Research · §3.4</div>
+<h1>Evaluation design</h1>
+<p class="lead">Slide 8: "Tiga korpus memberi tiga jenis bukti." Slide 11: "Target dikunci sebelum eksperimen dimulai."</p>
+<h2 id="corpora">Three corpora, three kinds of evidence</h2>
+<table>
+<tr><th>Corpus</th><th>Oracle</th><th>Proves</th></tr>
+<tr><td>Synthetic graphs</td><td>Enumerate <em>all</em> topological orders independently</td><td>Implementation correctness, scaling (n, w, |Q|), search benefit</td></tr>
+<tr><td>Controlled app (4 services, separate local storage, simulated payment)</td><td>Action logs + business facts</td><td>App-fault detection (S1–S10), causal-info benefit, clock effects</td></tr>
+<tr><td>OTel Demo 2.0.2 (one path)</td><td>Actions, export, broker positions</td><td>Real-SDK integration, dependency reconstruction, completeness closure, clock sensitivity</td></tr>
+</table>
+<p>Observation conformance, application faults, and path support are reported <strong>separately</strong>.</p>
+<h2 id="vars">Variables</h2>
+<ul>
+<li><strong>Independent variable:</strong> checking strategy (PORV, one topo order, raw timestamp, interval timestamp). Prerequisite analysis runs separately.</li>
+<li><strong>Factors:</strong> scenario type, #events n, poset width w, clock skew, evidence quality.</li>
+<li><strong>Held constant per series:</strong> DFA size, edge density, rules, normalized input, machine, process conditions.</li>
+<li>Corpus split by purpose: small-graph suite (validation), paired cases (isolate causal info vs search), controlled executions (app faults), external integration. Search cases include models that accept all swaps <em>and</em> models that accept only some. For w = 1 the "mixed" class is marked not applicable.</li>
+</ul>
+<h2 id="profile">Profile & sampling</h2>
+<ul>
+<li>n = 4, 8, 12, 16, 20; w = 1, 2, 4 (w ≤ n); |Q| = 2–16; w = 8 stress. Compare sizes at fixed width and widths at fixed size.</li>
+<li>≥ 30 independent base units per selected cell; numbers frozen before generation; <strong>all scheduled samples run, with no stopping based on p-values</strong>.</li>
+<li>Clock shifts 0, ±100 ms, ±1 s, ±5 min. Loss via fixed-seed removal of relevant events.</li>
+<li>Loads 100/500 events (optional stress), 1,000/5,000 (optional extension). Two load shapes: many independent workflows vs one growing workflow.</li>
+</ul>
+<h2 id="collect">Data collection</h2>
+<ul>
+<li>Fresh app state per run; store business-fact records + treatment config; collect telemetry; validate evidence quality.</li>
+<li>The <strong>same normalized input</strong> goes to all strategies; time metadata and error bounds are used only by the timestamp baselines.</li>
+<li>Checker execution order is randomized/balanced (load & cache effects).</li>
+<li>Core time (after parsing) vs end-to-end time; 5 warm-ups, ≥ 30 reps; startup cost separated.</li>
+<li>Failed runs = experiment failure, not a checker decision. Settings changed after calibration → new corpus/manifest version.</li>
+</ul>
+<h2 id="criteria">Success criteria (prototype acceptance)</h2>
+<ol>
+<li><strong>100%</strong> oracle agreement on the complete small-graph suite, <strong>no abstain</strong> (accept, reject, many orders with one witness, branching workflows).</li>
+<li>All known-loss / broken-ref / cycle cases → inconclusive; format errors → input error; all limit-stop tests → inconclusive.</li>
+<li>On 100% of pairs where only timestamps or export order change, the PORV decision and canonical explanation are <strong>identical</strong> (also for the topo baseline and prerequisite analysis; timestamp baselines may change).</li>
+<li>All three baselines are complete and tested against their own definitions (incl. the deterministic order failing when an alternative is accepted, and inconclusive on ambiguous intervals). The prerequisite analysis is tested against the path oracle.</li>
+<li>At least one real SDK export processed from OTLP JSON to decision + explanation. One external integration path with revision, contract, model, independent labels, and inspectable patches. Business-fault evaluation is mandatory on the controlled app.</li>
+</ol>
+<h2 id="targets">Operational targets (design choices, frozen)</h2>
+<p>On complete observations in the main profile: <strong>≥ 95% decided</strong>, limits 10 s / 10⁶ configs, <strong>≤ 5% stopped</strong>. These suit offline small workflows. They're <em>not</em> measured values and <em>not</em> conditions for "beating" baselines. Missed targets are still results and are reported.</p>
+<h2 id="manifest">Manifest & freezing</h2>
+<p>A pre-calibration manifest records targets, generator, size/width/model combos, sample counts, identity rules, clock assumptions, abstain handling, stats plan, and timing procedure. Pilot/calibration seeds are separate from evaluation seeds. Calibration only checks implementation, oracle, cell feasibility, and measurement tools. Revisions after freezing → a new protocol version, with old results kept. This is close to a <strong>pre-registration</strong>-style design and protects against tuning to the results.</p>
+</article>
+
+<article class="page" id="scenarios" data-group="The Research" data-title="Scenarios S1–S10 (and S7)">
+<div class="crumb">The Research · Table 3.3</div>
+<h1>Scenarios S1–S10</h1>
+<table>
+<tr><th>ID</th><th>Scenario</th><th>Treatment</th><th>Observation label</th><th>What it tests</th></tr>
+<tr><td>S1</td><td>Sequential, correct</td><td>Graph follows an accepted word</td><td><span class="pill ok">Kompatibel</span></td><td>Basic acceptance</td></tr>
+<tr><td>S2</td><td>Concurrent, correct</td><td>Payment & reservation can swap; model accepts both</td><td><span class="pill ok">Kompatibel</span></td><td>Concurrency isn't a violation</td></tr>
+<tr><td>S3</td><td>Clock shift</td><td>Timestamps changed; events & edges of S2 unchanged</td><td><span class="pill ok">Kompatibel</span></td><td>PORV invariance to clocks; timestamp baselines may flip</td></tr>
+<tr><td>S4</td><td>Proven early transition</td><td>Graph forces shipping before payment</td><td><span class="pill bad">Tidak kompatibel</span></td><td>True violation detected</td></tr>
+<tr><td>S5</td><td>Required action not done</td><td>Payment/reservation never happened; complete closed observation</td><td><span class="pill bad">Tidak kompatibel</span></td><td>Missing action with complete evidence</td></tr>
+<tr><td>S6</td><td>Duplicate action</td><td>Two real shipments; model accepts one</td><td><span class="pill bad">Tidak kompatibel</span></td><td>Duplicates</td></tr>
+<tr><td>S7</td><td>Unordered prerequisite</td><td>Payment & shipping unordered; an order with payment first exists</td><td><span class="pill ok">Kompatibel</span> (fault missed)</td><td>Limit of existential semantics</td></tr>
+<tr><td>S8</td><td>Telemetry loss</td><td>App action happened; event/edge removed; K<sub>w</sub> revoked</td><td><span class="pill unk">Tidak dapat disimpulkan</span></td><td>Loss ≠ failure</td></tr>
+<tr><td>S9</td><td>Bad evidence</td><td>Broken refs, missing correlation, cyclic graph</td><td><span class="pill unk">TDD</span> / input error</td><td>Evidence gates</td></tr>
+<tr><td>S10</td><td>Workflow alternatives</td><td>Model allows two branches; small graphs with several orders</td><td>Per independent oracle</td><td>Branching models</td></tr>
+</table>
+<div class="callout"><b>S5 vs S8 (examiners love this)</b><p><strong>S5:</strong> the action <em>didn't happen</em>, and complete evidence justifies that → incompatible. <strong>S8:</strong> the action <em>did happen</em> but its record was lost → inconclusive. Telling them apart needs app facts (action logs), not the DFA.</p></div>
+<h2 id="s7-deep">Deep dive: S7, the honest limitation</h2>
+<figure>
+<svg viewBox="0 0 600 170">
+  <line class="e" x1="20" y1="140" x2="580" y2="140" marker-end="url(#arr)"/><text x="570" y="160" class="sub" text-anchor="end">physical time</text>
+  <g font-size="12" text-anchor="middle">
+  <rect class="box" x="30" y="60" width="110" height="34" rx="6"/><text x="85" y="82">order.created</text>
+  <rect class="box" x="230" y="20" width="120" height="34" rx="6" style="stroke:var(--danger)"/><text x="290" y="42">shipping.started</text>
+  <rect class="box" x="420" y="95" width="130" height="34" rx="6"/><text x="485" y="117">payment.succeeded</text></g>
+  <line class="e" x1="140" y1="70" x2="228" y2="40" marker-end="url(#arr)"/><line class="e" x1="140" y1="84" x2="418" y2="110" marker-end="url(#arr)"/>
+  <line class="e dash red" x1="352" y1="40" x2="420" y2="100"/><text x="420" y="62" class="sub">no causal edge between them</text>
+</svg>
+<figcaption>Slide 10: shipping actually happens before payment (enforcement disabled), but the graph leaves them unordered.</figcaption>
+</figure>
+<ul>
+<li><strong>Setup:</strong> in the app variant, prerequisite enforcement is disabled and shipping runs before payment, proven by controlled action logs.</li>
+<li><strong>PORV:</strong> the graph has payment and shipping unordered, so the order "payment → shipping" exists and is accepted → <span class="pill ok">compatible</span>. On the <em>observation label</em> that's <strong>correct</strong>. On the <em>application label</em> it's a <strong>missed fault (FN)</strong>.</li>
+<li><strong>Raw timestamp variant</strong> (with a reliable shared clock): shows shipping first → rejects → <strong>catches it</strong>, where PORV doesn't. This is reported as is.</li>
+<li><strong>Interval variant:</strong> catches it if the intervals are surely separated; abstains if they overlap.</li>
+<li><strong>Prerequisite analysis:</strong> no path payment ⇝ shipping → "not supported". It complements the interpretation.</li>
+<li>Why not run the variant on one process? Recorded local order would add an edge, turning it into <strong>S4</strong>.</li>
+</ul>
+<div class="callout say"><b>SAY</b><p>"S7 sengaja kami masukkan untuk menunjukkan batas semantik eksistensial. PORV benar terhadap label observasi, tetapi melewatkan kesalahan aplikasi. Karena itu kami punya label aplikasi terpisah dan analisis prasyarat kausal sebagai pelengkap. Kami tidak menyembunyikan kasus di mana pembanding timestamp justru lebih baik."</p></div>
+</article>
+
+<article class="page" id="external" data-group="The Research" data-title="OTel Demo integration">
+<div class="crumb">The Research · §3.3 & Lampiran A</div>
+<h1>External path: OpenTelemetry Demo 2.0.2</h1>
+<p class="lead">Slide 12: checkout → Kafka → accounting. Commit <code>63649d6d6a59…</code>, Apache-2.0.</p>
+<table>
+<tr><th>Symbol</th><th>Event</th><th>Recorded at</th><th>Means</th></tr>
+<tr><td>a</td><td>order.publish.initiated</td><td>Before order enters async producer input</td><td>App will try to publish</td></tr>
+<tr><td>c</td><td>order.publish.client_succeeded</td><td>After client success channel returns the same message object</td><td>Client reports success, <strong>not broker storage</strong></td></tr>
+<tr><td>p</td><td>order.accounting.processed</td><td>After accounting parses the order and the log call returns</td><td>Logging action done, <strong>not a DB change</strong></td></tr>
+</table>
+<p>Every event carries <code>app.order.id</code> and <code>app.message.id</code>. The message ID and the publish-attempt reference travel in <strong>Kafka headers</strong>.</p>
+<figure>
+<svg viewBox="0 0 420 130">
+  <g font-size="14" font-weight="600" text-anchor="middle">
+  <circle class="n" cx="60" cy="65" r="22"/><text x="60" y="70">a</text>
+  <circle class="n" cx="300" cy="25" r="22"/><text x="300" y="30">c</text>
+  <circle class="n" cx="300" cy="105" r="22"/><text x="300" y="110">p</text></g>
+  <line class="e" x1="82" y1="58" x2="276" y2="30" marker-end="url(#arr)"/><text x="170" y="32" class="sub">local order</text>
+  <line class="e" x1="82" y1="72" x2="276" y2="100" marker-end="url(#arr)"/><text x="170" y="112" class="sub">propagated reference</text>
+  <text x="370" y="70" class="sub" text-anchor="middle">c ∥ p</text>
+</svg>
+<figcaption>Edges a ≺ c and a ≺ p. Model accepts both acp and apc, so search isn't exercised here.</figcaption>
+</figure>
+<div class="callout warn"><b>BE HONEST ABOUT WHAT THIS PATH PROVES</b><p>Both topological orders are accepted, so <strong>this path shows no search benefit</strong> over one topological order. It evaluates <strong>SDK integration, dependency reconstruction, collection completeness, and clock sensitivity</strong>. Order contradictions on modified graphs are reported as <em>synthetic controls</em>. External business-fault cases need independent requirements and proven faulty executions.</p></div>
+<h2 id="closure">Bounded closure procedure (Appendix A.2)</h2>
+<ol>
+<li>Checkout and accounting write <strong>action logs separate from the telemetry SDK</strong>, fsynced to disk (a write failure fails the source). Accounting logs a "processing" phase before and a "done" phase after.</li>
+<li>After a successful checkout response, both sources are <strong>frozen</strong>. If accounting is frozen mid-processing → inconclusive (the action may have happened before its record).</li>
+<li>Broker <strong>offset range</strong> is checked against accounting's position. Fresh profile: exactly one message at offset 0.</li>
+<li>Telemetry is allowed to reach the collector, then the collector is <strong>stopped normally</strong> to close the export (waiting alone proves nothing). Each event is reconciled one by one, and dropped counts are checked.</li>
+</ol>
+<p>Profile: fresh broker, 1 partition, 1 successful order, 1 message, no retries/restarts. K<sub>w</sub> is given only if reconciliation succeeds, no failure/restart occurred, accounting is outside an action, and the collector stopped normally.</p>
+<h2 id="feasibility">Feasibility runs (7 Oct 2026)</h2>
+<table>
+<tr><th>Run</th><th>Points matched</th><th>Result</th></tr>
+<tr><td>…-f877b33d</td><td>3</td><td><span class="pill unk">Inconclusive</span>: collector stopped before export closed</td></tr>
+<tr><td>…-58dbb2bd</td><td>3</td><td><span class="pill ok">Complete</span>: logs/export match, one broker offset, sources outside action</td></tr>
+<tr><td>…-648ec7ba</td><td>3</td><td><span class="pill ok">Complete</span>: new epoch, different order</td></tr>
+</table>
+<p><strong>Done:</strong> SDK collection + bounded closure. <strong>Next:</strong> DFA search, three baselines, independently labelled business-fault experiments. Feasibility data is kept separate from the official corpus. If the target fails the integration contract → one replacement is chosen and frozen (name, license, commit, workflow, reason).</p>
+</article>
+
+<article class="page" id="validity" data-group="The Research" data-title="Scope, limits & threats">
+<div class="crumb">The Research · §3.1.1 & §3.4.4</div>
+<h1>Scope, limitations & threats to validity</h1>
+<h2 id="scope">Scope (8 points)</h2>
+<ol>
+<li>Controlled app, synthetic graphs, one OSS workflow (OTel Demo 2.0.2). The external path covers integration only.</li>
+<li>DFA per workflow, existential semantics; the prerequisite analysis only for explicit dependencies. No new formal language, no consensus, no unbounded liveness.</li>
+<li>Offline checking. "Runtime" = evidence from running apps. No streaming, no automatic intervention.</li>
+<li>Input: normalized OTLP JSON. No binary formats, no every-backend support, no automatic instrumentation of whole apps.</li>
+<li>Event identity, workflow identity, and dependency direction are defined in the contract. Standard traces without business info aren't enough.</li>
+<li>Not every span link = happened-before.</li>
+<li>Mandatory baselines: raw timestamp, timestamp ± bound, one deterministic topo order.</li>
+<li>Explanations = deterministic relevant-event slices. No global minimality, no user study.</li>
+</ol>
+<h2 id="risks">Three risks (slide 13)</h2>
+<table>
+<tr><th>Risk</th><th>Mitigation</th></tr>
+<tr><td>Causal edges wrong or missing</td><td>Contract frozen before data; independent action reconciliation; defective evidence → inconclusive</td></tr>
+<tr><td>Search blows up</td><td>Width controlled; #configurations measured; limits; every target miss reported as is</td></tr>
+<tr><td>Circular evaluation</td><td>Graph oracle and business facts made without PORV; coverage always shown with accuracy</td></tr>
+</table>
+<h2 id="threats">Threats to validity</h2>
+<ul>
+<li><strong>Internal:</strong> labels from the verifier itself would be circular → independent oracles. The existential label favours PORV by definition → separate app & path labels. Non-atomicity between action, log write, and telemetry → freezing + reconciliation; no claims about crash recovery or production. Synchronous log writes affect timing → same instrumentation profile in pairs. Machine load, JIT, cache, and run order are controlled/recorded.</li>
+<li><strong>Construct:</strong> accepting one order ≠ certainty about real behaviour. Summary size ≠ usefulness. Extra OTLP attributes are reported as an app contract.</li>
+<li><strong>External:</strong> one 3-event external contract; search benefit only from controlled + synthetic data; small models; transport, retry, fan-out, batching differences reported.</li>
+<li><strong>Reliability/reproducibility:</strong> rules, raw input, normalization, labels, seeds, configs, per-run results stored; versions locked; determinism tests; raw timing data published.</li>
+</ul>
+<p>Slide 13's closing line: <em>"Klaim kita berhenti pada profil dan generator yang diuji."</em></p>
+</article>
+
+<article class="page" id="schedule" data-group="The Research" data-title="Schedule">
+<div class="crumb">The Research · Bab IV</div>
+<h1>Schedule (Nov 2026 – Jan 2027)</h1>
+<table>
+<tr><th>Activity</th><th>Nov</th><th>Dec</th><th>Jan</th></tr>
+<tr><td>Literature, semantics, observation contract</td><td>●</td><td>●</td><td></td></tr>
+<tr><td>Implement checker, baselines, test app</td><td>●</td><td>●</td><td></td></tr>
+<tr><td>Calibration & config freeze</td><td></td><td>●</td><td></td></tr>
+<tr><td>Official experiments & data collection</td><td></td><td>●</td><td>●</td></tr>
+<tr><td>Analysis & explanation of results</td><td></td><td></td><td>●</td></tr>
+<tr><td>Writing & consultation</td><td>●</td><td>●</td><td>●</td></tr>
+<tr><td>Final revision & seminar prep</td><td></td><td></td><td>●</td></tr>
+</table>
+<h2 id="cuts">If time runs short: what gets cut first</h2>
+<ol><li>External business-fault patches & extra external closure profiles</li><li>Second external app</li><li>1,000–5,000-event loads</li><li>Timing variations outside the main profile</li></ol>
+<p><strong>Never cut:</strong> minimal evidence gates, oracle validation, the three baselines, prerequisite analysis without repetition, S7, width control. Explanations fall back to the full graph if slices aren't ready.</p>
+<div class="callout say"><b>"IS 3 MONTHS REALISTIC?"</b><p>"Fondasi sudah ada: prototipe pendahuluan dan uji kelayakan pengumpulan OTel Demo pada 7 Oktober. Kami juga sudah menetapkan prioritas pemotongan; oracle, pembanding, dan kasus S7 tidak akan dipotong."</p></div>
+</article>
+
+<!-- ================= RELATED WORK ================= -->
+<article class="page" id="related" data-group="Related Work" data-title="Comparison with other papers">
+<div class="crumb">Related Work · Bab II §2.6–2.7</div>
+<h1>How is this different from other research?</h1>
+<p class="lead">Rule: for every paper, be able to say "they do X, we do Y, and we're not claiming Z". Never claim novelty for the idea of checking multiple orderings.</p>
+
+<h2 id="position">Where the thesis sits</h2>
+<p>Between <strong>process checking from tracing</strong> (Sakai, Sun) and <strong>trace validation against formal specs</strong> (Ellsberg, TraceLink, Weil-Kennedy). Three aspects get attention: <strong>sufficiency of evidence to build causal edges</strong>, <strong>distinguishing violation from incompleteness</strong>, and <strong>cost + explanation size</strong>.</p>
+
+<h2 id="table">Comparison table</h2>
+<table>
+<tr><th>Work</th><th>What they do</th><th>What PORV does differently</th></tr>
+<tr><td><strong>Sakai & Takahashi (2022)</strong><br>NOMS</td><td>Build a service process model <em>from</em> distributed tracing for conformance checking</td><td>Model is <strong>written by the developer</strong> (DFA), with explicit dependency semantics. Doesn't mine a model</td></tr>
+<tr><td><strong>Sun et al. (2024)</strong><br>IEEE TSC</td><td>Annotation-assisted, scenario-oriented detection of inconsistencies in microservices</td><td>Small rule model; <strong>no full model extraction</strong>; focus on the contract + evidence quality + causal order</td></tr>
+<tr><td><strong>Adriansyah et al. (2011)</strong></td><td>Alignment-based conformance on Petri nets with A*; logs are <em>total orders</em>; counts inserted/skipped activities</td><td>Keeps the <strong>partial order</strong> of the observation; yes/no existence of an accepted word; <strong>no insertion/deletion</strong> of business actions</td></tr>
+<tr><td><strong>Bauer & Falcone (2012)</strong></td><td>Decentralised LTL monitoring with local monitors</td><td><strong>Centralised</strong>, after collection, finite DFA + evidence gates. Scope comparison only</td></tr>
+<tr><td><strong>Ellsberg (Ding et al., NSDI 2025)</strong></td><td>Runtime protocol refinement checking vs. a protocol simulation (etcd, ZooKeeper, RedisRaft)</td><td><strong>Application-level business interactions</strong>, not consensus protocols. Similarity: checking execution evidence against allowed behaviour</td></tr>
+<tr><td><strong>TraceLink (Hackett & Beschastnikh, OOPSLA 2025)</strong></td><td>Validate implementation traces against verified designs in the PGo ecosystem (TLA+, Modular PlusCal); keeps partial-order info</td><td><strong>No PGo toolchain</strong> and no equivalent guarantee; OTel-based, bounded app rules</td></tr>
+<tr><td><strong>Weil-Kennedy et al. (2025, preprint)</strong></td><td>Interaction verification from <em>local traces</em> with automata, no global clock</td><td>Shows that checking several possible orders <strong>isn't novel by itself</strong> (the proposal says so). PORV designs the search for a small DFA from <strong>OTel observations</strong> with a contract</td></tr>
+<tr><td><strong>Mahé et al. (2022)</strong></td><td>Offline RV of interaction models over local traces, dealing with observability</td><td>Supports the "offline = still RV" framing; different model formalism</td></tr>
+<tr><td><strong>Chase & Garg (1998); Omer et al. (2026)</strong></td><td>Global predicate detection; monitoring temporal specs over partial-order global states</td><td>PORV accepts one <strong>word</strong> of a DFA, not a general predicate/temporal property; complexity results not reused as PORV's</td></tr>
+<tr><td><strong>X-Trace, Dapper, Pivot Tracing</strong></td><td>Causal tracing and diagnosis infrastructure</td><td>They give the observation foundation; PORV adds <em>explicit acceptance model</em> over chosen business points</td></tr>
+<tr><td><strong>XVector / ShiViz (Beschastnikh et al.)</strong></td><td>Record partial-order info; <em>visualize</em> executions</td><td>PORV outputs a <strong>decision + witness</strong>; visualization isn't a main evaluation output</td></tr>
+<tr><td><strong>Amarilli & Paperman (2018)</strong></td><td>Constrained topological sorting: NP-hardness for regular constraints</td><td>Theory background for the problem's complexity. The algorithm itself isn't claimed new</td></tr>
+</table>
+
+<h2 id="novelty">So what IS the contribution?</h2>
+<div class="callout"><b>HONEST ANSWER</b>
+<ol>
+<li><strong>Integration:</strong> existential partial-order checking + an <strong>OpenTelemetry business observation contract</strong> (what counts as an event, an edge, and "complete").</li>
+<li><strong>Three-valued handling of evidence:</strong> violation vs unknown, with a completeness gate and explicit tests (S5 vs S8).</li>
+<li><strong>Evaluation design that isolates effects:</strong> three baselines, independent oracles, three label sets, risk–coverage, pre-frozen manifest.</li>
+<li><strong>Honest boundary map:</strong> S7 and the fact that the external path shows no search benefit.</li>
+<li><strong>Artifacts:</strong> prototype, labelled corpus, reproducible protocol, cost/width analysis.</li>
+</ol></div>
+<div class="callout say"><b>SAY</b><p>"Kami tidak mengklaim bahwa memeriksa beberapa urutan yang mungkin itu baru; Weil-Kennedy dkk. dan lainnya sudah melakukannya. Kebaruan kami ada pada kontrak observasi OpenTelemetry, penanganan bukti tidak lengkap, dan desain evaluasi yang memisahkan manfaat informasi kausal dari manfaat pencarian."</p></div>
+
+<h2 id="dims">One-glance dimension table</h2>
+<table>
+<tr><th>Dimension</th><th>Process-mining alignment</th><th>Timestamp tools</th><th>Formal trace validation</th><th>PORV</th></tr>
+<tr><td>Log structure</td><td>total order</td><td>total order by clock</td><td>partial order</td><td>partial order from contract</td></tr>
+<tr><td>Spec</td><td>Petri net</td><td>rule / sequence</td><td>TLA+ / protocol / automata</td><td>developer DFA</td></tr>
+<tr><td>Answer</td><td>cost of deviation</td><td>pass/fail</td><td>refines / not</td><td>3-valued + witness</td></tr>
+<tr><td>Missing evidence</td><td>looks like deviation</td><td>looks like fault</td><td>often assumed complete</td><td>explicit gate → inconclusive</td></tr>
+</table>
+<p class="sub" style="font-size:13px;color:var(--muted)">The right-hand columns are your own positioning summary, so state them as "in this research's framing" rather than as absolute claims about those fields.</p>
+</article>
+
+<!-- ================= DEFENSE PREP ================= -->
+<article class="page" id="slides" data-group="Defense Prep" data-title="Slide-by-slide script">
+<div class="crumb">Defense Prep</div>
+<h1>Slide-by-slide script (23 slides)</h1>
+<p class="lead">Main body = 14 slides (≈ 12–15 min); slides 16–23 are backup. Each entry: the point, a talk track in Indonesian, and the likely follow-up.</p>
+
+<h3 id="s1">1 · Title</h3><p>Introduce yourself, the advisor, the topic. Don't read the long title; say it in one sentence: "memeriksa apakah alur kerja layanan asinkron sesuai model, memakai data OpenTelemetry."</p>
+
+<h3 id="s2">2 · Kausalitas membatasi urutan, timestamp memilih satu</h3>
+<div class="callout say"><b>SAY</b><p>"Pada alur pesanan, pembayaran dan reservasi boleh selesai dalam urutan apa pun, tetapi pengiriman menunggu keduanya. Timestamp memaksa satu urutan saja. Pertanyaan kami: bagaimana bukti kausal dan pencarian urutan mengubah keputusan, ketepatan, cakupan, dan biaya?"</p></div>
+<p><em>Follow-up:</em> "Kenapa tidak pakai NTP / jam sinkron?" → <a href="#q-ntp">Q</a>.</p>
+
+<h3 id="s3">3 · Pengujian model offline pada alur pesanan</h3>
+<p>Scope: one OTel export, one workflow, developer-written DFA. <strong>In:</strong> business events + workflow ID, provable causal dependencies, 4 controlled services, synthetic graphs, one OTel Demo 2.0.2 path. <strong>Out:</strong> consensus, unbounded liveness, streaming, whole-app correctness. Outputs: contract, prototype, labelled corpus, usage-boundary map. Name the three closest studies: Sakai & Takahashi, Sun et al., Amarilli & Paperman.</p>
+
+<h3 id="s4">4 · Pipeline</h3>
+<p>Export events → match action log (e.g. <code>payment.completed</code> ↔ "payment succeeded") → build the graph (order → payment) → test the DFA. Point out that the <strong>message context links</strong> payment to order.created, not the timestamp.</p>
+
+<h3 id="s5">5 · Satu saksi menerima model; pencarian memeriksa pilihan</h3>
+<div class="callout say"><b>SAY</b><p>"Kompatibel jika ada satu urutan topologis yang diterima DFA. Di lattice ini, a·b·c·d diterima dan a·c·b·d ditolak; satu saksi sudah cukup. Konfigurasi (S, q) disimpan sekali, biayanya |Q|(n+1)ʷ. Saksi berarti kompatibel, pilihan habis berarti tidak kompatibel, batas 10 detik atau 10⁶ konfigurasi berarti belum dapat disimpulkan."</p></div>
+<p><em>Must say:</em> "Kompatibel ⇏ aplikasi benar." Practise explaining the lattice pictured on this slide, using the <a href="#algorithm">stepper</a>.</p>
+
+<h3 id="s6">6 · Bukti lengkap menentukan apakah hasilnya tegas</h3>
+<p>Table of three decisions. Completeness is checked by matching action logs with the export. Malformed input = input error, not a decision.</p>
+
+<h3 id="s7">7 · Satu graf memisahkan manfaat kausal dari manfaat pencarian</h3>
+<p>Walk the 4×3 table row by row (see <a href="#baselines">Baselines</a>). Clock shifts tested: 0, ±100 ms, ±1 s, ±5 min.</p>
+
+<h3 id="s8">8 · Tiga korpus</h3>
+<p>Synthetic graphs (oracle: enumerate all topological orders), controlled app (action logs + business facts), OTel Demo (actions, export, broker position). Report observation match, app error, and path support <strong>separately</strong>.</p>
+
+<h3 id="s9">9 · Sepuluh skenario</h3>
+<p>Group them: S1–S2 compatible; S3 invariance to clock shift; S4–S6 incompatible when evidence complete; <strong>S7 compatible but fault missed</strong>; S8–S9 inconclusive or input error; S10 workflow alternatives vs oracle. Mention S5 (didn't happen) vs S8 (happened, record lost).</p>
+
+<h3 id="s10">10 · S7</h3>
+<p>The honesty slide. Shipping before payment is a real error, but PORV accepts since the graph leaves them unordered and an accepted order exists. <em>Don't be defensive.</em> Frame it as a designed finding: "ini batas yang kami ukur, bukan kegagalan yang disembunyikan."</p>
+
+<h3 id="s11">11 · Target dikunci sebelum eksperimen</h3>
+<p>n = 4…20; w = 1, 2, 4; |Q| = 2–16; ≥ 30 independent units/cell; shifts; manifest frozen. Metrics: accuracy, FPR/FNR, coverage, time, #configs, explanation size. Targets: 100% oracle on small suite; main profile coverage ≥ 95%, ≤ 5% stopped. "Kita laporkan setiap target yang tidak tercapai."</p>
+
+<h3 id="s12">12 · OTel Demo path</h3>
+<p>a = publish initiated, c = client succeeded, p = accounting processed. Edges a≺c, a≺p; model accepts acp and apc. Done: two complete collections + one inconclusive (collector stopped early, 7 Oct 2026). Next: DFA search, three baselines, independently labelled business-fault experiments. <strong>Search not tested here</strong> as both orders are accepted.</p>
+
+<h3 id="s13">13 · Tiga risiko</h3>
+<p>Wrong/missing causal edges · search explosion · circular evaluation: each with its mitigation. End on "Klaim kita berhenti pada profil dan generator yang diuji."</p>
+
+<h3 id="s14">14 · Jadwal</h3>
+<p>Calibration finishes before official data opens. If late: cut external fault expansion and stress tests; keep oracle, baselines, S7.</p>
+
+<h3 id="s15">15 · Hasil penelitian</h3>
+<p>Four outputs. Ends with an open question for the panel: <em>"Cukup satu urutan yang diterima, atau semua urutan harus diterima?"</em>. <strong>Prepare your own answer for this</strong> (see <a href="#q-exist">existential vs universal</a>), because someone will take the bait.</p>
+
+<h3 id="s16">16–23 · Backups</h3>
+<ul>
+<li><strong>16 Statistics</strong> → <a href="#pre-stats">Metrics & statistics</a> (bootstrap 10,000; McNemar exact + Holm over 8 tests; Clopper–Pearson).</li>
+<li><strong>17 Prerequisite check</strong> → <a href="#prereq">Prerequisite analysis</a>.</li>
+<li><strong>18 OpenTelemetry</strong> → <a href="#pre-otel">Observability & OTel</a>.</li>
+<li><strong>19–23 References</strong>: Amarilli & Paperman 2018 · Lamport 1978 · OTel Observability primer, OTLP spec, Messaging semconv (dev status), Traces, Tracing API · Sakai & Takahashi 2022 · Sun et al. 2024.</li>
+</ul>
+
+<h2 id="timing-plan">Timing plan (suggested)</h2>
+<table>
+<tr><th>Block</th><th>Slides</th><th>Minutes</th></tr>
+<tr><td>Problem & scope</td><td>2–3</td><td>2.5</td></tr>
+<tr><td>Method</td><td>4–7</td><td>5</td></tr>
+<tr><td>Evaluation</td><td>8–11</td><td>4</td></tr>
+<tr><td>External path, risks, schedule, outputs</td><td>12–15</td><td>3</td></tr>
+</table>
+</article>
+
+<article class="page" id="questions" data-group="Defense Prep" data-title="Question bank">
+<div class="crumb">Defense Prep</div>
+<h1>Question bank</h1>
+<p class="lead">Likely questions from examiners. Click a question for the answer (Indonesian answer you can say; English notes after). Filter by topic.</p>
+<div class="widget" style="padding:10px 14px">
+  <div class="row" id="qFilter">
+    <button class="btn on" data-f="all">All</button><button class="btn" data-f="concept">Concepts</button><button class="btn" data-f="method">Method</button><button class="btn" data-f="eval">Evaluation</button><button class="btn" data-f="novel">Novelty</button><button class="btn" data-f="limit">Limits</button><button class="btn" data-f="trick">Tricky</button>
+    <span style="margin-left:auto;display:flex;gap:6px"><button class="btn" id="qOpen">Expand all</button><button class="btn" id="qClose">Collapse all</button></span>
+  </div>
+</div>
+<div id="qList"></div>
+</article>
+
+<article class="page" id="practice" data-group="Defense Prep" data-title="Practice mode (flashcards)">
+<div class="crumb">Defense Prep</div>
+<h1>Practice mode</h1>
+<p class="lead">Read the question, <strong>answer out loud first</strong> (like in the room), then reveal. Mark "got it" / "again" so you only repeat what you missed.</p>
+<div class="widget">
+  <div class="row"><select id="pTopic"><option value="all">All topics</option><option value="concept">Concepts</option><option value="method">Method</option><option value="eval">Evaluation</option><option value="novel">Novelty</option><option value="limit">Limits</option><option value="trick">Tricky</option></select>
+  <button class="btn" id="pShuffle">Shuffle</button><span id="pCount" class="mono" style="margin-left:auto;font-size:13px;color:var(--muted)"></span></div>
+  <div class="flash" id="pCard"><div class="q" id="pQ"></div><div id="pA" style="display:none;margin-top:14px"></div></div>
+  <div class="row"><button class="btn primary" id="pReveal">Reveal answer</button><button class="btn" id="pGot" style="display:none">✓ Got it</button><button class="btn" id="pAgain" style="display:none">↺ Again</button><button class="btn" id="pSkip">Skip</button></div>
+</div>
+<div class="callout tip"><b>DEFENSE-DAY HABITS</b>
+<ul><li>Pause, restate the question in your own words, then answer. It buys thinking time.</li>
+<li>If you don't know: "Itu belum kami uji; di proposal kami batasi pada ... dan itu masuk keterbatasan." Never bluff.</li>
+<li>Always connect your answer to one of the three RQs or to a limitation already written in the proposal.</li>
+<li>Lead with the limitation yourself (S7, no search benefit in OTel Demo, 3-event external contract). Examiners respect it.</li></ul></div>
+</article>
+
+<article class="page" id="glossary" data-group="Defense Prep" data-title="Glossary (EN ↔ ID)">
+<div class="crumb">Defense Prep</div>
+<h1>Glossary (English ↔ Indonesian)</h1>
+<table>
+<tr><th>English</th><th>Indonesian</th><th>One-line meaning</th></tr>
+<tr><td>Runtime verification</td><td>Verifikasi runtime</td><td>Check observed behaviour against a spec</td></tr>
+<tr><td>Partial order</td><td>Urutan parsial</td><td>Only some pairs are ordered</td></tr>
+<tr><td>Total order</td><td>Urutan total</td><td>Every pair ordered</td></tr>
+<tr><td>Happened-before</td><td>Happened-before (≺)</td><td>Causal precedence (Lamport)</td></tr>
+<tr><td>Concurrent / unordered</td><td>Konkuren / tidak terurut</td><td>No causal path either way</td></tr>
+<tr><td>Linear extension / topological order</td><td>Urutan topologis</td><td>One total order consistent with all edges</td></tr>
+<tr><td>Antichain · width</td><td>Antichain · lebar</td><td>Set of pairwise unordered events · size of largest</td></tr>
+<tr><td>Ideal</td><td>Ideal urutan</td><td>Set closed under predecessors (a valid "processed so far")</td></tr>
+<tr><td>Configuration</td><td>Konfigurasi</td><td>(S, q) pair in the search</td></tr>
+<tr><td>Memoization</td><td>Memoisasi</td><td>Remember visited configurations</td></tr>
+<tr><td>DFA</td><td>Automaton berhingga deterministik</td><td>The workflow model</td></tr>
+<tr><td>Witness</td><td>Saksi</td><td>The accepted order that proves compatibility</td></tr>
+<tr><td>Observation contract</td><td>Kontrak observasi</td><td>Rules mapping OTel data to events and edges</td></tr>
+<tr><td>Completeness (K<sub>w</sub>)</td><td>Kelengkapan bukti</td><td>Guarantee all needed events/edges were collected</td></tr>
+<tr><td>Inconclusive</td><td>Tidak dapat disimpulkan</td><td>Neither accept nor reject</td></tr>
+<tr><td>Oracle</td><td>Oracle</td><td>Independent source of ground-truth labels</td></tr>
+<tr><td>Baseline / comparator</td><td>Pembanding</td><td>Simpler method used for contrast</td></tr>
+<tr><td>Clock skew · error bound</td><td>Pergeseran jam · batas galat</td><td>Clock offset · max assumed error</td></tr>
+<tr><td>Coverage</td><td>Cakupan</td><td>Fraction of inputs with a decision</td></tr>
+<tr><td>Abstain</td><td>Abstain / menahan keputusan</td><td>Return inconclusive</td></tr>
+<tr><td>Span · trace</td><td>Span · trace</td><td>One operation · set of spans for a request</td></tr>
+<tr><td>Offline</td><td>Offline</td><td>Check after the export is closed</td></tr>
+<tr><td>Threats to validity</td><td>Ancaman terhadap validitas</td><td>Reasons results may not hold</td></tr>
+</table>
+</article>
+</main>
+<aside class="toc" id="toc"></aside>
+</div>
+<div class="modal" id="modal"><div class="box"><input id="sInput" placeholder="Search the docs…" autocomplete="off"><div class="results" id="sResults"></div></div></div>
+<script>
+/* ---------- Q&A DATA ---------- */
+const QA = [
+{id:"q-what",t:"concept",q:"Jelaskan penelitian Anda dalam satu menit. / Explain your research in one minute.",a:`<p>"Pada aplikasi layanan asinkron, beberapa pekerjaan berjalan konkuren, misalnya pembayaran dan reservasi sebelum pengiriman. Mengurutkan peristiwa dengan timestamp memaksa satu urutan dan bisa salah karena jam berbeda. Kami membentuk graf urutan parsial dari OpenTelemetry lewat kontrak observasi, lalu memeriksa apakah ada sedikitnya satu urutan topologis yang diterima DFA alur kerja. Hasilnya kompatibel, tidak kompatibel, atau tidak dapat disimpulkan jika bukti kurang. Kami membandingkannya dengan tiga pembanding untuk memisahkan manfaat informasi kausal dari manfaat pencarian."</p>`},
+{id:"q-why-ts",t:"concept",q:"Mengapa timestamp tidak cukup? / Why aren't timestamps enough?",a:`<p>Jam tiap layanan berbeda (drift/skew), jadi urutan timestamp bukan bukti sebab-akibat lintas proses (Lamport 1978). Selain itu, timestamp memaksa <em>satu</em> urutan total padahal peristiwa konkuren tidak punya urutan "sebenarnya".</p><p><em>Evidence from the thesis:</em> S3 shows PORV is unchanged under skews of 0, ±100 ms, ±1 s, ±5 min while timestamp baselines can flip. <strong>But</strong> S7 shows timestamps can catch something PORV misses if the clock is reliable. Say both.</p>`},
+{id:"q-ntp",t:"concept",q:"Kenapa tidak sinkronkan jam saja (NTP / PTP)? / Why not just synchronize clocks?",a:`<p>Sinkronisasi hanya mengurangi galat, tidak menghilangkannya, dan resolusi pencatatan juga terbatas. Karena itu ada pembanding "timestamp dengan batas galat": ia aman karena menahan keputusan bila interval bersinggungan, tetapi cakupannya turun. Selain itu, peristiwa konkuren tetap tidak punya urutan yang benar walau jam sempurna.</p>`},
+{id:"q-hb",t:"concept",q:"Apa itu happened-before dan urutan parsial? / What is happened-before?",a:`<p>Relasi ≺ dari urutan lokal, pengiriman→penerimaan pesan, dan penutupan transitif. Jika tak ada a≺b maupun b≺a, keduanya tidak terurut. Urutan parsial hanya mengurutkan sebagian pasangan.</p>`},
+{id:"q-unordered",t:"concept",q:"Mengapa Anda memakai istilah 'tidak terurut' dan bukan 'konkuren'?",a:`<p>Pada telemetri yang tidak lengkap, ketiadaan lintasan bisa karena bukti hilang, bukan karena benar-benar konkuren. Istilah "konkuren" hanya pantas pada model yang dijamin lengkap.</p>`},
+{id:"q-exist",t:"method",q:"Mengapa semantik eksistensial ('sedikitnya satu urutan'), bukan semua urutan? / Why existential rather than universal?",a:`<p>Eksistensial = klaim terlemah dan penolakannya paling aman: kami menolak hanya bila <em>tidak ada</em> urutan konsisten-bukti yang diterima, sehingga konkurensi yang sah tidak menimbulkan alarm palsu. Semantik universal ("semua urutan harus diterima") lebih kuat, tetapi sisi kausal yang hilang akan jadi alarm palsu.</p><p><strong>Admit the cost:</strong> existential can miss real faults (S7). That's why there's (1) a separate app-fault label, (2) the prerequisite-path analysis, and (3) the timestamp baselines under a reliable shared clock. Universal semantics and path checks answer stronger questions and are named as such in §2.5.</p>`},
+{id:"q-compat",t:"trick",q:"Jika hasilnya 'kompatibel', apakah aplikasinya benar? / If compatible, is the app correct?",a:`<p><strong>Tidak.</strong> "Kompatibel ⇏ aplikasi benar." Artinya ada penjelasan urutan yang diizinkan model untuk observasi itu, bukan bukti bahwa aplikasi menegakkan setiap prasyarat. S7 adalah contohnya. Klaim hanya berlaku untuk model, observasi, dan cakupan alur kerja yang dinyatakan; bukan bukti seluruh implementasi atau liveness.</p>`},
+{id:"q-s7",t:"limit",q:"S7 menunjukkan PORV gagal mendeteksi kesalahan. Bukankah itu kelemahan fatal?",a:`<p>Itu batas yang kami <em>rancang untuk diukur</em>, bukan kelemahan tersembunyi. Pada label observasi PORV benar; pada label aplikasi ia melewatkan kesalahan (FN) dan dihitung begitu. Kami melaporkan ketepatan deteksi kesalahan aplikasi terpisah, memakai analisis prasyarat kausal sebagai pelengkap, dan melaporkan bahwa pembanding timestamp (dengan jam andal) bisa menang di sini.</p><p>Tujuan RQ3 memang "bagaimana <em>batas</em> deteksi kesalahan aplikasinya", jadi S7 menjawab RQ3.</p>`},
+{id:"q-incon",t:"concept",q:"Mengapa perlu status 'tidak dapat disimpulkan'? / Why a third verdict?",a:`<p>Peristiwa yang tidak ada di ekspor bisa berarti tidak terjadi <em>atau</em> tidak terekam (sampling, batas perekaman, kolektor berhenti). Menyamakan keduanya membuat alarm tanpa dasar. Status ini juga dipakai untuk siklus, referensi rusak, dan batas pencarian tercapai (penolakan butuh pencarian tuntas, bukan time-out).</p>`},
+{id:"q-abstain",t:"eval",q:"Bukankah abstain bisa dipakai untuk 'curang' membuat akurasi tinggi?",a:`<p>Ya, karena itu <strong>cakupan selalu dilaporkan bersama ketepatan</strong> (C = keputusan / seluruh input), ada plot risiko–cakupan, abstain dipisah (bukti kurang vs batas pencarian), dan penurunan risiko disertai kehilangan cakupan dibahas sebagai <em>pertukaran</em>, bukan peningkatan gratis. Target operasional: cakupan ≥ 95%, berhenti karena batas ≤ 5%.</p>`},
+{id:"q-s5s8",t:"trick",q:"Apa beda S5 dan S8?",a:`<p>S5: aksi <em>tidak terjadi</em>, observasi lengkap → tidak kompatibel. S8: aksi <em>terjadi</em> tetapi rekamannya hilang → tidak dapat disimpulkan. Membedakannya butuh fakta aplikasi (catatan aksi) dan batas penutupan, bukan DFA; DFA tidak boleh dipakai sebagai bukti kelengkapan karena itu melingkar.</p>`},
+{id:"q-contract",t:"method",q:"Mengapa perlu kontrak observasi? OpenTelemetry sudah punya trace. / Why a contract?",a:`<p>OTel menyediakan struktur dan korelasi, tetapi tidak makna bisnis. Awal span "payment" bukan "pembayaran berhasil"; parent–child tidak otomatis menyatakan urutan akhir; link umum tidak bermakna kausal. Kontrak menetapkan titik bisnis, identitas alur (order.id), arti sisi kausal, dan syarat kecukupan bukti. Ini juga jujur: instrumentasi tambahan (porv.*) dilaporkan, bukan disembunyikan.</p>`},
+{id:"q-edges",t:"method",q:"Dari mana sisi kausal berasal? Mengapa parent–child tidak selalu dipakai?",a:`<p>Empat sumber: (1) urutan lokal yang dijamin instrumentasi, (2) awal induk → awal anak, (3) kirim → proses pesan dengan ID pesan dan konteks cocok, (4) link/referensi pendahulu yang diberi makna kausal eksplisit. Akhir induk tidak otomatis mendahului anak (pada kode asinkron induk bisa selesai lebih dulu), dan link generik tidak punya arah.</p>`},
+{id:"q-whydfa",t:"method",q:"Mengapa DFA, bukan LTL, Petri net, atau BPMN?",a:`<p>Alur kerja kami berhingga dan kecil; DFA paling sederhana, bisa ditulis pengembang, dan deterministik (satu kata → satu run). LTL untuk lintasan tak hingga/liveness (di luar lingkup); pada Petri net konkurensi ada <em>di model</em>, sedangkan di PORV konkurensi ada <em>di observasi</em>. Kami juga tidak membuat bahasa formal baru.</p>`},
+{id:"q-eps",t:"method",q:"Apa itu peristiwa ε (konteks)? Apakah boleh diabaikan?",a:`<p>Peristiwa yang tidak ada di alfabet model diberi label ε: tidak mengubah keadaan DFA, tetapi tetap ada di graf supaya batasan urutan (a≺x≺b) tidak hilang. Pemetaan dibekukan sebelum evaluasi; peristiwa bisnis yang seharusnya diperiksa tidak boleh disembunyikan sebagai konteks.</p>`},
+{id:"q-algo",t:"method",q:"Jelaskan algoritma pencarian Anda. / Explain your search.",a:`<p>Konfigurasi (S, q): S himpunan peristiwa terproses, q keadaan DFA; mulai dari (∅, q₀). Pilih peristiwa yang semua pendahulunya sudah di S; ikuti transisi DFA (ε tidak mengubah q). Jika S = V dan q ∈ F → saksi. Simpan (S, q) yang sudah dikunjungi (memoisasi). Bila semua konfigurasi habis tanpa saksi → tidak kompatibel; bila batas 10 s / 10⁶ → tidak dapat disimpulkan.</p>`},
+{id:"q-complex",t:"method",q:"Bukankah masalah ini NP-complete? Apa kompleksitas algoritma Anda?",a:`<p>Ya, kasus umum NP-complete (Amarilli & Paperman 2018: NP-hard bahkan untuk bahasa tetap (ab)*; dengan DFA eksplisit sertifikat dapat diperiksa polinomial). Namun jumlah konfigurasi ≤ |Q|·∏(nᵢ+1) ≤ |Q|(n+1)ʷ dengan w lebar poset (Dilworth), sehingga polinomial untuk w tetap. Itu sebabnya lebar jadi faktor eksperimen yang dikendalikan (w = 1, 2, 4; 8 stress test). Kami tidak mengklaim algoritma baru; yang dievaluasi adalah biayanya di bawah kontrak dan profil lebar tertentu.</p>`},
+{id:"q-width",t:"method",q:"Bagaimana Anda menghitung lebar poset?",a:`<p>Lewat partisi rantai minimum menggunakan pencocokan bipartit pada relasi keterjangkauan (Dilworth): rantai minimum = n − ukuran pencocokan maksimum = lebar (ukuran antichain terbesar). Biayanya dilaporkan sebagai analisis struktur terpisah bila tidak dibutuhkan verifier inti.</p>`},
+{id:"q-baselines",t:"eval",q:"Mengapa tepat tiga pembanding itu? / Why these three baselines?",a:`<p>Masing-masing mengisolasi satu efek: timestamp vs satu urutan topologis → manfaat informasi kausal; satu urutan topologis vs PORV → manfaat pencarian alternatif; timestamp ± galat → timestamp yang paling jujur terhadap ketidakpastian jam. Semuanya memakai peristiwa, pemetaan, DFA, dan gerbang bukti yang sama.</p><p>Not claimed: that the timestamp baseline is "the best existing verifier".</p>`},
+{id:"q-nosearch",t:"trick",q:"Pada OTel Demo kedua urutan diterima. Jadi apa gunanya pencarian?",a:`<p>Benar, jalur itu <em>tidak</em> menunjukkan manfaat pencarian, dan proposal menyatakannya. Jalur itu mengevaluasi integrasi SDK, rekonstruksi dependensi, kelengkapan pengumpulan, dan sensitivitas jam. Manfaat pencarian diuji pada aplikasi terkontrol dan graf sintetis, dengan kelas model yang menerima sebagian urutan saja.</p><p>Also useful: if the DFA's verdict is invariant under swapping adjacent unordered events, one order suffices and search adds nothing. The corpus deliberately includes graphs where orders are split between accepted and rejected.</p>`},
+{id:"q-labels",t:"eval",q:"Bagaimana Anda menghindari evaluasi melingkar?",a:`<p>Oracle dibuat tanpa PORV: untuk graf kecil, enumerasi independen semua urutan topologis; untuk aplikasi, catatan aksi dan fakta bisnis; untuk lintasan, oracle lintasan sendiri. Label observasi, label aplikasi, dan label dukungan lintasan tidak digabung. Kami akui label eksistensial secara definisi sejalan dengan PORV, karena itu perbandingan aplikasi memakai label bisnis terpisah.</p>`},
+{id:"q-30",t:"eval",q:"Mengapa minimal 30 unit? Apakah ada power analysis?",a:`<p>30 adalah <em>minimum desain</em> per sel terpilih; kami tidak menjanjikan daya uji tertentu. Presisi ditampilkan lewat selang kepercayaan (bootstrap 95%, Clopper–Pearson), seluruh sampel yang dijadwalkan dijalankan, dan tidak ada penghentian berdasarkan nilai p. Efek dan interval adalah hasil utama; p hanya mendukung interpretasi.</p><p>Don't claim 30 is "enough for significance". It's a floor chosen for feasibility.</p>`},
+{id:"q-stats",t:"eval",q:"Mengapa McNemar eksak + Holm + bootstrap?",a:`<p>Data berpasangan (dua metode pada input yang sama) dan biner (keputusan benar/salah) → McNemar eksak memakai pasangan tidak selaras dengan binomial(½) yang tepat untuk jumlah kecil. Ada 4 perbandingan × 2 kelas (aplikasi benar/salah) = 8 uji → koreksi Holm (α = 0,05, ukuran keluarga tetap 8). Bootstrap persentil 10.000 replikasi pada unit independen untuk selisih kesalahan, cakupan, dan median selisih waktu. Clopper–Pearson untuk FPR/FNR (0/30 → batas atas ≈ 11,6%).</p>`},
+{id:"q-pseudo",t:"eval",q:"Apa itu unit independen dan mengapa pergeseran jam tidak dihitung sampel tambahan?",a:`<p>Unit independen = satu graf dasar (seed berbeda) atau satu eksekusi aplikasi dari keadaan baru. Pergeseran jam, kehilangan bukti, dan pengulangan waktu dari unit yang sama satu kelompok; menghitungnya terpisah akan menggelembungkan keyakinan (pseudo-replikasi).</p>`},
+{id:"q-targets",t:"eval",q:"Dari mana angka target (95%, 5%, 10 detik, 10⁶) berasal? Bagaimana jika tidak tercapai?",a:`<p>Itu pilihan desain untuk penggunaan offline pada alur kecil, dikunci sebelum kalibrasi; bukan hasil pengukuran dan bukan syarat mengalahkan pembanding. Jika gagal, tetap dilaporkan sebagai hasil penelitian. Satu-satunya syarat keras prototipe: 100% sesuai oracle pada suite graf kecil lengkap tanpa abstain.</p>`},
+{id:"q-freeze",t:"method",q:"Apa gunanya 'pembekuan manifest'?",a:`<p>Mencegah penyetelan terhadap hasil. Target, generator, ukuran sel, jumlah sampel, asumsi jam, perlakuan abstain, rencana statistik, dan prosedur waktu dicatat sebelum korpus resmi. Data pilot memakai seed terpisah; perubahan setelah beku → versi protokol baru dan hasil lama disimpan.</p>`},
+{id:"q-novel",t:"novel",q:"Apa kebaruan penelitian Anda? Bukankah memeriksa banyak urutan sudah dilakukan?",a:`<p>Betul, Weil-Kennedy dkk. (2025) dan lainnya menunjukkan itu bukan kebaruan tersendiri. Kontribusi kami: (1) kontrak observasi OpenTelemetry untuk membentuk graf kausal bisnis, (2) penanganan bukti tidak lengkap dengan tiga status dan gerbang kelengkapan, (3) desain evaluasi dengan tiga pembanding, oracle independen, dan tiga label yang dipisah, (4) peta batas (S7), (5) prototipe dan korpus berlabel.</p>`},
+{id:"q-sakai",t:"novel",q:"Apa bedanya dengan Sakai & Takahashi (2022) dan Sun dkk. (2024)?",a:`<p>Sakai & Takahashi <em>membentuk</em> model proses dari tracing; kami memakai model yang <em>ditulis pengembang</em> dengan semantik dependensi eksplisit. Sun dkk. memakai pendekatan berbantuan anotasi/skenario; kami tidak mengasumsikan model aplikasi lengkap bisa diekstraksi, hanya sejumlah aturan dan titik bisnis, dan menekankan kontrak serta kualitas bukti.</p>`},
+{id:"q-align",t:"novel",q:"Mengapa tidak pakai alignment (Adriansyah dkk.) saja?",a:`<p>Alignment bekerja pada log berupa urutan total dan mengukur biaya penyisipan/penghapusan aktivitas pada Petri net. Kami mempertahankan urutan parsial observasi dan bertanya apakah ada kata yang diterima tanpa menyisipkan atau menghapus aksi bisnis. Pertanyaan dan representasinya berbeda; keduanya menghubungkan observasi dengan perilaku model.</p>`},
+{id:"q-tracelink",t:"novel",q:"Bagaimana dibanding Ellsberg dan TraceLink?",a:`<p>Ellsberg memeriksa implementasi protokol konsensus (Etcd, ZooKeeper, RedisRaft) terhadap simulasi protokol; TraceLink memvalidasi trace terhadap desain terverifikasi dalam ekosistem PGo (TLA+). Kami menyasar interaksi aplikasi/bisnis antarlayanan dengan telemetri OpenTelemetry dan tidak memakai toolchain PGo atau mengklaim jaminan setara.</p>`},
+{id:"q-offline",t:"concept",q:"Kalau offline, kenapa disebut 'runtime verification'?",a:`<p>Bukti dikumpulkan saat aplikasi berjalan dan diperiksa terhadap spesifikasi; keputusan diberikan setelah ekspor ditutup. Ini verifikasi runtime offline (Leucker & Schallhart 2009; Mahé dkk. 2022). Pemeriksaan streaming dan intervensi otomatis bukan sasaran awal.</p>`},
+{id:"q-external",t:"limit",q:"Hanya satu jalur eksternal dengan 3 peristiwa. Apakah bisa digeneralisasi?",a:`<p>Tidak, dan kami menyatakannya: validitas eksternal dibatasi pada kontrak tiga peristiwa itu. Klaim empiris dibatasi pada generator, profil aplikasi, dan ukuran yang diuji. Perbedaan transport, retry, fan-out, dan batching dilaporkan; generalisasi butuh studi lanjutan.</p>`},
+{id:"q-kafka",t:"limit",q:"Apakah 'client succeeded' berarti pesan tersimpan di Kafka?",a:`<p>Tidak. Produsen memakai <code>sarama.NoResponse</code>, jadi keberhasilan klien bukan konfirmasi broker dan offset produsen tidak dipakai sebagai bukti. Posisi pesan diambil dari konsumen dan rentang offset broker diperiksa terpisah. Demikian juga, "pemanggilan log kembali" tidak menjamin log tersimpan permanen.</p>`},
+{id:"q-prod",t:"limit",q:"Apakah ini bisa dipakai di produksi?",a:`<p>Belum diklaim. Targetnya offline pada alur kecil; pengumpulan lengkap butuh pengumpulan terkontrol dan catatan aksi sinkron (mengubah waktu aplikasi; overhead aplikasi tidak diukur sebagai klaim). Tidak ada klaim crash recovery atau sistem produksi.</p>`},
+{id:"q-explain",t:"limit",q:"Apakah penjelasan Anda minimal / mudah dipahami?",a:`<p>Tidak diklaim. Penolakan menyertakan model, alur kerja, peristiwa relevan, batasan urutan, dan ringkasan pencarian tuntas. Satu urutan gagal bukan counterexample cukup pada semantik eksistensial. Rasio R_slice = n_slice / n_workflow hanya mengukur kepadatan; kegunaan bagi pengguna butuh studi pengguna (di luar lingkup).</p>`},
+{id:"q-prereq",t:"method",q:"Apa itu analisis prasyarat kausal dan mengapa perlu?",a:`<p>Pertanyaannya: adakah lintasan kausal dari prasyarat (pembayaran berhasil) ke tindakan dependen (pengiriman)? Ia melengkapi semantik eksistensial yang buta pada S7. Dibatasi pada aturan eksplisit tanpa pengulangan, dengan oracle lintasan sendiri. Tidak ada lintasan ≠ otomatis kesalahan aplikasi; itu hanya "prasyarat tidak didukung bukti".</p>`},
+{id:"q-schedule",t:"limit",q:"Apakah jadwal tiga bulan realistis?",a:`<p>Sebagian fondasi sudah ada (prototipe pendahuluan, uji kelayakan 7 Okt 2026). Kalibrasi dan pembekuan selesai sebelum data resmi. Jika mepet yang dipotong dulu: patch kesalahan bisnis eksternal, aplikasi kedua, beban 1.000–5.000 peristiwa, variasi waktu di luar profil utama. Oracle, tiga pembanding, S7, dan kontrol lebar tidak dipotong.</p>`},
+{id:"q-expected",t:"trick",q:"Apa hasil yang Anda harapkan? Apakah PORV pasti lebih baik?",a:`<p>Tidak ada janji keunggulan. Pada model yang menerima semua pertukaran peristiwa tak terurut, satu urutan sudah cukup dan pencarian tidak menambah ketepatan. Hasil yang diharapkan adalah <em>peta kapan berguna</em>: kapan informasi kausal membantu, kapan pencarian membantu, berapa biayanya, dan di mana deteksi berhenti. Kemenangan metode bukan syarat keberhasilan.</p>`},
+{id:"q-cycle",t:"method",q:"Apa yang terjadi jika graf punya siklus?",a:`<p>Tidak dipaksa menjadi urutan parsial: keputusan urutan menjadi tidak dapat disimpulkan sampai masalah observasi dijelaskan (S9). Siklus berarti bukti kausal saling bertentangan, mungkin karena instrumentasi atau referensi salah.</p>`},
+{id:"q-future",t:"limit",q:"Apa pekerjaan lanjutan setelah penelitian ini?",a:`<p>Evaluasi semantik universal/lintasan pada lebih banyak profil; aplikasi eksternal lain dengan alur gagal/retry; pemeriksaan streaming; studi pengguna untuk penjelasan; counterexample minimal; format biner OTLP dan backend lain.</p>`}
+];
+const TAGN={concept:"Concept",method:"Method",eval:"Evaluation",novel:"Novelty",limit:"Limits",trick:"Tricky"};
+
+/* ---------- Build Q&A ---------- */
+const qList=document.getElementById('qList');
+QA.forEach(x=>{
+  const d=document.createElement('details');d.className='qa';d.id=x.id;d.dataset.t=x.t;
+  d.innerHTML=`<summary><span>${x.q}</span><span class="pill tag">${TAGN[x.t]}</span></summary><div class="body">${x.a}</div>`;
+  qList.appendChild(d);
+});
+document.getElementById('qFilter').addEventListener('click',e=>{
+  const b=e.target.closest('[data-f]');if(!b)return;
+  document.querySelectorAll('#qFilter [data-f]').forEach(x=>x.classList.toggle('on',x===b));
+  qList.querySelectorAll('.qa').forEach(d=>d.style.display=(b.dataset.f==='all'||d.dataset.t===b.dataset.f)?'':'none');
+});
+document.getElementById('qOpen').onclick=()=>qList.querySelectorAll('.qa').forEach(d=>d.open=true);
+document.getElementById('qClose').onclick=()=>qList.querySelectorAll('.qa').forEach(d=>d.open=false);
+
+/* ---------- Nav ---------- */
+const pages=[...document.querySelectorAll('.page')];
+const order=["Getting Started","Prerequisites","The Research","Related Work","Defense Prep"];
+const side=document.getElementById('side');
+order.forEach(g=>{
+  const ps=pages.filter(p=>p.dataset.group===g);
+  const div=document.createElement('div');div.className='grp';
+  div.innerHTML=`<h4>${g}</h4>`+ps.map(p=>`<a href="#${p.id}" data-p="${p.id}">${p.dataset.title}</a>`).join('');
+  side.appendChild(div);
+});
+// pager
+const flat=order.flatMap(g=>pages.filter(p=>p.dataset.group===g));
+flat.forEach((p,i)=>{
+  const pg=document.createElement('div');pg.className='pager';
+  const prev=flat[i-1],next=flat[i+1];
+  pg.innerHTML=(prev?`<a href="#${prev.id}"><small>← Previous</small>${prev.dataset.title}</a>`:'<span style="flex:1"></span>')+(next?`<a class="next" href="#${next.id}"><small>Next →</small>${next.dataset.title}</a>`:'<span style="flex:1"></span>');
+  p.appendChild(pg);
+  p.querySelectorAll('h2,h3').forEach(h=>{ if(h.id){const a=document.createElement('a');a.className='anchor';a.href='#'+h.id;a.textContent='#';h.appendChild(a);} });
+});
+
+/* ---------- Router + TOC ---------- */
+const toc=document.getElementById('toc');
+function buildToc(p){
+  const hs=[...p.querySelectorAll('h2[id],h3[id]')];
+  toc.innerHTML=hs.length?'<h4>On this page</h4>'+hs.map(h=>`<a class="${h.tagName==='H3'?'l3':''}" href="#${h.id}" data-h="${h.id}">${h.childNodes[0].textContent}</a>`).join(''):'';
+}
+function route(){
+  let id=decodeURIComponent(location.hash.slice(1))||'overview';
+  let el=document.getElementById(id);
+  if(!el){id='overview';el=document.getElementById(id);}
+  const page=el.classList.contains('page')?el:el.closest('.page');
+  pages.forEach(p=>p.classList.toggle('show',p===page));
+  side.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.p===page.id));
+  buildToc(page);
+  if(el===page)window.scrollTo(0,0);
+  else{ if(el.tagName==='DETAILS')el.open=true; el.scrollIntoView({block:'start'}); }
+  document.title=page.dataset.title+' · PORV Defense Docs';
+  side.classList.remove('open');
+  if(page.id==='practice')pNext(true);
+}
+window.addEventListener('hashchange',route);
+window.addEventListener('scroll',()=>{
+  const links=[...toc.querySelectorAll('a[data-h]')];let cur=null;
+  links.forEach(a=>{const h=document.getElementById(a.dataset.h);if(h&&h.getBoundingClientRect().top<120)cur=a;});
+  links.forEach(a=>a.classList.toggle('on',a===cur));
+},{passive:true});
+document.getElementById('menuBtn').onclick=()=>side.classList.toggle('open');
+
+/* ---------- Theme ---------- */
+const root=document.documentElement;
+try{const t=localStorage.getItem('theme');if(t)root.dataset.theme=t;}catch(e){}
+document.getElementById('themeBtn').onclick=()=>{
+  const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme=dark?'light':'dark';
+  try{localStorage.setItem('theme',root.dataset.theme)}catch(e){}
+};
+
+/* ---------- Search ---------- */
+const modal=document.getElementById('modal'),sIn=document.getElementById('sInput'),sRes=document.getElementById('sResults');
+const index=[];
+pages.forEach(p=>{
+  index.push({href:'#'+p.id,title:p.dataset.title,sub:p.dataset.group,text:p.textContent});
+  p.querySelectorAll('h2[id],h3[id]').forEach(h=>{
+    let txt=h.textContent,n=h.nextElementSibling,c=0;
+    while(n&&!/^H[23]$/.test(n.tagName)&&c++<6){txt+=' '+n.textContent;n=n.nextElementSibling;}
+    index.push({href:'#'+h.id,title:h.childNodes[0].textContent,sub:p.dataset.title,text:txt});
+  });
+});
+QA.forEach(x=>index.push({href:'#'+x.id,title:x.q,sub:'Question bank',text:x.q+' '+x.a.replace(/<[^>]+>/g,' ')}));
+let sSel=0;
+function doSearch(){
+  const q=sIn.value.trim().toLowerCase();
+  if(!q){sRes.innerHTML='<div style="padding:16px;color:var(--muted);font-size:14px">Type to search pages, headings and questions.</div>';return;}
+  const words=q.split(/\s+/);
+  const hits=index.map(i=>{const t=i.title.toLowerCase(),x=i.text.toLowerCase();
+    if(!words.every(w=>t.includes(w)||x.includes(w)))return null;
+    return {i,s:words.reduce((a,w)=>a+(t.includes(w)?5:0)+(x.includes(w)?1:0),0)};}).filter(Boolean).sort((a,b)=>b.s-a.s).slice(0,12);
+  sRes.innerHTML=hits.length?hits.map(h=>{
+    const x=h.i.text,k=x.toLowerCase().indexOf(words[0]);const sn=x.slice(Math.max(0,k-40),k+90).replace(/\s+/g,' ');
+    return `<a href="${h.i.href}"><b>${h.i.title}</b><small>${h.i.sub} · …${sn}…</small></a>`}).join(''):'<div style="padding:16px;color:var(--muted)">No results.</div>';
+  sSel=0;sRes.querySelector('a')?.classList.add('sel');
+}
+function openS(){modal.classList.add('open');sIn.value='';doSearch();sIn.focus();}
+function closeS(){modal.classList.remove('open');}
+document.getElementById('searchBtn').onclick=openS;
+modal.addEventListener('click',e=>{if(e.target===modal||e.target.closest('a'))closeS();});
+sIn.addEventListener('input',doSearch);
+sIn.addEventListener('keydown',e=>{
+  const as=[...sRes.querySelectorAll('a')];
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();as[sSel]?.classList.remove('sel');sSel=(sSel+(e.key==='ArrowDown'?1:-1)+as.length)%as.length;as[sSel]?.classList.add('sel');as[sSel]?.scrollIntoView({block:'nearest'});}
+  if(e.key==='Enter'&&as[sSel]){location.hash=as[sSel].getAttribute('href');closeS();}
+});
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();modal.classList.contains('open')?closeS():openS();}
+  if(e.key==='Escape')closeS();
+});
+
+/* ---------- Search stepper ---------- */
+(function(){
+  const words={abcd:['abcd'],acbd:['acbd'],both:['abcd','acbd'],none:['adbc']};
+  const preds={a:[],b:['a'],c:['a'],d:['b','c']};
+  const names={a:'created',b:'paid',c:'reserved',d:'shipped'};
+  let log=[],i=0;
+  const selM=document.getElementById('stModel');
+  function build(){
+    const W=words[selM.value];
+    const okPrefix=s=>W.some(w=>w.startsWith(s));
+    const okFull=s=>W.includes(s);
+    const memo=new Set(['']);const stack=[{S:'',path:''}];log=[];let result=null;
+    log.push({t:'Start at (∅, q₀). q₀ is the DFA start state. Memo = {∅}.',cfg:'',path:''});
+    while(stack.length){
+      const {path}=stack.pop();
+      const S=new Set(path.split('').filter(Boolean));
+      if(S.size===4){
+        if(okFull(path)){log.push({t:`All 4 events processed and DFA state is accepting → WITNESS ${path.split('').join('·')}. Stop: COMPATIBLE.`,cfg:path,path});result='ok';break;}
+        log.push({t:`All events processed but word ${path} not accepted. Dead end.`,cfg:path,path});continue;}
+      const ready=['a','b','c','d'].filter(v=>!S.has(v)&&preds[v].every(p=>S.has(p)));
+      log.push({t:`Pop {${[...S].join(',')||'∅'}}. Ready events (all predecessors done): ${ready.join(', ')||'none'}.`,cfg:path,path});
+      const cand=[];
+      for(const v of ready){
+        const np=path+v;
+        if(!okPrefix(np)){log.push({t:`Try ${v} (${names[v]}): DFA has no transition for this → rejected step.`,cfg:path,path});continue;}
+        if(memo.has(np)){log.push({t:`Try ${v}: configuration already in memo → skip.`,cfg:path,path});continue;}
+        memo.add(np);cand.push({S:np,path:np});
+        log.push({t:`Try ${v} (${names[v]}): allowed → push {${[...np].join(',')}}.`,cfg:np,path:np});
+      }
+      cand.reverse().forEach(c=>stack.push(c));
+    }
+    if(!result)log.push({t:'Stack empty: every reachable configuration explored, no witness → INCOMPATIBLE (exhaustive).',cfg:'',path:''});
+    log.result=result;
+  }
+  function render(){
+    const st=document.getElementById('stSteps');
+    st.innerHTML=log.slice(0,i+1).map((l,k)=>`<div class="${k===i?'cur':''}">${k+1}. ${l.t}</div>`).join('');
+    st.scrollTop=st.scrollHeight;
+    const cur=log[i];
+    document.querySelectorAll('#stSvg circle').forEach(c=>{const n=c.dataset.n;c.classList.toggle('done',cur.cfg.includes(n));});
+    document.getElementById('stState').textContent='processed: '+(cur.cfg.split('').join(' · ')||'∅');
+    const last=i===log.length-1;
+    const kahn='abcd';const kahnOk=words[selM.value].includes(kahn);
+    document.getElementById('stVerdicts').innerHTML=last?`
+      <div class="card"><h5>PORV</h5><p>${log.result?'<span class="pill ok">compatible</span> witness found':'<span class="pill bad">incompatible</span> search exhausted'}</p></div>
+      <div class="card"><h5>One topological order (Kahn, smallest ID)</h5><p>tries only a·b·c·d → ${kahnOk?'<span class="pill ok">compatible</span>':'<span class="pill bad">incompatible</span>'}${(!kahnOk&&log.result)?' <b>(wrong: PORV found an accepted order)</b>':''}</p></div>`:'';
+  }
+  function reset(){build();i=0;render();}
+  selM.onchange=reset;
+  document.getElementById('stNext').onclick=()=>{if(i<log.length-1){i++;render();}};
+  document.getElementById('stPrev').onclick=()=>{if(i>0){i--;render();}};
+  document.getElementById('stRun').onclick=()=>{i=log.length-1;render();};
+  document.getElementById('stReset').onclick=reset;
+  reset();
+})();
+
+/* ---------- Clock-skew widget ---------- */
+(function(){
+  const S=document.getElementById('skS'),E=document.getElementById('skE');
+  function fmt(ms){const a=Math.abs(ms);const s=ms<0?'−':'+';return ms===0?'0 ms':a>=60000?s+(a/60000)+' min':a>=1000?s+(a/1000)+' s':s+a+' ms';}
+  function pill(v){return v==='ok'?'<span class="pill ok">compatible</span>':v==='bad'?'<span class="pill bad">incompatible (false alarm)</span>':'<span class="pill unk">inconclusive</span>';}
+  function run(){
+    const skew=+S.value,eps=+E.value;
+    document.getElementById('skSv').textContent=fmt(skew);document.getElementById('skEv').textContent='±'+eps+' ms';
+    const ev=[{s:'a',n:'created',t:0},{s:'c',n:'reserved',t:80},{s:'b',n:'paid',t:120+skew},{s:'d',n:'shipped',t:300}];
+    const sorted=[...ev].sort((x,y)=>x.t-y.t||x.s.localeCompare(y.s));
+    const word=sorted.map(e=>e.s).join('');
+    const accept=w=>w==='abcd'||w==='acbd';
+    const raw=accept(word)?'ok':'bad';
+    let amb=false;for(let i=0;i<4;i++)for(let j=i+1;j<4;j++)if(Math.abs(ev[i].t-ev[j].t)<=2*eps)amb=true;
+    const iv=amb?'unk':(accept(word)?'ok':'bad');
+    const real=skew>=-120&&skew<=180?'':'';
+    document.getElementById('skOut').innerHTML=`
+      <p style="font-size:13px;margin:10px 0 4px">Reported timestamp order: <code>${sorted.map(e=>e.n).join(' → ')}</code></p>
+      <table><tr><th>Strategy</th><th>Verdict</th><th>Why</th></tr>
+      <tr><td><b>PORV</b></td><td>${pill('ok')}</td><td>Graph has no timestamps; still a·b·c·d / a·c·b·d both possible</td></tr>
+      <tr><td>One topological order</td><td>${pill('ok')}</td><td>Same graph; also clock-free</td></tr>
+      <tr><td>Raw timestamp</td><td>${pill(raw)}</td><td>${raw==='ok'?'Clock order happens to be an accepted one':'Skew moved payment outside created…shipped, so the sorted word is not accepted'}</td></tr>
+      <tr><td>Timestamp ± ε</td><td>${pill(iv)}</td><td>${amb?'Some intervals overlap (gap ≤ 2ε) → no single sure order':'All gaps &gt; 2ε → one sure order, then DFA'}${(!amb&&iv==='bad')?'':''}</td></tr></table>`;
+  }
+  S.oninput=E.oninput=run;
+  document.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{
+    const v=+b.dataset.sk;S.min=Math.min(-1000,v);S.max=Math.max(1000,v);S.value=v;run();});
+  run();
+})();
+
+/* ---------- Practice mode ---------- */
+let pDeck=[],pIdx=0,pMissed=new Set();
+function pBuild(){
+  const t=document.getElementById('pTopic').value;
+  pDeck=QA.filter(x=>t==='all'||x.t===t);pIdx=0;
+}
+function pNext(fresh){
+  if(fresh&&!pDeck.length)pBuild();
+  if(!pDeck.length){document.getElementById('pQ').textContent='Deck finished 🎉';document.getElementById('pA').style.display='none';return;}
+  if(pIdx>=pDeck.length)pIdx=0;
+  const x=pDeck[pIdx];
+  document.getElementById('pQ').textContent=x.q;
+  const a=document.getElementById('pA');a.style.display='none';a.innerHTML=x.a;
+  document.getElementById('pReveal').style.display='';document.getElementById('pGot').style.display='none';document.getElementById('pAgain').style.display='none';
+  document.getElementById('pCount').textContent=`${pIdx+1} / ${pDeck.length} left`;
+}
+document.getElementById('pTopic').onchange=()=>{pBuild();pNext();};
+document.getElementById('pShuffle').onclick=()=>{pBuild();pDeck.sort(()=>Math.random()-.5);pNext();};
+document.getElementById('pReveal').onclick=()=>{document.getElementById('pA').style.display='';document.getElementById('pReveal').style.display='none';document.getElementById('pGot').style.display='';document.getElementById('pAgain').style.display='';};
+document.getElementById('pGot').onclick=()=>{pDeck.splice(pIdx,1);pNext();};
+document.getElementById('pAgain').onclick=()=>{const x=pDeck.splice(pIdx,1)[0];pDeck.push(x);pNext();};
+document.getElementById('pSkip').onclick=()=>{pIdx++;pNext();};
+pBuild();
+
+route();
+</script>
+</body>
+</html>
