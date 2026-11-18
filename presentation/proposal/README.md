@@ -1,8 +1,11 @@
 # Seminar proposal slides
 
 Indonesian, 16:9 Beamer presentation of the current proposal in `content/proposal/`.
-The main talk has a title slide and 20 content slides, followed by backup material
-and selected references. The PDF is generated, not hand-edited.
+The main talk has a title slide and 12 content slides grouped into the study
+program's recommended sections (Latar Belakang, Rumusan Masalah, Metode, Metrik
+dan Evaluasi, then a closing slide), followed by six backup slides and two pages
+of selected references. Each content slide carries Beamer speaker notes
+(`\note{}`), hidden in the normal build. The PDF is generated, not hand-edited.
 
 ## Build
 
@@ -16,7 +19,8 @@ make presentation
 - Review PDF: `presentation/proposal/main.pdf`
 - Auxiliary files: `build/presentation/`
 
-Uses XeLaTeX, BibTeX, and latexmk. The presentation configuration is independent
+Uses XeLaTeX, BibTeX, and latexmk. Without TeX Live, Tectonic also builds it:
+`cd presentation/proposal && tectonic -X compile main.tex -Z search-path=themes/ugm1`. The presentation configuration is independent
 of the proposal's pdfLaTeX configuration. On a minimal existing TeX Live setup,
 install the additional template dependencies with:
 
